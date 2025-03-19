@@ -22,7 +22,7 @@ libft:
 	@make -C $(LIBFT)
 
 ${NAME}: ${OBJS}
-	@$(CC) $(OBJS) $(LIB) $(HEADERS) -o $(NAME)
+	@$(CC) $(OBJS) $(LIB) $(HEADERS) -o $(NAME) -lreadline
 
 $(OBJ_DIR)/%.o:%.c
 	@mkdir -p $(OBJ_DIR)
