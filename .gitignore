@@ -1,12 +1,14 @@
 
 #pastas
 .vscode/
+objs/
 
 # arquivos aleatórios
 *.pdf
+*.md
 
 # arquivos de compilação
 minishell
 a.out
 libft.a
-*.o 
+*.o
