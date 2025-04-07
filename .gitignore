@@ -9,4 +9,4 @@
 minishell
 a.out
 libft.a
-*.o
+*.o 
