@@ -1,6 +1,7 @@
 
 #pastas
 .vscode/
+objs/
 
 # arquivos aleatórios
 *.pdf
