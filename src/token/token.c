@@ -6,7 +6,7 @@
 /*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 10:48:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/04/08 14:39:48 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/04/08 15:42:30 by rafaelherin      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,19 +173,14 @@ void add_token_list(t_data *data, char *token_name, t_type id_token)
 	{
 		new_token->value = ft_strdup(token_name);
 		if (!new_token->value)
-		{
-			free(new_token);
-			return ;
-		}
+			free(new_token); return;
 	}
 	else
 		new_token->value =NULL;
 	new_token->type = id_token;
     new_token->next = NULL;
 	 if (data->token_list == NULL)
-    {
         data->token_list = new_token;
-    }
     else
     {
         last = data->token_list;
