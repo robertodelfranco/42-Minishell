@@ -3,14 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 10:48:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/04/08 14:39:48 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/04/08 17:55:50 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "token.h"
 #include "../../include/minishell.h"
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
 // #include <stddef.h> // para size_t
 // #include <string.h> // para strlen, strcmp
@@ -35,65 +45,23 @@
 //         default: return "UNKNOWN";
 //     }
 // }
-
-// size_t ft_strlen(const char *str)
-// {
-// 	size_t len = 0;
-
-// 	while (str[len] != '\0')
-// 		len++;
-// 	return len;
-// }
-
-
 // // Prototypes das funções usadas
-// void    get_token(t_data *data, int start);
-// t_type  give_id_token(char *str);
-// void    add_token_list(t_data *data, char *token_name, t_type id_token);
-// size_t  ft_strlen(const char *s); // para evitar erro no ft_strlen
 
-// char *ft_strchr(const char *s, int c) {
-//     while (*s) {
-//         if (*s == (char)c)
-//             return (char *)s;
-//         s++;
-//     }
-//     return NULL;
-// }
+void    get_token(t_data *data, int start);
+t_type  give_id_token(char *str);
+void    add_token_list(t_data *data, char *token_name, t_type id_token);
 
-// int ft_stchr(const char *set, char c) {
-//     while (*set) {
-//         if (*set == c)
-//             return 1;
-//         set++;
-//     }
-//     return 0;
-// }
 
-// char *ft_substr(const char *s, unsigned int start, size_t len) {
-//     char *sub = malloc(len + 1);
-//     if (!sub) return NULL;
-//     strncpy(sub, s + start, len);
-//     sub[len] = '\0';
-//     return sub;
-// }
-
-// char *ft_strdup(const char *s) {
-//     char *dup = malloc(strlen(s) + 1);
-//     if (dup)
-//         strcpy(dup, s);
-//     return dup;
-// }
-
-// void *ft_calloc(size_t count, size_t size) {
-//     void *ptr = malloc(count * size);
-//     if (ptr)
-//         memset(ptr, 0, count * size);
-//     return ptr;
-// }
+int ft_stchr(const char *set, char c) {
+    while (*set) {
+        if (*set == c)
+            return 1;
+        set++;
+    }
+    return 0;
+}
 
 /* TESTE TESTE TESTE */
-
 
 int	create_token(t_data *data)
 {
@@ -197,30 +165,41 @@ void add_token_list(t_data *data, char *token_name, t_type id_token)
 
 /*TESTE TESTE TESTE TESTE TESTE TESTE TESTE*/
 
-// void print_tokens(t_token *list) {
-//     while (list) {
-//         printf("Token: %-10s | Type: %-2d\n", list->value, list->type);
-//         list = list->next;
-//     }
-// }
+void print_tokens(t_token *list) {
+    while (list) {
+        printf("Token: %-10s | Type: %-2d\n", list->value, list->type);
+        list = list->next;
+    }
+}
 
-// int main(void)
-// {
-// 	t_data *data = calloc(1, sizeof(t_data));
-// 	data->prompt = strdup("echo hello && ls < << | || > >> ( ) $ $$ * .*");
+int main(void)
+{
+    while (1)
+    {
+        // Exibe o prompt e lê a entrada do usuário
+        t_data *data = calloc(1, sizeof(t_data));
+		data->prompt = readline("$> ");
+        create_token(data);
+		// Se o usuário apertar Ctrl+D (EOF), encerra o shell
+        if (!data->prompt)
+        {
+            printf("exit\n");
+            break;
+        }
 
-// 	create_token(data);
+        // Se o usuário digitou algo, adiciona ao histórico
+        if (*data->prompt)
+            add_history(data->prompt);
 
-// 	// só print pra ver se funcionou:
-// 	t_token *tok = data->token_list;
-// 	while (tok)
-// 	{
-// 		print_tokens(data->token_list);
-// 		tok = tok->next;
-// 	}
+        print_tokens(data->token_list);
+        // Por enquanto, apenas imprime o comando digitado
+        printf("Comando digitado: %s\n", data->prompt);
 
-// 	return 0;
-// }
+        // Libera a memória alocada por readline
+        free(data->prompt);
+    }
+    return 0;
+}
 
 /*TESTE TESTE TESTE TESTE TESTE TESTE TESTE*/
 

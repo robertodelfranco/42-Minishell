@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/04/08 13:43:44 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/04/08 17:48:28 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 # include <string.h>
 # include <stdlib.h>
 # include <stdbool.h>
+# include "../src/token/token.h"
+# include "../lib/includes/libft.h"
+# include "../lib/includes/ft_printf_bonus.h"
 
 # define SUCCESS 0
 # define FAILURE 1
@@ -29,29 +32,12 @@
 
 # define NOPRINTABLE "\t\n\v\f\r "
 
-typedef enum e_token_type
-{
-	AND = 1,
-	OR,
-	PIPE,
-	IN_REDIR,
-	OUT_REDIR,
-	APPEND,
-	HEREDOC,
-	COMMAND,
-	WORD,
-	EXPAND,
-	SING_QUOTE,
-	DOUB_QUOTE,
-	OPEN_PAR,
-	CLOSE_PAR,
-}t_type;
 
 typedef struct s_token
 {
-	char			*value;
-	t_type			type;
-	struct s_token	*next;
+	char				*value;
+	t_type				type;
+	struct s_token		*next;
 }t_token;
 typedef struct s_data
 {

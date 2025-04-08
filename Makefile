@@ -10,11 +10,11 @@ LIBFT		=	lib
 
 LIB			=	$(LIBFT)/libft.a
 
-SRCS		=	./src/main.c
+SRCS		=	./src/token/token.c
 
 OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 OBJ_DIR		=	objs
-VPATH		=	./src
+VPATH		=	./src ./src/token
 
 all: libft ${NAME}
 
