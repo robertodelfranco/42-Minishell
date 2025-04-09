@@ -2,9 +2,11 @@
 #pastas
 .vscode/
 objs/
+*.json
 
 # arquivos aleatórios
 *.pdf
+Makefile
 
 # arquivos de compilação
 minishell
