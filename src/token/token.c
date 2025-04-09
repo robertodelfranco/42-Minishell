@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 10:48:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/04/08 15:49:43 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/04/09 16:30:18 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,9 @@
 
 
 // // Prototypes das funções usadas
-// void    get_token(t_data *data, int start);
-// t_type  give_id_token(char *str);
-// void    add_token_list(t_data *data, char *token_name, t_type id_token);
-// size_t  ft_strlen(const char *s); // para evitar erro no ft_strlen
+void    get_token(t_data *data, int start);
+t_type  give_id_token(char *str);
+void    add_token_list(t_data *data, char *token_name, t_type id_token);
 
 // char *ft_strchr(const char *s, int c) {
 //     while (*s) {
@@ -61,14 +60,14 @@
 //     return NULL;
 // }
 
-// int ft_stchr(const char *set, char c) {
-//     while (*set) {
-//         if (*set == c)
-//             return 1;
-//         set++;
-//     }
-//     return 0;
-// }
+int ft_stchr(const char *set, char c) {
+    while (*set) {
+        if (*set == c)
+            return 1;
+        set++;
+    }
+    return 0;
+}
 
 // char *ft_substr(const char *s, unsigned int start, size_t len) {
 //     char *sub = malloc(len + 1);
@@ -173,7 +172,10 @@ void add_token_list(t_data *data, char *token_name, t_type id_token)
 	{
 		new_token->value = ft_strdup(token_name);
 		if (!new_token->value)
-			free(new_token); return;
+		{
+			free(new_token); 
+			return;
+		}
 	}
 	else
 		new_token->value =NULL;
