@@ -6,7 +6,6 @@ objs/
 
 # arquivos aleatórios
 *.pdf
-Makefile
 
 # arquivos de compilação
 minishell
