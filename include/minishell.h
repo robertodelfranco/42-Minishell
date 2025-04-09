@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/04/09 15:27:28 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/04/09 15:55:58 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <string.h>
 # include <stdlib.h>
 # include <stdbool.h>
+# include <readline/readline.h>
 # include "../lib/includes/libft.h"
 # include "../lib/includes/ft_printf_bonus.h"
 
@@ -80,5 +81,10 @@ typedef struct s_node
 	struct s_node	*right;
 	struct s_node	*left;
 }	t_node;
+
+char	*ft_readline(void);
+t_redir	*create_redir_node(t_type type, char *target);
+t_node	*create_pipe_node(t_node *cmd1, t_node *cmd2, bool subshell);
+t_node	*create_cmd_node(char **prompt, t_redir *redir, bool subshell);
 
 #endif
