@@ -2,6 +2,7 @@
 #pastas
 .vscode/
 objs/
+*.json
 
 # arquivos aleatórios
 *.pdf
