@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 10:48:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/04/09 16:30:18 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/09 18:20:14 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,7 @@ t_type	give_id_token(char *str)
         return DOUB_QUOTE;
     if (str[0] == '$')
         return EXPAND;
-    return WORD;
+    return (get_comand(str));
 }
 
 void add_token_list(t_data *data, char *token_name, t_type id_token)
@@ -190,6 +190,58 @@ void add_token_list(t_data *data, char *token_name, t_type id_token)
             last = last->next;
         last->next = new_token;
     }
+}
+
+t_type	external_command(char *token_name);
+
+t_type	get_comand(char *token_name)
+{
+	if (strcmp(token_name, "echo") == 0)
+		return ECHO;
+	else if (strcmp(token_name, "cd") == 0)
+		return CD;
+	else if (strcmp(token_name, "pwd") == 0)
+		return PWD;
+	else if (strcmp(token_name, "export") == 0)
+		return EXPORT;
+	else if (strcmp(token_name, "unset") == 0)
+		return UNSET;
+	else if (strcmp(token_name, "env") == 0)
+		return ENV;
+	else if (strcmp(token_name, "exit") == 0)
+		return EXIT;
+	else if (external_command(token_name) == 1)
+		return NOT_BUILT_IN;
+	else
+		return WORD;
+}
+
+t_type	external_command(char *token_name)
+{
+	int		i;
+	char	*full_cmd;
+	char	*full_path;
+	char	**new_path;
+
+	new_path = ft_split(getenv("PATH"), ':');
+	if (new_path == NULL)
+		return (0);
+	i = 0;
+	if (token_name)
+	{
+		while (new_path[i])
+		{
+			full_path = ft_strjoin(new_path[i], "/");
+			full_cmd = ft_strjoin(full_path, token_name);
+			if (access(full_cmd, X_OK) == 0)
+				return (1);
+			free(full_cmd);
+			free(full_path);
+			ft_printf("%s\n", new_path[i++]);
+		}
+	}
+	ft_printf("return 0");
+	return (0);
 }
 
 /*TESTE TESTE TESTE TESTE TESTE TESTE TESTE*/

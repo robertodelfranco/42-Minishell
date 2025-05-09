@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/04/09 16:26:32 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/09 17:35:10 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,20 @@ typedef enum e_token_type
 	APPEND,
 	HEREDOC,
 	COMMAND,
-	WORD,
 	EXPAND,
 	SING_QUOTE,
 	DOUB_QUOTE,
 	OPEN_PAR,
 	CLOSE_PAR,
+	ECHO = 1,
+	CD,
+	PWD,
+	EXPORT,
+	UNSET,
+	ENV,
+	EXIT,
+	NOT_BUILT_IN,
+	WORD,
 }	t_type;
 
 typedef enum e_tree_type
@@ -92,5 +100,10 @@ t_node	*create_cmd_node(char **prompt, t_redir *redir, bool subshell);
 
 // tokens
 int	create_token(t_data *data);
+t_type	get_comand(char *token_name);
+t_type	external_command(char *token_name);
+
+// parsing
+void	parsing(t_data *data);
 
 #endif
