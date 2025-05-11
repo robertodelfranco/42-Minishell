@@ -11,7 +11,7 @@ LIBFT		=	lib
 LIB			=	$(LIBFT)/libft.a
 
 SRCS		=	./src/init.c \
-				./src/teste.c \
+				./src/main.c \
 				./src/read.c \
 				./src/token/token.c \
 				./src/parse/parse.c

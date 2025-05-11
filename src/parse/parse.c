@@ -12,18 +12,22 @@
 
 #include "../../include/minishell.h"
 
-void	ft_free_list(t_token *token_list)
+void	ft_free_token_list(t_token *token_list)
 {
 	t_token	*current;
 	t_token	*temp;
 
+	if (!token_list)
+		return ;
 	current = token_list;
 	while (current)
 	{
-		temp = current;
-		free(temp);
-		current = current->next;
+		temp = current->next;
+		free(current->value);
+		free(current);
+		current = temp;
 	}
+	token_list = NULL;
 }
 
 void	parsing(t_data *data)
@@ -35,10 +39,7 @@ void	parsing(t_data *data)
 	while (current)
 	{
 		if (current->type == WORD)
-		{
 			ft_printf("WORD: %s\n", current->value);
-			// identify_command(data, current);
-		}
 		else if (current->type == PIPE)
 			ft_printf("PIPE: %s\n", current->value);
 		else if (current->type == IN_REDIR)
@@ -63,13 +64,26 @@ void	parsing(t_data *data)
 			ft_printf("DOUB_QUOTE: %s\n", current->value);
 		else if (current->type == EXPAND)
 			ft_printf("EXPAND: %s\n", current->value);
+		else if (current->type == ECHO)
+			ft_printf("ECHO: %s\n", current->value);
+		else if (current->type == CD)
+			ft_printf("CD: %s\n", current->value);
+		else if (current->type == PWD)
+			ft_printf("PWD: %s\n", current->value);
+		else if (current->type == EXPORT)
+			ft_printf("EXPORT: %s\n", current->value);
+		else if (current->type == UNSET)
+			ft_printf("UNSET: %s\n", current->value);
+		else if (current->type == ENV)
+			ft_printf("ENV: %s\n", current->value);
+		else if (current->type == EXIT)
+			ft_printf("EXIT: %s\n", current->value);
+		else if (current->type == NOT_BUILT_IN)
+			ft_printf("NOT_BUILT_IN: %s\n", current->value);
 		else
 			ft_printf("UNKNOWN TOKEN: %s\n", current->value);
 		current = current->next;
-		
 	}
-	ft_free_list(data->token_list);
-	data->token_list = NULL;
 	ft_printf("Parsing completed.\n");
 }
 

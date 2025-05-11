@@ -16,13 +16,15 @@ int	main(void)
 {
 	t_data	*data;
 
-	data = (t_data *)ft_calloc(1, sizeof(t_data));
 	while (true)
 	{
+		data = (t_data *)ft_calloc(1, sizeof(t_data));
 		data->prompt = ft_readline();
 		if (data->prompt != NULL)
 			create_token(data);
 		if (data->token_list != NULL)
 			parsing(data);
+		free(data->prompt);
+		free(data);
 	}
 }

@@ -172,10 +172,7 @@ void add_token_list(t_data *data, char *token_name, t_type id_token)
 	{
 		new_token->value = ft_strdup(token_name);
 		if (!new_token->value)
-		{
-			free(new_token); 
-			return;
-		}
+			return(free(new_token));
 	}
 	else
 		new_token->value =NULL;
@@ -197,11 +194,20 @@ t_type	external_command(char *token_name);
 t_type	get_comand(char *token_name)
 {
 	if (strcmp(token_name, "echo") == 0)
+	{
+		ft_printf("COMMAND ECHO HERE!\n");
 		return ECHO;
+	} 
 	else if (strcmp(token_name, "cd") == 0)
+	{
+		ft_printf("COMMAND CD HERE!\n");
 		return CD;
+	}
 	else if (strcmp(token_name, "pwd") == 0)
+	{
+		ft_printf("COMMAND PWD HERE!\n");
 		return PWD;
+	}
 	else if (strcmp(token_name, "export") == 0)
 		return EXPORT;
 	else if (strcmp(token_name, "unset") == 0)
@@ -211,7 +217,10 @@ t_type	get_comand(char *token_name)
 	else if (strcmp(token_name, "exit") == 0)
 		return EXIT;
 	else if (external_command(token_name) == 1)
+	{
+		ft_printf("IS NOT BUILT_IN\n");
 		return NOT_BUILT_IN;
+	}
 	else
 		return WORD;
 }
@@ -240,7 +249,7 @@ t_type	external_command(char *token_name)
 			ft_printf("%s\n", new_path[i++]);
 		}
 	}
-	ft_printf("return 0");
+	ft_printf("return 0\n");
 	return (0);
 }
 

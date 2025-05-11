@@ -25,3 +25,17 @@ int main(void)
 		external_command(data->prompt);
 	}
 }
+
+
+
+
+
+
+
+
+
+// teste de aspas
+// minishell$ echo '"'"'"'""''""w""'"hello ' hi ' $USER"'""w""''""'"'"'"'
+// "'""""w""hello ' hi ' robert""w""""'"
+// minishell$ echo '"'"'"'""''""w""'"hello "' hi '" $USER"'""w""''""'"'"'"'
+// "'""""w""hello  hi  robert""w""""'"

@@ -14,5 +14,5 @@
 
 char	*ft_readline(void)
 {
-	return (readline("hell $>"));
+	return (readline("minihell $"));
 }

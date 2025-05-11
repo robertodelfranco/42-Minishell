@@ -41,7 +41,7 @@ typedef enum e_token_type
 	DOUB_QUOTE,
 	OPEN_PAR,
 	CLOSE_PAR,
-	ECHO = 1,
+	ECHO,
 	CD,
 	PWD,
 	EXPORT,
