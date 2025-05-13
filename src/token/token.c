@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 10:48:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/09 18:20:14 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/13 13:51:51 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@
 // 		len++;
 // 	return len;
 // }
-
 
 // // Prototypes das funções usadas
 void    get_token(t_data *data, int start);
@@ -93,7 +92,6 @@ int ft_stchr(const char *set, char c) {
 
 /* TESTE TESTE TESTE */
 
-
 int	create_token(t_data *data)
 {
 	int	i;
@@ -104,6 +102,8 @@ int	create_token(t_data *data)
 		i++;
 	while (data->prompt[i] != '\0')
 	{
+		// if (data->prompt[i] == '"')
+		// 	get_quotes(data, i);
 		if (!ft_stchr(NOPRINTABLE, data->prompt[i]))
 		{
 			get_token(data, i);
@@ -157,7 +157,7 @@ t_type	give_id_token(char *str)
         return DOUB_QUOTE;
     if (str[0] == '$')
         return EXPAND;
-    return (get_comand(str));
+    return (get_command(str));
 }
 
 void add_token_list(t_data *data, char *token_name, t_type id_token)
@@ -165,7 +165,7 @@ void add_token_list(t_data *data, char *token_name, t_type id_token)
 	t_token	*new_token;
 	t_token	*last;
 
-	new_token = (t_token *)ft_calloc(1, sizeof(t_token));
+	new_token = ft_calloc(1, sizeof(t_token));
 	if(!new_token)
 		return ;
 	if (token_name)
@@ -189,25 +189,14 @@ void add_token_list(t_data *data, char *token_name, t_type id_token)
     }
 }
 
-t_type	external_command(char *token_name);
-
-t_type	get_comand(char *token_name)
+t_type	get_command(char *token_name)
 {
 	if (strcmp(token_name, "echo") == 0)
-	{
-		ft_printf("COMMAND ECHO HERE!\n");
 		return ECHO;
-	} 
 	else if (strcmp(token_name, "cd") == 0)
-	{
-		ft_printf("COMMAND CD HERE!\n");
 		return CD;
-	}
 	else if (strcmp(token_name, "pwd") == 0)
-	{
-		ft_printf("COMMAND PWD HERE!\n");
 		return PWD;
-	}
 	else if (strcmp(token_name, "export") == 0)
 		return EXPORT;
 	else if (strcmp(token_name, "unset") == 0)
@@ -217,10 +206,7 @@ t_type	get_comand(char *token_name)
 	else if (strcmp(token_name, "exit") == 0)
 		return EXIT;
 	else if (external_command(token_name) == 1)
-	{
-		ft_printf("IS NOT BUILT_IN\n");
 		return NOT_BUILT_IN;
-	}
 	else
 		return WORD;
 }
@@ -236,20 +222,17 @@ t_type	external_command(char *token_name)
 	if (new_path == NULL)
 		return (0);
 	i = 0;
-	if (token_name)
+	while (new_path[i])
 	{
-		while (new_path[i])
-		{
-			full_path = ft_strjoin(new_path[i], "/");
-			full_cmd = ft_strjoin(full_path, token_name);
-			if (access(full_cmd, X_OK) == 0)
-				return (1);
-			free(full_cmd);
-			free(full_path);
-			ft_printf("%s\n", new_path[i++]);
-		}
+		full_path = ft_strjoin(new_path[i], "/");
+		full_cmd = ft_strjoin(full_path, token_name);
+		ft_printf("%s\n", new_path[i++]);
+		if (access(full_cmd, X_OK) == 0)
+			return (free(full_cmd), free(full_path), ft_free_matrix(new_path), 1);
+		free(full_cmd);
+		free(full_path);
 	}
-	ft_printf("return 0\n");
+	ft_free_matrix(new_path);
 	return (0);
 }
 

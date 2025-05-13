@@ -6,28 +6,42 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/08 18:58:19 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/13 14:11:39 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	ft_free_token_list(t_token *token_list)
+void	ft_free_token_list(t_data *data)
 {
 	t_token	*current;
 	t_token	*temp;
 
-	if (!token_list)
+	if (!data->token_list)
 		return ;
-	current = token_list;
+	current = data->token_list;
 	while (current)
 	{
 		temp = current->next;
 		free(current->value);
+		current->value = NULL;
 		free(current);
 		current = temp;
 	}
-	token_list = NULL;
+	data->token_list = NULL;
+}
+
+void	ft_free_matrix(char **ptr_matrix)
+{
+	int	i;
+
+	i = 0;
+	while (ptr_matrix[i])
+	{
+		free(ptr_matrix[i]);
+		i++;
+	}
+	free(ptr_matrix);
 }
 
 void	parsing(t_data *data)
@@ -35,7 +49,6 @@ void	parsing(t_data *data)
 	t_token	*current;
 
 	current = data->token_list;
-	ft_printf("Parsing tokens...\n");
 	while (current)
 	{
 		if (current->type == WORD)
@@ -77,14 +90,16 @@ void	parsing(t_data *data)
 		else if (current->type == ENV)
 			ft_printf("ENV: %s\n", current->value);
 		else if (current->type == EXIT)
+		{
+			data->exit = 1;
 			ft_printf("EXIT: %s\n", current->value);
+		}
 		else if (current->type == NOT_BUILT_IN)
 			ft_printf("NOT_BUILT_IN: %s\n", current->value);
 		else
 			ft_printf("UNKNOWN TOKEN: %s\n", current->value);
 		current = current->next;
 	}
-	ft_printf("Parsing completed.\n");
 }
 
 // void	identify_command(t_data *data, t_token *current)
