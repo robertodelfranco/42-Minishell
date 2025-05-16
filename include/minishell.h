@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/13 13:59:45 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/16 15:11:49 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,12 +102,14 @@ t_node	*create_pipe_node(t_node *cmd1, t_node *cmd2, bool subshell);
 t_node	*create_cmd_node(char **prompt, t_redir *redir, bool subshell);
 
 // tokens
-int	create_token(t_data *data);
+int		create_token(t_data *data);
 t_type	get_command(char *token_name);
 t_type	external_command(char *token_name);
 
 // parsing
-void	parsing(t_data *data);
+void	*parse(t_data *data);
+
+// clean
 void	ft_free_token_list(t_data *data);
 void	ft_free_matrix(char **ptr_matrix);
 
