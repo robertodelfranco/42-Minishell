@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/19 09:53:52 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 12:45:09 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,13 @@ typedef enum e_token_type
 	BUILT_IN,
 	EXTERNAL,
 	WORD,
+	ECHO,
+	PWD,
+	CD,
+	ENV,
+	UNSET,
+	EXPORT,
+	EXIT
 }	t_type;
 
 typedef enum e_tree_type
@@ -72,8 +79,10 @@ typedef struct s_redir
 typedef struct s_data
 {
 	char	*prompt;
+	int		nbr_of_quotes;
+	int		nbr_of_parentheses;
 	int		exit_status;
-	int		exit;
+	bool	exit;
 	t_token	*token_list;
 }	t_data;
 
@@ -81,6 +90,7 @@ typedef struct s_node
 {
 	char			**command;
 	t_tree_type		type;
+	t_type			type;
 	bool			subshell;
 	t_redir			*redir;
 	struct s_node	*right;
@@ -102,6 +112,7 @@ t_type	external_command(char *token_name);
 
 // parsing
 void	*parse(t_data *data);
+bool	validate_tokens(t_data *data);
 
 // clean
 void	ft_free_token_list(t_data *data);
