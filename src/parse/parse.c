@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/16 15:33:39 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 10:02:27 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,42 @@ void	*parse(t_data *data)
 		return (free_program(data));
 }
 
-// void	identify_command(t_data *data, t_token *current)
-// {
-// 	// if (current->value == ECHO)
-// 	// {
-// 	// 	while (current && current->type != WORD)
-// 	// 		current = current->next;
-// 	// 	if (current)
-// 	// 		ft_printf("ECHO command detected with value: %s\n", current->value);
-// 	// }
-// }
+bool	validate_tokens(t_data *data)
+{
+	t_token	*current;
+
+	current = data->token_list;
+	if (current->type == PIPE || current->type == AND || current->type == OR)
+		return (false);
+	while (current)
+	{
+		if (current->type == PIPE && (current->next->type != BUILT_IN
+			&& current->next->type != EXTERNAL) || current->next == NULL)
+			return (false);
+		if (current->type == AND && (current->next->type != BUILT_IN
+			&& current->next->type != EXTERNAL && current->next->type != WORD)
+			|| current->next == NULL)
+			return (false);
+		if (current->type == OR && (current->next->type != BUILT_IN
+			&& current->next->type != EXTERNAL && current->next->type != WORD)
+			|| current->next == NULL)
+			return (false);
+		if (current->type == IN_REDIR || current->type == OUT_REDIR
+			|| current->type == APPEND || current->type == HEREDOC)
+			if (current->next == NULL || current->next->type != WORD)
+				return (false);
+	}
+	return (true);
+}
+
+// Tokens inesperados no início/fim: ex: começar ou terminar com | ou && ou redirecionamentos (<, >).
+
+// Tokens duplicados sem conteúdo entre eles: ex: ||, && ou | |.
+
+// Redirecionamentos sem target: ex: ls > ou cat <.
+
+// Subshells mal fechados: parênteses abertos sem fechar ( ou ).
+
 
 // if (current->type == WORD)
 // 	ft_printf("WORD: %s\n", current->value);
@@ -76,8 +102,8 @@ void	*parse(t_data *data)
 // 	data->exit = 1;
 // 	ft_printf("EXIT: %s\n", current->value);
 // }
-// else if (current->type == NOT_BUILT_IN)
-// 	ft_printf("NOT_BUILT_IN: %s\n", current->value);
+// else if (current->type == EXTERNAL)
+// 	ft_printf("EXTERNAL: %s\n", current->value);
 // else
 // 	ft_printf("UNKNOWN TOKEN: %s\n", current->value);
 // current = current->next;

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/16 15:11:49 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 09:53:52 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,8 @@ typedef enum e_token_type
 	DOUB_QUOTE,
 	OPEN_PAR,
 	CLOSE_PAR,
-	ECHO,
-	CD,
-	PWD,
-	EXPORT,
-	UNSET,
-	ENV,
-	EXIT,
-	NOT_BUILT_IN,
+	BUILT_IN,
+	EXTERNAL,
 	WORD,
 }	t_type;
 

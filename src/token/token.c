@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 10:48:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/13 13:51:51 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 09:54:15 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,21 +192,21 @@ void add_token_list(t_data *data, char *token_name, t_type id_token)
 t_type	get_command(char *token_name)
 {
 	if (strcmp(token_name, "echo") == 0)
-		return ECHO;
+		return BUILT_IN;
 	else if (strcmp(token_name, "cd") == 0)
-		return CD;
+		return BUILT_IN;
 	else if (strcmp(token_name, "pwd") == 0)
-		return PWD;
+		return BUILT_IN;
 	else if (strcmp(token_name, "export") == 0)
-		return EXPORT;
+		return BUILT_IN;
 	else if (strcmp(token_name, "unset") == 0)
-		return UNSET;
+		return BUILT_IN;
 	else if (strcmp(token_name, "env") == 0)
-		return ENV;
+		return BUILT_IN;
 	else if (strcmp(token_name, "exit") == 0)
-		return EXIT;
+		return BUILT_IN;
 	else if (external_command(token_name) == 1)
-		return NOT_BUILT_IN;
+		return EXTERNAL;
 	else
 		return WORD;
 }
