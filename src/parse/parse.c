@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/19 16:10:42 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 19:03:15 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,27 @@ void	*free_program(t_data *data)
 	return (NULL);
 }
 
+void	print_list(t_data *data)
+{
+	printf("entrei\n");
+
+	t_parse	*print;
+	print = data->parse_list;
+	while (print)
+	{
+		ft_printf("type = %d\n", print->node_type);
+		int i = 0;
+		while (print->cmd[i])
+		{
+			ft_printf("cmd = %s\n", print->cmd[i]);
+			i++;
+		}
+		if (print->redir)
+			ft_printf("target = %s, type = %d\n", print->redir->target, print->redir->type);
+		print = print->next;
+	}
+}
+
 void	*parse(t_data *data)
 {
 	if (data->nbr_of_quotes % 2 != 0)
@@ -30,6 +51,7 @@ void	*parse(t_data *data)
 		return (free_program(data));
 	if (!parse_args(data))
 		return (free_program(data));
+	print_list(data);
 	// if (!build_tree(data))
 	// 	return (free_program(data));
 	return (NULL);
@@ -38,9 +60,16 @@ void	*parse(t_data *data)
 bool	validate_tokens(t_data *data)
 {
 	t_token	*cur;
+	t_token	*last;
 
 	cur = data->token_list;
+	last = data->token_list;
 	if (cur->type == PIPE || cur->type == AND || cur->type == OR)
+		return (false);
+	while(last->next)
+		last = last->next;
+	if (last->type == PIPE || last->type == AND || last->type == OR
+			|| last->type == REDIR)
 		return (false);
 	// transform every if into a function
 	while (cur)
@@ -92,30 +121,96 @@ static t_type	ft_get_type(char *value)
 		return (EXTERNAL);
 }
 
+t_parse	*add_parse_list(t_data *data, char **args, t_type type)
+{
+	t_parse	*new_node;
+	t_parse	*last;
+
+	new_node = ft_calloc(1, sizeof(t_parse));
+	if (!new_node)
+		return (NULL);
+	new_node->cmd = args;
+	new_node->node_type = type;
+	new_node->redir = NULL;
+	new_node->next = NULL;
+	if (data->parse_list == NULL)
+		data->parse_list = new_node;
+	else
+	{
+		last = data->parse_list;
+		while (last->next != NULL)
+			last = last->next;
+		last->next = new_node;
+	}
+	return (new_node);
+}
+
+t_type	ft_get_redir_type(char *redir)
+{
+	if (strcmp(redir, ">") == 0)
+		return (IN_REDIR);
+	else if (strcmp(redir, "<") == 0)
+		return (OUT_REDIR);
+	else if (strcmp(redir, ">>") == 0)
+		return (APPEND);
+	else
+		return (HEREDOC);
+}
+
+t_redir	*create_redir(char *redir, char *target)
+{
+	t_redir	*new_redir;
+
+	new_redir = ft_calloc(1, sizeof(t_redir));
+	if (!new_redir)
+		return (NULL);
+	new_redir->target = redir;
+	new_redir->type = ft_get_redir_type(redir);
+	new_redir->subshell = false;
+	return (new_redir);
+}
+
+char	**get_operations(t_token *cur)
+{
+	char	**args;
+	int		i;
+
+	i = 1;
+	args = ft_calloc(i + 1, sizeof(char *));
+	if (!args)
+		return (NULL);
+	args[0] = ft_strdup(cur->value);
+	if (!args[0])
+		return (NULL);
+	return (args);
+}
+
 bool	parse_args(t_data *data)
 {
 	char	**args;
+	t_parse	*node;
 	t_token	*cur;
 
 	cur = data->token_list;
 	while (cur)
 	{
+		if (cur->type == PIPE || cur->type == AND || cur->type == OR)
+			add_parse_list(data, get_operations(cur), cur->type);
 		if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
 		{
 			cur->type = ft_get_type(cur->value);
 			args = get_arguments(cur);
+			node = add_parse_list(data, args, cur->type);
 		}
-		// if (cur->type == REDIR)
-		// 	get_redir(cur);
-		if (args)
-			for (int i = 0; args[i]; i++)
-				printf("args[%d]: %s\n", i, args[i]);
-		free(args);
-		args = NULL;
+		if (cur->type == REDIR)
+			if (node)
+				node->redir = create_redir(cur->value);
 		cur = cur->next;
 	}
+	// ft_free_token_list(data);
 	return (true);
 }
+
 
 char	**get_arguments(t_token *cur)
 {

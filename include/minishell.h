@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/19 16:10:28 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 18:23:52 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,13 +65,6 @@ typedef enum e_tree_type
 	SUBSHELL,
 }	t_tree_type;
 
-typedef struct s_token
-{
-	char			*value;
-	t_type			type;
-	struct s_token	*next;
-}	t_token;
-
 typedef struct s_redir
 {
 	t_type	type; // -> in_redir, out_redir, append, heredoc
@@ -85,6 +78,22 @@ typedef struct s_env
 	char			*value;
 	struct s_env	*next;
 }	t_env;
+
+typedef struct s_parse
+{
+	t_type			node_type;
+	char			**cmd;
+	t_redir			*redir;
+	struct s_parse	*next;
+}	t_parse;
+
+typedef struct s_token
+{
+	char			*value;
+	t_type			type;
+	struct s_token	*next;
+}	t_token;
+
 typedef struct s_data
 {
 	char	*prompt;
@@ -93,12 +102,13 @@ typedef struct s_data
 	int		exit_status;
 	bool	exit;
 	t_token	*token_list;
+	t_parse	*parse_list;
 	t_env	*env_list;
 }	t_data;
 
 typedef struct s_node
 {
-	char			**command;
+	char			**cmd;
 	t_tree_type		node_type;
 	t_type			command_type;
 	bool			subshell;

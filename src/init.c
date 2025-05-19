@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:20:19 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/19 15:13:19 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 18:24:52 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ t_node	*create_cmd_node(char **prompt, t_redir *redir, bool subshell)
 	if (!cmd)
 		return (NULL);
 	cmd->node_type = CMD_NODE;
-	cmd->command = prompt;
+	cmd->cmd = prompt;
 	cmd->left = NULL;
 	cmd->right = NULL;
 	cmd->subshell = subshell;
