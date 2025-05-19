@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/19 12:45:09 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 14:04:21 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,12 @@ typedef struct s_redir
 	bool	subshell; // -> if it is a subshell
 }	t_redir;
 
+typedef struct s_env
+{
+	char			*key;
+	char			*value;
+	struct s_env	*next;
+}	t_env;
 typedef struct s_data
 {
 	char	*prompt;
@@ -84,6 +90,7 @@ typedef struct s_data
 	int		exit_status;
 	bool	exit;
 	t_token	*token_list;
+	t_env	*env_list;
 }	t_data;
 
 typedef struct s_node
