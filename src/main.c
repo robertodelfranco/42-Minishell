@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:22:45 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/16 15:08:00 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 15:29:00 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,11 @@ int	main(void)
 		create_token(data);
 		if (data->token_list == NULL)
 			continue ;
-		parsing(data);
+		if (!parse(data))
+			continue ;
 		ft_free_token_list(data);
 		free(data->prompt);
-		if (data->exit == 1)
+		if (data->exit)
 			return (free(data), 0);
 		free(data);
 		data = NULL;
