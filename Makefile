@@ -12,11 +12,14 @@ LIB			=	$(LIBFT)/libft.a
 
 SRCS		=	./src/init.c \
 				./src/main.c \
-				./src/read.c
+				./src/read.c \
+				./src/token/token.c \
+				./src/parse/parse.c
+
 
 OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 OBJ_DIR		=	objs
-VPATH		=	./src ./src/builtin
+VPATH		=	./src ./src/builtin ./src/token ./src/parse ./src/exec ./src/env
 
 all: libft ${NAME}
 
@@ -43,4 +46,4 @@ re: fclean all
 val:
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./minishell
 
-.PHONY: all clean fclean re libft
+.PHONY: all clean fclean re libft val

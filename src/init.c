@@ -6,13 +6,13 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:20:19 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/04/09 15:55:24 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/16 15:13:33 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-t_redir	*create_redir_node(t_type type, char *target)
+t_redir	*create_redir_node(t_type type, char *target, bool subshell)
 {
 	t_redir	*redir;
 
@@ -21,6 +21,7 @@ t_redir	*create_redir_node(t_type type, char *target)
 		return (NULL);
 	redir->type = type;
 	redir->target = target;
+	redir->subshell = subshell;
 	return (redir);
 }
 
