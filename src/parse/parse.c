@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/19 19:03:15 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 19:06:44 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ t_redir	*create_redir(char *redir, char *target)
 	new_redir = ft_calloc(1, sizeof(t_redir));
 	if (!new_redir)
 		return (NULL);
-	new_redir->target = redir;
+	new_redir->target = target;
 	new_redir->type = ft_get_redir_type(redir);
 	new_redir->subshell = false;
 	return (new_redir);
@@ -203,11 +203,12 @@ bool	parse_args(t_data *data)
 			node = add_parse_list(data, args, cur->type);
 		}
 		if (cur->type == REDIR)
-			if (node)
-				node->redir = create_redir(cur->value);
+			if (cur->next && cur->next->type == WORD)
+				node->redir = create_redir(cur->value, cur->next->value);
 		cur = cur->next;
 	}
 	// ft_free_token_list(data);
+	// echo -n hello world | ls -l && echo hi again > get.txt || cat get.txt
 	return (true);
 }
 
