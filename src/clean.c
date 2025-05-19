@@ -1,18 +1,45 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   read.c                                             :+:      :+:    :+:   */
+/*   clean.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/09 15:31:14 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/08 17:29:32 by rdel-fra         ###   ########.fr       */
+/*   Created: 2025/05/16 15:10:52 by rdel-fra          #+#    #+#             */
+/*   Updated: 2025/05/16 15:11:28 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-char	*ft_readline(void)
+void	ft_free_token_list(t_data *data)
 {
-	return (readline("minihell $"));
+	t_token	*current;
+	t_token	*temp;
+
+	if (!data->token_list)
+		return ;
+	current = data->token_list;
+	while (current)
+	{
+		temp = current->next;
+		free(current->value);
+		current->value = NULL;
+		free(current);
+		current = temp;
+	}
+	data->token_list = NULL;
+}
+
+void	ft_free_matrix(char **ptr_matrix)
+{
+	int	i;
+
+	i = 0;
+	while (ptr_matrix[i])
+	{
+		free(ptr_matrix[i]);
+		i++;
+	}
+	free(ptr_matrix);
 }
