@@ -6,48 +6,144 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/19 10:02:27 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 16:10:42 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+void	*free_program(t_data *data)
+{
+	ft_free_token_list(data);
+	free(data->prompt);
+	free(data);
+	return (NULL);
+}
+
 void	*parse(t_data *data)
 {
+	if (data->nbr_of_quotes % 2 != 0)
+		return (free_program(data));
+	if (data->nbr_of_parentheses % 2 != 0)
+		return (free_program(data));
 	if (!validate_tokens(data))
 		return (free_program(data));
-	if (!parse_tokens(data))
+	if (!parse_args(data))
 		return (free_program(data));
-	if (!build_tree(data))
-		return (free_program(data));
+	// if (!build_tree(data))
+	// 	return (free_program(data));
+	return (NULL);
 }
 
 bool	validate_tokens(t_data *data)
 {
-	t_token	*current;
+	t_token	*cur;
 
-	current = data->token_list;
-	if (current->type == PIPE || current->type == AND || current->type == OR)
+	cur = data->token_list;
+	if (cur->type == PIPE || cur->type == AND || cur->type == OR)
 		return (false);
-	while (current)
+	// transform every if into a function
+	while (cur)
 	{
-		if (current->type == PIPE && (current->next->type != BUILT_IN
-			&& current->next->type != EXTERNAL) || current->next == NULL)
+		if ((cur->type == PIPE && cur->next->type != BUILT_IN
+				&& cur->next->type != EXTERNAL) || (cur->type == PIPE
+					&& cur->next == NULL))
+				{
+					printf("Error: pipe with invalid target\n");
+					return (false);
+				}
+		if ((cur->type == AND && cur->next->type != BUILT_IN
+				&& cur->next->type != EXTERNAL && cur->next->type != WORD)
+			|| (cur->type == AND && cur->next == NULL))
 			return (false);
-		if (current->type == AND && (current->next->type != BUILT_IN
-			&& current->next->type != EXTERNAL && current->next->type != WORD)
-			|| current->next == NULL)
+		if ((cur->type == OR && cur->next->type != BUILT_IN
+				&& cur->next->type != EXTERNAL && cur->next->type != WORD)
+			|| (cur->type == OR && cur->next == NULL))
 			return (false);
-		if (current->type == OR && (current->next->type != BUILT_IN
-			&& current->next->type != EXTERNAL && current->next->type != WORD)
-			|| current->next == NULL)
-			return (false);
-		if (current->type == IN_REDIR || current->type == OUT_REDIR
-			|| current->type == APPEND || current->type == HEREDOC)
-			if (current->next == NULL || current->next->type != WORD)
-				return (false);
+		if (cur->type == REDIR)
+			if (cur->next == NULL || (cur->next->type != WORD && cur
+				->next->type != BUILT_IN && cur->next->type != EXTERNAL))
+				{
+					printf("Error: redirection with invalid target\n");
+					return (false);
+				}
+		cur = cur->next;
 	}
 	return (true);
+}
+
+static t_type	ft_get_type(char *value)
+{
+	if (strcmp(value, "echo") == 0)
+		return (ECHO);
+	else if (strcmp(value, "pwd") == 0)
+		return (PWD);
+	else if (strcmp(value, "cd") == 0)
+		return (CD);
+	else if (strcmp(value, "env") == 0)
+		return (ENV);
+	else if (strcmp(value, "unset") == 0)
+		return (UNSET);
+	else if (strcmp(value, "export") == 0)
+		return (EXPORT);
+	else if (strcmp(value, "exit") == 0)
+		return (EXIT);
+	else
+		return (EXTERNAL);
+}
+
+bool	parse_args(t_data *data)
+{
+	char	**args;
+	t_token	*cur;
+
+	cur = data->token_list;
+	while (cur)
+	{
+		if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
+		{
+			cur->type = ft_get_type(cur->value);
+			args = get_arguments(cur);
+		}
+		// if (cur->type == REDIR)
+		// 	get_redir(cur);
+		if (args)
+			for (int i = 0; args[i]; i++)
+				printf("args[%d]: %s\n", i, args[i]);
+		free(args);
+		args = NULL;
+		cur = cur->next;
+	}
+	return (true);
+}
+
+char	**get_arguments(t_token *cur)
+{
+	t_token	*count;
+	char	**args;
+	int		i;
+
+	i = 1;
+	count = cur->next;
+	while (count && count->type == WORD)
+	{
+		i++;
+		count = count->next;
+	}
+	args = ft_calloc(i + 1, sizeof(char *));
+	if (!args)
+		return (NULL);
+	i = 0;
+	args[i++] = ft_strdup(cur->value);
+	cur = cur->next;
+	while (cur && cur->type == WORD)
+	{
+		args[i++] = ft_strdup(cur->value);
+		if (!args[i - 1])
+		return (NULL);
+		cur = cur->next;
+	}
+	return (args);
 }
 
 // Tokens inesperados no início/fim: ex: começar ou terminar com | ou && ou redirecionamentos (<, >).
@@ -85,23 +181,8 @@ bool	validate_tokens(t_data *data)
 // 	ft_printf("DOUB_QUOTE: %s\n", current->value);
 // else if (current->type == EXPAND)
 // 	ft_printf("EXPAND: %s\n", current->value);
-// else if (current->type == ECHO)
-// 	ft_printf("ECHO: %s\n", current->value);
-// else if (current->type == CD)
-// 	ft_printf("CD: %s\n", current->value);
-// else if (current->type == PWD)
-// 	ft_printf("PWD: %s\n", current->value);
-// else if (current->type == EXPORT)
-// 	ft_printf("EXPORT: %s\n", current->value);
-// else if (current->type == UNSET)
-// 	ft_printf("UNSET: %s\n", current->value);
-// else if (current->type == ENV)
-// 	ft_printf("ENV: %s\n", current->value);
-// else if (current->type == EXIT)
-// {
-// 	data->exit = 1;
-// 	ft_printf("EXIT: %s\n", current->value);
-// }
+// else if (current->type == BUILT_IN)
+// 	ft_printf("BUILT_IN: %s\n", current->value);
 // else if (current->type == EXTERNAL)
 // 	ft_printf("EXTERNAL: %s\n", current->value);
 // else

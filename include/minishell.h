@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/19 14:04:21 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 16:10:28 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 # include <stdio.h>
+# include <unistd.h>
 # include <string.h>
 # include <stdlib.h>
 # include <stdbool.h>
@@ -24,6 +25,7 @@
 
 # define SUCCESS 0
 # define FAILURE 1
+# define CMD_NOT_FOUND 127
 
 # define NOPRINTABLE "\t\n\v\f\r "
 
@@ -32,6 +34,7 @@ typedef enum e_token_type
 	AND = 1,
 	OR,
 	PIPE,
+	REDIR,
 	IN_REDIR,
 	OUT_REDIR,
 	APPEND,
@@ -96,8 +99,8 @@ typedef struct s_data
 typedef struct s_node
 {
 	char			**command;
-	t_tree_type		type;
-	t_type			type;
+	t_tree_type		node_type;
+	t_type			command_type;
 	bool			subshell;
 	t_redir			*redir;
 	struct s_node	*right;
@@ -120,6 +123,8 @@ t_type	external_command(char *token_name);
 // parsing
 void	*parse(t_data *data);
 bool	validate_tokens(t_data *data);
+bool	parse_args(t_data *data);
+char	**get_arguments(t_token *cur);
 
 // clean
 void	ft_free_token_list(t_data *data);

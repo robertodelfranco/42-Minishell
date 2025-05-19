@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 10:48:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/19 09:54:15 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 16:01:49 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,13 +140,13 @@ t_type	give_id_token(char *str)
     if (strcmp(str, "|") == 0)
         return PIPE;
     if (strcmp(str, "<<") == 0)
-        return HEREDOC;
+        return REDIR;
     if (strcmp(str, ">>") == 0)
-        return APPEND;
+        return REDIR;
     if (strcmp(str, "<") == 0)
-        return IN_REDIR;
+        return REDIR;
     if (strcmp(str, ">") == 0)
-        return OUT_REDIR;
+        return REDIR;
     if (strcmp(str, "(") == 0)
         return OPEN_PAR;
     if (strcmp(str, ")") == 0)
@@ -224,9 +224,9 @@ t_type	external_command(char *token_name)
 	i = 0;
 	while (new_path[i])
 	{
-		full_path = ft_strjoin(new_path[i], "/");
+		full_path = ft_strjoin(new_path[i++], "/");
 		full_cmd = ft_strjoin(full_path, token_name);
-		ft_printf("%s\n", new_path[i++]);
+		// ft_printf("%s\n", new_path[i++]);
 		if (access(full_cmd, X_OK) == 0)
 			return (free(full_cmd), free(full_path), ft_free_matrix(new_path), 1);
 		free(full_cmd);

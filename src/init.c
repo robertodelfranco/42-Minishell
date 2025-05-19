@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:20:19 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/16 15:13:33 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/19 15:13:19 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,16 @@ t_redir	*create_redir_node(t_type type, char *target, bool subshell)
 	return (redir);
 }
 
-t_node	*create_pipe_node(t_node *cmd1, t_node *cmd2, bool subshell)
+t_node	*create_pipe_node(t_node *node_left, t_node *node_right, bool subshell)
 {
 	t_node	*pipe;
 	
 	pipe = (t_node *)ft_calloc(1, sizeof(t_node));
 	if (!pipe)
 	return (NULL);
-	pipe->type = PIPE_NODE;
-	pipe->left = cmd1;
-	pipe->right = cmd2;
+	pipe->node_type = PIPE_NODE;
+	pipe->left = node_left;
+	pipe->right = node_right;
 	pipe->subshell = subshell;
 	pipe->redir = NULL;
 	return (pipe);
@@ -47,7 +47,7 @@ t_node	*create_cmd_node(char **prompt, t_redir *redir, bool subshell)
 	cmd = (t_node *)ft_calloc(1, sizeof(t_node));
 	if (!cmd)
 		return (NULL);
-	cmd->type = CMD_NODE;
+	cmd->node_type = CMD_NODE;
 	cmd->command = prompt;
 	cmd->left = NULL;
 	cmd->right = NULL;
