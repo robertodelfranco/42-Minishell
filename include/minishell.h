@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/19 18:23:52 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/20 14:20:52 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,10 @@ typedef struct s_token
 typedef struct s_data
 {
 	char	*prompt;
-	int		nbr_of_quotes;
-	int		nbr_of_parentheses;
+	int		double_quotes;
+	int		single_quotes;
+	int		open_parentheses;
+	int		close_parentheses;
 	int		exit_status;
 	bool	exit;
 	t_token	*token_list;
@@ -121,22 +123,36 @@ typedef struct s_node
 char	*ft_readline(void);
 
 //inits
-t_redir	*create_redir_node(t_type type, char *target, bool subshell);
+t_redir	*create_redir(char *redir, char *target);
 t_node	*create_pipe_node(t_node *cmd1, t_node *cmd2, bool subshell);
 t_node	*create_cmd_node(char **prompt, t_redir *redir, bool subshell);
 
 // tokens
 int		create_token(t_data *data);
+t_type	give_id_token(char *str);
+void	get_token(t_data *data, int start);
 t_type	get_command(char *token_name);
 t_type	external_command(char *token_name);
 
-// parsing
+void	add_token_list(t_data *data, char *token_name, t_type id_token);
+
+// parse
 void	*parse(t_data *data);
 bool	validate_tokens(t_data *data);
 bool	parse_args(t_data *data);
+
+// parse_utils
+t_token	*ft_last(t_token *lst);
 char	**get_arguments(t_token *cur);
+char	**get_operations(t_token *cur);
+t_type	ft_get_redir_type(char *redir);
+t_type	ft_get_type(char *value);
+
+// tree
+bool	build_tree(t_data *data);
 
 // clean
+void	*free_program(t_data *data);
 void	ft_free_token_list(t_data *data);
 void	ft_free_matrix(char **ptr_matrix);
 

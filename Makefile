@@ -15,7 +15,9 @@ SRCS		=	./src/init.c \
 				./src/read.c \
 				./src/token/token.c \
 				./src/parse/parse.c \
-				./src/clean.c
+				./src/parse/parse_utils.c \
+				./src/clean.c \
+				./src/tree.c
 
 
 OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
