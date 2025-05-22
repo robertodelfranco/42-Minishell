@@ -10,17 +10,20 @@ LIBFT		=	lib
 
 LIB			=	$(LIBFT)/libft.a
 
-SRCS		=	./src/init.c \
-				./src/main.c \
+SRCS		=	./src/main.c \
 				./src/read.c \
+				./src/clean.c \
 				./src/token/token.c \
+				./src/token/token_utils.c \
+				./src/executor/executor.c \
 				./src/parse/parse.c \
-				./src/clean.c
-
+				./src/parse/parse_list.c \
+				./src/parse/parse_stack.c \
+				./src/parse/parse_utils.c
 
 OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 OBJ_DIR		=	objs
-VPATH		=	./src ./src/builtin ./src/token ./src/parse ./src/exec ./src/env
+VPATH		=	./src ./src/builtin ./src/token ./src/parse ./src/executor ./src/env
 
 all: libft ${NAME}
 

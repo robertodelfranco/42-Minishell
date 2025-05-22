@@ -6,11 +6,19 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 15:10:52 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/16 15:11:28 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/20 14:10:45 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+void	*free_program(t_data *data)
+{
+	ft_free_token_list(data);
+	free(data->prompt);
+	free(data);
+	return (NULL);
+}
 
 void	ft_free_token_list(t_data *data)
 {
