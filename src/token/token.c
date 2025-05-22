@@ -6,12 +6,14 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 10:48:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/20 10:11:38 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 14:44:43 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+// if (data->prompt[i] == '"')
+// 	get_quotes(data, i);
 int	create_token(t_data *data)
 {
 	int	i;
@@ -22,8 +24,6 @@ int	create_token(t_data *data)
 		i++;
 	while (data->prompt[i] != '\0')
 	{
-		// if (data->prompt[i] == '"')
-		// 	get_quotes(data, i);
 		if (!ft_strchr(NOPRINTABLE, data->prompt[i]))
 		{
 			get_token(data, i);
@@ -49,35 +49,6 @@ void	get_token(t_data *data, int start)
 	id_token = give_id_token(token_name);
 	add_token_list(data, token_name, id_token);
 	free(token_name);
-}
-
-t_type	give_id_token(char *str)
-{
-	if (strcmp(str, "&&") == 0)
-		return (AND);
-	if (strcmp(str, "||") == 0)
-		return (OR);
-	if (strcmp(str, "|") == 0)
-		return (PIPE);
-	if (strcmp(str, "<<") == 0)
-		return (REDIR);
-	if (strcmp(str, ">>") == 0)
-		return (REDIR);
-	if (strcmp(str, "<") == 0)
-		return (REDIR);
-	if (strcmp(str, ">") == 0)
-		return (REDIR);
-	if (strcmp(str, "(") == 0)
-		return (OPEN_PAR);
-	if (strcmp(str, ")") == 0)
-		return (CLOSE_PAR);
-	if (str[0] == '\'' && str[ft_strlen(str)-1] == '\'')
-		return (SING_QUOTE);
-	if (str[0] == '"' && str[ft_strlen(str)-1] == '"')
-		return (DOUB_QUOTE);
-	if (str[0] == '$')
-		return (EXPAND);
-	return (get_command(str));
 }
 
 void	add_token_list(t_data *data, char *token_name, t_type id_token)
@@ -107,50 +78,4 @@ void	add_token_list(t_data *data, char *token_name, t_type id_token)
 			last = last->next;
 		last->next = new_token;
 	}
-}
-
-t_type	get_command(char *token_name)
-{
-	if (strcmp(token_name, "echo") == 0)
-		return (BUILT_IN);
-	else if (strcmp(token_name, "cd") == 0)
-		return (BUILT_IN);
-	else if (strcmp(token_name, "pwd") == 0)
-		return (BUILT_IN);
-	else if (strcmp(token_name, "export") == 0)
-		return (BUILT_IN);
-	else if (strcmp(token_name, "unset") == 0)
-		return (BUILT_IN);
-	else if (strcmp(token_name, "env") == 0)
-		return (BUILT_IN);
-	else if (strcmp(token_name, "exit") == 0)
-		return (BUILT_IN);
-	else if (external_command(token_name) == 1)
-		return (EXTERNAL);
-	else
-		return (WORD);
-}
-
-t_type	external_command(char *token_name)
-{
-	int		i;
-	char	*full_cmd;
-	char	*full_path;
-	char	**new_path;
-
-	new_path = ft_split(getenv("PATH"), ':');
-	if (new_path == NULL)
-		return (0);
-	i = 0;
-	while (new_path[i])
-	{
-		full_path = ft_strjoin(new_path[i++], "/");
-		full_cmd = ft_strjoin(full_path, token_name);
-		if (access(full_cmd, X_OK) == 0)
-			return (free(full_cmd), free(full_path), ft_free_matrix(new_path), 1); // this will change to a function because of annoying people
-		free(full_cmd);
-		free(full_path);
-	}
-	ft_free_matrix(new_path);
-	return (0);
 }
