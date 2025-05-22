@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/22 16:05:38 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 17:13:42 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,8 @@ void	pwd(t_data *data);
 
 // clean
 bool	free_program(t_data *data);
+void	ft_free_node_list(t_data *data);
+void	ft_free_parse_list(t_data *data);
 void	ft_free_token_list(t_data *data);
 void	ft_free_matrix(char **ptr_matrix);
 

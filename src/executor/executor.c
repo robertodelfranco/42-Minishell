@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/22 16:05:31 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 17:04:11 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ bool	executor(t_data *data)
 			// 	env(data, data->env_list);
 			if (cur->node_type == PWD)
 				pwd(data);
+			if (cur->node_type == EXIT)
+				data->exit = true;
 		}
 		cur = cur->next;
 	}
