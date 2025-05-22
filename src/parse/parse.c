@@ -6,12 +6,13 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/22 15:32:06 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:54:51 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+// echo hi > texiste | cat texiste | ls -l | grep ".c"
 void	print_list(t_data *data)
 {
 	t_parse	*print;
@@ -22,17 +23,26 @@ void	print_list(t_data *data)
 		ft_printf("type = %d, ", print->node_type);
 		if (print->redir)
 		{
-			if (print->cmd[0])
-				ft_printf("cmd = %s, ", print->cmd[0]);
-			ft_printf("target = %s\n", print->redir->target);
+			ft_printf("cmd = %s, ", print->cmd[0]);
+			if (print->cmd[1])
+				ft_printf("cmd = %s, ", print->cmd[1]);
+			ft_printf("redir = %d - target = %s\n", print->redir->type,
+				print->redir->target);
 		}
 		else
-			ft_printf("cmd = %s\n", print->cmd[0]);
+		{
+			if (print->cmd[1])
+				ft_printf("cmd = %s, ", print->cmd[0]);
+			if (print->cmd[1])
+				ft_printf("cmd = %s\n", print->cmd[1]);
+			else
+				ft_printf("cmd = %s\n", print->cmd[0]);
+		}
 		print = print->next;
 	}
 }
 
-void	*parse(t_data *data)
+bool	parse(t_data *data)
 {
 	if (data->double_quotes % 2 != 0 || data->single_quotes % 2 != 0)
 		return (free_program(data));
@@ -43,9 +53,8 @@ void	*parse(t_data *data)
 	print_list(data);
 	if (!build_stack(data))
 		return (free_program(data));
-	return (NULL);
+	return (true);
 }
-//ls -l | grep txt | wc -l > total.txt
 
 bool	validate_tokens(t_data *data)
 {

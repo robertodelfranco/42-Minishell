@@ -19,7 +19,10 @@ SRCS		=	./src/main.c \
 				./src/parse/parse.c \
 				./src/parse/parse_list.c \
 				./src/parse/parse_stack.c \
-				./src/parse/parse_utils.c
+				./src/parse/parse_utils.c \
+				./src/builtin/echo.c \
+				./src/builtin/pwd.c \
+				./src/builtin/env.c
 
 OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 OBJ_DIR		=	objs

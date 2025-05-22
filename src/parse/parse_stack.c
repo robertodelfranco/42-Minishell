@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 15:04:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/22 15:17:38 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:58:36 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ bool	build_stack(t_data *data)
 	cur = data->parse_list;
 	while (cur)
 	{
-		if (cur->node_type == BUILT_IN || cur->node_type == EXTERNAL)
+		if (cur->node_type != PIPE)
 		{
 			node = create_cmd_node(cur->cmd, cur->redir, cur->node_type);
 			add_stack_node(data, node);

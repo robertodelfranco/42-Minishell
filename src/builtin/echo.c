@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 17:54:41 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/22 14:38:16 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 16:09:50 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static void	print_cmd(char **args, int n_flag)
 {
 	int	i;
 
-	i = 0;
+	i = 1;
 	while (args[i])
 	{
 		printf("%s", args[i]);
