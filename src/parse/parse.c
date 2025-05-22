@@ -6,58 +6,84 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/19 10:02:27 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:32:06 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+void	print_list(t_data *data)
+{
+	t_parse	*print;
+
+	print = data->parse_list;
+	while (print)
+	{
+		ft_printf("type = %d, ", print->node_type);
+		if (print->redir)
+		{
+			if (print->cmd[0])
+				ft_printf("cmd = %s, ", print->cmd[0]);
+			ft_printf("target = %s\n", print->redir->target);
+		}
+		else
+			ft_printf("cmd = %s\n", print->cmd[0]);
+		print = print->next;
+	}
+}
+
 void	*parse(t_data *data)
 {
+	if (data->double_quotes % 2 != 0 || data->single_quotes % 2 != 0)
+		return (free_program(data));
 	if (!validate_tokens(data))
 		return (free_program(data));
-	if (!parse_tokens(data))
+	if (!parse_args(data))
 		return (free_program(data));
-	if (!build_tree(data))
+	print_list(data);
+	if (!build_stack(data))
 		return (free_program(data));
+	return (NULL);
 }
+//ls -l | grep txt | wc -l > total.txt
 
 bool	validate_tokens(t_data *data)
 {
-	t_token	*current;
+	t_token	*cur;
+	t_token	*last;
 
-	current = data->token_list;
-	if (current->type == PIPE || current->type == AND || current->type == OR)
+	cur = data->token_list;
+	if (cur->type == PIPE)
 		return (false);
-	while (current)
+	last = ft_last(data->token_list);
+	if (last->type == PIPE || last->type == REDIR)
+		return (false);
+	while (cur)
 	{
-		if (current->type == PIPE && (current->next->type != BUILT_IN
-			&& current->next->type != EXTERNAL) || current->next == NULL)
+		if ((cur->type == PIPE && cur->next->type != BUILT_IN
+				&& cur->next->type != EXTERNAL) || (cur->type == PIPE
+				&& cur->next == NULL))
 			return (false);
-		if (current->type == AND && (current->next->type != BUILT_IN
-			&& current->next->type != EXTERNAL && current->next->type != WORD)
-			|| current->next == NULL)
-			return (false);
-		if (current->type == OR && (current->next->type != BUILT_IN
-			&& current->next->type != EXTERNAL && current->next->type != WORD)
-			|| current->next == NULL)
-			return (false);
-		if (current->type == IN_REDIR || current->type == OUT_REDIR
-			|| current->type == APPEND || current->type == HEREDOC)
-			if (current->next == NULL || current->next->type != WORD)
+		if (cur->type == REDIR)
+		{
+			if (cur->next == NULL || (cur->next->type != WORD && cur
+					->next->type != BUILT_IN && cur->next->type != EXTERNAL))
 				return (false);
+		}
+		cur = cur->next;
 	}
 	return (true);
 }
 
-// Tokens inesperados no início/fim: ex: começar ou terminar com | ou && ou redirecionamentos (<, >).
+// ft_free_token_list(data);
+// echo -n hello world | ls -l && echo hi again > get.txt || cat get.txt
+// ls -l | grep src && echo ok > log.txt
 
+// Tokens inesperados no início/fim: ex: começar ou terminar com 
+// | ou && ou redirecionamentos (<, >).
 // Tokens duplicados sem conteúdo entre eles: ex: ||, && ou | |.
-
 // Redirecionamentos sem target: ex: ls > ou cat <.
-
 // Subshells mal fechados: parênteses abertos sem fechar ( ou ).
-
 
 // if (current->type == WORD)
 // 	ft_printf("WORD: %s\n", current->value);
@@ -85,23 +111,8 @@ bool	validate_tokens(t_data *data)
 // 	ft_printf("DOUB_QUOTE: %s\n", current->value);
 // else if (current->type == EXPAND)
 // 	ft_printf("EXPAND: %s\n", current->value);
-// else if (current->type == ECHO)
-// 	ft_printf("ECHO: %s\n", current->value);
-// else if (current->type == CD)
-// 	ft_printf("CD: %s\n", current->value);
-// else if (current->type == PWD)
-// 	ft_printf("PWD: %s\n", current->value);
-// else if (current->type == EXPORT)
-// 	ft_printf("EXPORT: %s\n", current->value);
-// else if (current->type == UNSET)
-// 	ft_printf("UNSET: %s\n", current->value);
-// else if (current->type == ENV)
-// 	ft_printf("ENV: %s\n", current->value);
-// else if (current->type == EXIT)
-// {
-// 	data->exit = 1;
-// 	ft_printf("EXIT: %s\n", current->value);
-// }
+// else if (current->type == BUILT_IN)
+// 	ft_printf("BUILT_IN: %s\n", current->value);
 // else if (current->type == EXTERNAL)
 // 	ft_printf("EXTERNAL: %s\n", current->value);
 // else
