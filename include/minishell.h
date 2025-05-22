@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/20 14:20:52 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 14:50:46 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,7 @@
 
 typedef enum e_token_type
 {
-	AND = 1,
-	OR,
-	PIPE,
+	PIPE = 1,
 	REDIR,
 	IN_REDIR,
 	OUT_REDIR,
@@ -43,8 +41,6 @@ typedef enum e_token_type
 	EXPAND,
 	SING_QUOTE,
 	DOUB_QUOTE,
-	OPEN_PAR,
-	CLOSE_PAR,
 	BUILT_IN,
 	EXTERNAL,
 	WORD,
@@ -57,19 +53,10 @@ typedef enum e_token_type
 	EXIT
 }	t_type;
 
-typedef enum e_tree_type
-{
-	OP_NODE = 1, // Operation -> and, or
-	PIPE_NODE,
-	CMD_NODE,
-	SUBSHELL,
-}	t_tree_type;
-
 typedef struct s_redir
 {
-	t_type	type; // -> in_redir, out_redir, append, heredoc
+	t_type	type;
 	char	*target;
-	bool	subshell; // -> if it is a subshell
 }	t_redir;
 
 typedef struct s_env
@@ -99,57 +86,70 @@ typedef struct s_data
 	char	*prompt;
 	int		double_quotes;
 	int		single_quotes;
-	int		open_parentheses;
-	int		close_parentheses;
 	int		exit_status;
 	bool	exit;
 	t_token	*token_list;
 	t_parse	*parse_list;
+	t_node	*exec_list;
 	t_env	*env_list;
 }	t_data;
 
 typedef struct s_node
 {
 	char			**cmd;
-	t_tree_type		node_type;
-	t_type			command_type;
-	bool			subshell;
+	t_type			node_type;
 	t_redir			*redir;
-	struct s_node	*right;
-	struct s_node	*left;
+	struct s_node	*next;
+	struct s_node	*prev;
 }	t_node;
 
 //read
 char	*ft_readline(void);
 
-//inits
-t_redir	*create_redir(char *redir, char *target);
-t_node	*create_pipe_node(t_node *cmd1, t_node *cmd2, bool subshell);
-t_node	*create_cmd_node(char **prompt, t_redir *redir, bool subshell);
-
-// tokens
+// token
 int		create_token(t_data *data);
-t_type	give_id_token(char *str);
 void	get_token(t_data *data, int start);
-t_type	get_command(char *token_name);
-t_type	external_command(char *token_name);
-
 void	add_token_list(t_data *data, char *token_name, t_type id_token);
+
+// token_utils
+t_type	external_command(char *token_name);
+t_type	give_id_token(char *str);
+t_type	get_command(char *token_name);
+t_token	*ft_last(t_token *lst);
+
+// executor
+void	*executor(t_data *data);
 
 // parse
 void	*parse(t_data *data);
 bool	validate_tokens(t_data *data);
-bool	parse_args(t_data *data);
 
 // parse_utils
-t_token	*ft_last(t_token *lst);
-char	**get_arguments(t_token *cur);
-char	**get_operations(t_token *cur);
 t_type	ft_get_redir_type(char *redir);
-t_type	ft_get_type(char *value);
+t_type	ft_get_cmd_type(char *value);
 
-// tree
-bool	build_tree(t_data *data);
+// parse_list
+bool	parse_args(t_data *data);
+t_parse	*add_parse_list(t_data *data, char **args, t_type type);
+t_redir	*create_redir(char *redir, char *target);
+char	**get_operations(t_token *cur);
+char	**get_arguments(t_token *cur);
+
+// parse_stack
+bool	build_stack(t_data *data);
+void	add_stack_node(t_data *data, t_node *node);
+t_node	*create_pipe_node(t_parse *current);
+t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type);
+
+// built_ins
+	// echo
+int		echo(char **args);
+
+	// env
+void	env(t_data *data, char **args);
+
+	// pwd
+void	pwd(t_data *data);
 
 // clean
 void	*free_program(t_data *data);
