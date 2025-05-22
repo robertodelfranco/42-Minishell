@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/22 15:14:48 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 16:05:31 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,19 @@ bool	executor(t_data *data)
 		{
 			printf("Pipe node %d\n", cur->node_type);
 		}
-		else if (cur->node_type == BUILT_IN)
-		{
-			printf("Built-in node %d\n", cur->node_type);
-		}
 		else if (cur->node_type == EXTERNAL)
 		{
 			printf("External node %d\n", cur->node_type);
 		}
 		else
 		{
-			printf("Unknown node type %d\n", cur->node_type);
+			printf("Built-in node %d\n", cur->node_type);
+			if (cur->node_type == ECHO)
+				echo(cur->cmd);
+			// if (cur->node_type == ENV)
+			// 	env(data, data->env_list);
+			if (cur->node_type == PWD)
+				pwd(data);
 		}
 		cur = cur->next;
 	}
