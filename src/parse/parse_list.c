@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/22 14:12:50 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:32:09 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,10 @@ bool	parse_args(t_data *data)
 			node = add_parse_list(data, args, cur->type);
 		}
 		if (cur->type == REDIR)
-			if (cur->next && cur->next->type == WORD)
-				node->redir = create_redir(cur->value, cur->next->value);
+		{
+			node->redir = create_redir(cur->value, cur->next->value);
+			cur = cur->next;
+		}
 		cur = cur->next;
 	}
 	return (true);

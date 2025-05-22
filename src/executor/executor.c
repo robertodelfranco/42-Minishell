@@ -6,13 +6,13 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/22 14:51:32 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:14:48 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	*executor(t_data *data)
+bool	executor(t_data *data)
 {
 	t_node	*cur;
 
@@ -36,5 +36,6 @@ void	*executor(t_data *data)
 			printf("Unknown node type %d\n", cur->node_type);
 		}
 		cur = cur->next;
-	}	
+	}
+	return (true);
 }

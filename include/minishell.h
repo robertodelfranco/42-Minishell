@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/22 14:50:46 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:17:53 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,15 +83,15 @@ typedef struct s_token
 
 typedef struct s_data
 {
-	char	*prompt;
-	int		double_quotes;
-	int		single_quotes;
-	int		exit_status;
-	bool	exit;
-	t_token	*token_list;
-	t_parse	*parse_list;
-	t_node	*exec_list;
-	t_env	*env_list;
+	char			*prompt;
+	int				double_quotes;
+	int				single_quotes;
+	int				exit_status;
+	bool			exit;
+	t_token			*token_list;
+	t_parse			*parse_list;
+	struct s_node	*exec_list;
+	t_env			*env_list;
 }	t_data;
 
 typedef struct s_node
@@ -118,7 +118,7 @@ t_type	get_command(char *token_name);
 t_token	*ft_last(t_token *lst);
 
 // executor
-void	*executor(t_data *data);
+bool	executor(t_data *data);
 
 // parse
 void	*parse(t_data *data);
@@ -138,7 +138,7 @@ char	**get_arguments(t_token *cur);
 // parse_stack
 bool	build_stack(t_data *data);
 void	add_stack_node(t_data *data, t_node *node);
-t_node	*create_pipe_node(t_parse *current);
+t_node	*create_pipe_node(t_type type);
 t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type);
 
 // built_ins

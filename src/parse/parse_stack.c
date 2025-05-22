@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 15:04:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/22 14:25:14 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:17:38 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 bool	build_stack(t_data *data)
 {
 	t_parse	*cur;
-	t_parse	*node;
+	t_node	*node;
 
 	cur = data->parse_list;
 	while (cur)
@@ -27,7 +27,7 @@ bool	build_stack(t_data *data)
 		}
 		else if (cur->node_type == PIPE)
 		{
-			node = create_pipe_node(cur);
+			node = create_pipe_node(cur->node_type);
 			add_stack_node(data, node);
 		}
 		cur = cur->next;
@@ -51,14 +51,14 @@ void	add_stack_node(t_data *data, t_node *node)
 	}
 }
 
-t_node	*create_pipe_node(t_parse *current)
+t_node	*create_pipe_node(t_type type)
 {
 	t_node	*pipe;
 
 	pipe = (t_node *)ft_calloc(1, sizeof(t_node));
 	if (!pipe)
 		return (NULL);
-	pipe->node_type = PIPE;
+	pipe->node_type = type;
 	return (pipe);
 }
 

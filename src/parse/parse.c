@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/22 14:38:21 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:32:06 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ void	print_list(t_data *data)
 		ft_printf("type = %d, ", print->node_type);
 		if (print->redir)
 		{
-			ft_printf("cmd = %s, ", print->cmd[0]);
+			if (print->cmd[0])
+				ft_printf("cmd = %s, ", print->cmd[0]);
 			ft_printf("target = %s\n", print->redir->target);
 		}
 		else
