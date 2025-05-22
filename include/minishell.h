@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/22 15:17:53 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/22 15:54:36 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ t_token	*ft_last(t_token *lst);
 bool	executor(t_data *data);
 
 // parse
-void	*parse(t_data *data);
+bool	parse(t_data *data);
 bool	validate_tokens(t_data *data);
 
 // parse_utils
@@ -152,7 +152,7 @@ void	env(t_data *data, char **args);
 void	pwd(t_data *data);
 
 // clean
-void	*free_program(t_data *data);
+bool	free_program(t_data *data);
 void	ft_free_token_list(t_data *data);
 void	ft_free_matrix(char **ptr_matrix);
 
