@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/23 15:41:07 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/23 15:49:09 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ char	**get_arguments(t_token **cur)
 
 	i = 1;
 	count = (*cur)->next;
-	while (count && count->type != PIPE)
+	while (count && count->type != PIPE && count->type != REDIR)	
 	{
 		i++;
 		count = count->next;
@@ -110,7 +110,7 @@ char	**get_arguments(t_token **cur)
 	i = 0;
 	args[i++] = ft_strdup((*cur)->value);
 	(*cur) = (*cur)->next;
-	while ((*cur) != NULL && (*cur)->type != PIPE)
+	while ((*cur) != NULL && (*cur)->type != PIPE && (*cur)->type != REDIR)
 	{
 		args[i++] = ft_strdup((*cur)->value);
 		if (!args[i - 1])
