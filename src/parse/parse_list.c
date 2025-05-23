@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/22 15:32:09 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/23 16:23:53 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,26 @@
 
 bool	parse_args(t_data *data)
 {
-	char	**args;
+	t_type	type;
 	t_parse	*node;
 	t_token	*cur;
 
 	cur = data->token_list;
 	while (cur)
 	{
-		if (cur->type == PIPE)
+		if (cur->type == PIPE || cur->type == EXPAND)
 			add_parse_list(data, get_operations(cur), cur->type);
-		if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
+		else if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
 		{
-			cur->type = ft_get_cmd_type(cur->value);
-			args = get_arguments(cur);
-			node = add_parse_list(data, args, cur->type);
-		}
-		if (cur->type == REDIR)
-		{
-			node->redir = create_redir(cur->value, cur->next->value);
-			cur = cur->next;
+			type = ft_get_cmd_type(cur->value);
+			node = add_parse_list(data, get_arguments(&cur), type);
+			if (cur == NULL)
+				break ;
+			if (cur->type == REDIR)
+			{
+				node->redir = create_redir(cur->value, cur->next->value);
+				cur = cur->next;
+			}
 		}
 		cur = cur->next;
 	}
@@ -90,15 +91,15 @@ char	**get_operations(t_token *cur)
 	return (args);
 }
 
-char	**get_arguments(t_token *cur)
+char	**get_arguments(t_token **cur)
 {
 	t_token	*count;
 	char	**args;
 	int		i;
 
 	i = 1;
-	count = cur->next;
-	while (count && count->type == WORD)
+	count = (*cur)->next;
+	while (count && count->type != PIPE && count->type != REDIR)
 	{
 		i++;
 		count = count->next;
@@ -107,14 +108,14 @@ char	**get_arguments(t_token *cur)
 	if (!args)
 		return (NULL);
 	i = 0;
-	args[i++] = ft_strdup(cur->value);
-	cur = cur->next;
-	while (cur && cur->type == WORD)
+	args[i++] = ft_strdup((*cur)->value);
+	(*cur) = (*cur)->next;
+	while ((*cur) != NULL && (*cur)->type != PIPE && (*cur)->type != REDIR)
 	{
-		args[i++] = ft_strdup(cur->value);
+		args[i++] = ft_strdup((*cur)->value);
 		if (!args[i - 1])
 			return (NULL);
-		cur = cur->next;
+		*cur = (*cur)->next;
 	}
 	return (args);
 }
