@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/23 15:40:15 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/23 16:03:24 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ bool	parse(t_data *data)
 		return (free_program(data, "Invalid tokens"));
 	if (!parse_args(data))
 		return (free_program(data, "Error parsing arguments"));
-	if (!data->parse_list)
-		return (free_program(data, "Command not found"));
 	print_list(data);
 	if (!build_stack(data))
 		return (free_program(data, "Error building stack"));
@@ -69,7 +67,7 @@ bool	validate_tokens(t_data *data)
 	t_token	*last;
 
 	cur = data->token_list;
-	if (cur->type == PIPE)
+	if (cur->type == PIPE || cur->type == WORD)
 		return (false);
 	last = ft_last(data->token_list);
 	if (last->type == PIPE || last->type == REDIR)

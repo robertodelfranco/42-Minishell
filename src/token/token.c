@@ -6,14 +6,12 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 10:48:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/22 14:44:43 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/23 16:16:51 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-// if (data->prompt[i] == '"')
-// 	get_quotes(data, i);
 int	create_token(t_data *data)
 {
 	int	i;

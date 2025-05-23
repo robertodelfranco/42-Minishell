@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/23 15:49:09 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/23 16:00:16 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ bool	parse_args(t_data *data)
 	cur = data->token_list;
 	while (cur)
 	{
-		if (cur->type == PIPE)
+		if (cur->type == PIPE || cur->type == EXPAND)
 			add_parse_list(data, get_operations(cur), cur->type);
 		else if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
 		{

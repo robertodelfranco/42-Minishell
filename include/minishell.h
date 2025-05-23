@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/23 15:39:31 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/23 15:58:49 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ typedef enum e_token_type
 	OUT_REDIR,
 	APPEND,
 	HEREDOC,
-	COMMAND,
 	EXPAND,
 	SING_QUOTE,
 	DOUB_QUOTE,
