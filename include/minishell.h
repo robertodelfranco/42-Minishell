@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/22 17:13:42 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/23 15:39:31 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@
 # define SUCCESS 0
 # define FAILURE 1
 # define CMD_NOT_FOUND 127
-
+# define COLOR "\033[1;36m"
+# define RESET "\033[0m"
 # define NOPRINTABLE "\t\n\v\f\r "
 
 typedef enum e_token_type
@@ -92,6 +93,7 @@ typedef struct s_data
 	t_parse			*parse_list;
 	struct s_node	*exec_list;
 	t_env			*env_list;
+	t_env			*env_copy;
 }	t_data;
 
 typedef struct s_node
@@ -133,13 +135,17 @@ bool	parse_args(t_data *data);
 t_parse	*add_parse_list(t_data *data, char **args, t_type type);
 t_redir	*create_redir(char *redir, char *target);
 char	**get_operations(t_token *cur);
-char	**get_arguments(t_token *cur);
+char	**get_arguments(t_token **cur);
 
 // parse_stack
 bool	build_stack(t_data *data);
 void	add_stack_node(t_data *data, t_node *node);
 t_node	*create_pipe_node(t_type type);
 t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type);
+
+// expansion
+void	ft_init_env(t_data *data, char **env);
+void	add_env_list(t_data *data, t_env *new_node);
 
 // built_ins
 	// echo
@@ -151,11 +157,15 @@ void	env(t_data *data, char **args);
 	// pwd
 void	pwd(t_data *data);
 
-// clean
-bool	free_program(t_data *data);
+// free_list
+void	ft_free_env_list(t_data *data);
 void	ft_free_node_list(t_data *data);
 void	ft_free_parse_list(t_data *data);
 void	ft_free_token_list(t_data *data);
+
+// clean
+bool	free_program(t_data *data, char *message);
+void	error_message(char *message);
 void	ft_free_matrix(char **ptr_matrix);
 
 #endif

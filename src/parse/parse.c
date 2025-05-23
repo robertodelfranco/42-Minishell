@@ -6,13 +6,27 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/22 15:54:51 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/23 15:40:15 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+void	print_command(t_parse *print)
+{
+	int	i;
+
+	i = 0;
+	ft_printf("cmd = ");
+	while (print->cmd[i])
+	{
+		ft_printf("%s ", print->cmd[i]);
+		i++;
+	}
+	ft_printf("\n");
+}
 // echo hi > texiste | cat texiste | ls -l | grep ".c"
+
 void	print_list(t_data *data)
 {
 	t_parse	*print;
@@ -23,21 +37,12 @@ void	print_list(t_data *data)
 		ft_printf("type = %d, ", print->node_type);
 		if (print->redir)
 		{
-			ft_printf("cmd = %s, ", print->cmd[0]);
-			if (print->cmd[1])
-				ft_printf("cmd = %s, ", print->cmd[1]);
+			print_command(print);
 			ft_printf("redir = %d - target = %s\n", print->redir->type,
 				print->redir->target);
 		}
 		else
-		{
-			if (print->cmd[1])
-				ft_printf("cmd = %s, ", print->cmd[0]);
-			if (print->cmd[1])
-				ft_printf("cmd = %s\n", print->cmd[1]);
-			else
-				ft_printf("cmd = %s\n", print->cmd[0]);
-		}
+			print_command(print);
 		print = print->next;
 	}
 }
@@ -45,14 +50,16 @@ void	print_list(t_data *data)
 bool	parse(t_data *data)
 {
 	if (data->double_quotes % 2 != 0 || data->single_quotes % 2 != 0)
-		return (free_program(data));
+		return (free_program(data, "Quotes not closed"));
 	if (!validate_tokens(data))
-		return (free_program(data));
+		return (free_program(data, "Invalid tokens"));
 	if (!parse_args(data))
-		return (free_program(data));
+		return (free_program(data, "Error parsing arguments"));
+	if (!data->parse_list)
+		return (free_program(data, "Command not found"));
 	print_list(data);
 	if (!build_stack(data))
-		return (free_program(data));
+		return (free_program(data, "Error building stack"));
 	return (true);
 }
 

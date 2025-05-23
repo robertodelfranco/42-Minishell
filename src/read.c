@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:31:14 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/08 17:29:32 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/23 14:29:35 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,5 @@
 
 char	*ft_readline(void)
 {
-	return (readline("minihell $"));
+	return (readline(COLOR "Minihell $ " RESET));
 }
