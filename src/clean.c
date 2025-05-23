@@ -6,13 +6,13 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 15:10:52 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/23 15:39:11 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/23 16:23:38 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-bool	free_program(t_data *data, char *message)	
+bool	free_program(t_data *data, char *message)
 {
 	if (message)
 		error_message(message);
