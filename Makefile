@@ -24,12 +24,13 @@ SRCS		=	./src/main.c \
 				./src/builtin/echo.c \
 				./src/builtin/pwd.c \
 				./src/builtin/env.c \
-				./src/builtin/cd.c \
-				./src/expansion/init_env.c
+				./src/expansion/init_env.c \
+				./src/pipes/pipes.c \
+				./src/builtin/cd.c
 
 OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 OBJ_DIR		=	objs
-VPATH		=	./src ./src/builtin ./src/token ./src/parse ./src/executor ./src/expansion
+VPATH		=	./src ./src/builtin ./src/token ./src/parse ./src/executor ./src/expansion ./src/pipes
 
 all: libft ${NAME}
 

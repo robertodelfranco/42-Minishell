@@ -30,6 +30,7 @@ SRCS		=	./libft/ft_isalpha.c \
 				./libft/ft_memcmp.c \
 				./libft/ft_substr.c \
 				./libft/ft_strjoin.c \
+				./libft/ft_strjoin_three.c \
 				./libft/ft_strtrim.c \
 				./libft/ft_itoa.c \
 				./libft/ft_split.c \

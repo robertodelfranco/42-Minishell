@@ -18,6 +18,8 @@
 # include <string.h>
 # include <stdlib.h>
 # include <stdbool.h>
+# include <sys/wait.h>
+// # include <signal.h>s
 # include <sys/stat.h>
 # include <readline/history.h>
 # include <readline/readline.h>
@@ -150,6 +152,9 @@ t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type);
 // expansion
 void	ft_init_env(t_data *data, char **env);
 void	add_env_list(t_data *data, t_env *new_node);
+
+// pipes
+void	ft_pipes(t_data *data);
 
 // built_ins
 	// echo
