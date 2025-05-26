@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 09:55:48 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/26 11:28:00 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/26 16:02:10 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ char	**get_env_array(t_env *env_list)
 	while (i < ft_listsize(env_list))
 	{
 		if (env_list->key && env_list->value)
-			env_array[i] = ft_strjoin_three(env_list->key, "=", env_list->value);
+			env_array[i] = ft_strjoin_three(env_list->key, "=",
+					env_list->value);
 		else if (env_list->key)
 			env_array[i] = ft_strjoin(env_list->key, "=");
 		else
@@ -112,7 +113,7 @@ void	ft_pipes(t_data *data)
 			exit(free_program(data, "Command execution failed"));
 		}
 	}
-	close(fd[1]); // Close the write end of the pipe in the parent process
+	close(fd[1]);
 	pid_two = fork();
 	if (pid_two < 0)
 	{
@@ -131,8 +132,8 @@ void	ft_pipes(t_data *data)
 			exit(free_program(data, "Command execution failed"));
 		}
 	}
-	close(fd[0]); // Close the read end of the pipe in the parent process
-	waitpid(pid, NULL, 0); // Wait for the first child process to finish
-	waitpid(pid_two, NULL, 0); // Wait for the second child process to finish
+	close(fd[0]);
+	waitpid(pid, NULL, 0);
+	waitpid(pid_two, NULL, 0);
 	ft_free_matrix(env_array);
 }

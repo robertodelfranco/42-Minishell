@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 17:34:57 by rheringe          #+#    #+#             */
-/*   Updated: 2025/05/26 15:13:00 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:55:10 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ static bool	cd_to_path(t_data *data, char *path)
 
 void	cd(t_data *data, char **argv)
 {
-	if (!argv[1])
+	if (!argv[1] || (argv[1][0] == '~' && argv[1][1] == '\0'))
 		cd_to_home(data);
 	else if (argv[2])
 	{
