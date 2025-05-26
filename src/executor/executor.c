@@ -3,27 +3,62 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/26 14:21:00 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/05/26 17:20:25 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	execute_built_in(t_data *data, t_node *cur)
+bool	execute_built_in(t_data *data, t_node *cur)
 {
-	if (cur->node_type == ECHO)
+	t_type	type;
+
+	type = ft_get_cmd_type(cur->cmd[0]);
+	if (type == ECHO)
 		echo(cur->cmd);
-	if (cur->node_type == ENV)
+	else if (type == ENV)
 		env(data, cur->cmd);
-	if (cur->node_type == CD)
+	else if (type == CD)
 		cd(data, cur->cmd);
-	if (cur->node_type == PWD)
+	else if (type == PWD)
 		pwd(data);
-	if (cur->node_type == EXIT)
+	else if (type == EXIT)
 		data->exit = true;
+	else
+	{
+		printf("Unknown built-in command: %s\n", cur->cmd[0]);
+		return (false);
+	}
+	return (true);
+}
+
+bool	execute_one_command(t_data *data, t_node *cur)
+{
+	if (cur->node_type == BUILT_IN)
+	{
+		if (execute_built_in(data, cur))
+			return (true);
+	}
+	else if (cur->node_type == EXTERNAL)
+	{
+		if (execute_external(data, cur)) // -> to be implemented
+			return (true);
+	}
+	else if (cur->node_type == EXPAND)
+	{
+		ft_printf_fd(2, "bash: %s: No such file or directory\n",
+			getenv(&cur->cmd[0][1]));
+		return (false);
+	}
+	else
+	{
+		printf("Unknown command type: %d\n", cur->node_type);
+		return (false);
+	}
+	return (false);
 }
 
 bool	executor(t_data *data)
@@ -31,6 +66,8 @@ bool	executor(t_data *data)
 	t_node	*cur;
 
 	cur = data->exec_list;
+	if (cur->next == NULL)
+		return (execute_one_command(data, cur));
 	while (cur)
 	{
 		if (cur->node_type == PIPE)
