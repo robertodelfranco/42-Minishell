@@ -6,7 +6,7 @@
 /*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/26 15:08:12 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/05/26 17:55:26 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <stdlib.h>
 # include <stdbool.h>
 # include <sys/wait.h>
-// # include <signal.h>s
+// # include <signal.h>
 # include <sys/stat.h>
 # include <readline/history.h>
 # include <readline/readline.h>
@@ -165,12 +165,15 @@ void	env(t_data *data, char **args);
 void	pwd(t_data *data);
 	// cd
 void	cd(t_data *data, char **argv);
+	// exit
+void	b_exit(t_data *data, char **argv, pid_t *pids);
 
 // free_list
 void	ft_free_env_list(t_data *data);
 void	ft_free_node_list(t_data *data);
 void	ft_free_parse_list(t_data *data);
 void	ft_free_token_list(t_data *data);
+void	ft_free_pids(pid_t *pids);
 
 // clean
 bool	free_program(t_data *data, char *message);
