@@ -24,6 +24,7 @@ SRCS		=	./src/main.c \
 				./src/builtin/echo.c \
 				./src/builtin/pwd.c \
 				./src/builtin/env.c \
+				./src/builtin/cd.c \
 				./src/expansion/init_env.c
 
 OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))

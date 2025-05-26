@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/23 16:07:45 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/26 14:21:00 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ void	execute_built_in(t_data *data, t_node *cur)
 		echo(cur->cmd);
 	if (cur->node_type == ENV)
 		env(data, cur->cmd);
+	if (cur->node_type == CD)
+		cd(data, cur->cmd);
 	if (cur->node_type == PWD)
 		pwd(data);
 	if (cur->node_type == EXIT)
