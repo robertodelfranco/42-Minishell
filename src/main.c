@@ -6,13 +6,12 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:22:45 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/23 15:39:40 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/23 17:12:32 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-// fix empty prompt and prompt with only spaces
 int	main(int ac, char **av, char **env)
 {
 	t_data	*data;
@@ -23,7 +22,7 @@ int	main(int ac, char **av, char **env)
 	{
 		data = (t_data *)ft_calloc(1, sizeof(t_data));
 		data->prompt = ft_readline();
-		if (data->prompt == NULL)
+		if (data->prompt[0] == '\0')
 			continue ;
 		add_history(data->prompt);
 		ft_init_env(data, env);
