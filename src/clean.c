@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 15:10:52 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/23 16:23:38 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/26 11:19:55 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ bool	free_program(t_data *data, char *message)
 	ft_free_parse_list(data);
 	ft_free_token_list(data);
 	free(data->prompt);
+	free(data);
 	return (false);
 }
 

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/23 16:07:45 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/26 11:24:47 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,24 +28,28 @@ bool	executor(t_data *data)
 {
 	t_node	*cur;
 
+	if (data->exec_list->node_type == EXIT)
+	{
+		data->exit = true;
+		return (false);
+	}
 	cur = data->exec_list;
 	while (cur)
 	{
-		if (cur->node_type == PIPE)
-			printf("Pipe\n");
-		else if (cur->node_type == EXTERNAL)
-			printf("External\n");
-		else if (cur->node_type == EXPAND)
-		{
-			printf("Expand\n");
-			printf("%s\n", getenv(&cur->cmd[0][1]));
-		}
-		else
-		{
-			printf("Built-in\n");
-			execute_built_in(data, cur);
-		}
-		cur = cur->next;
+		ft_pipes(data);
+		// else if (cur->node_type == EXTERNAL)
+		// 	printf("External\n");
+		// else if (cur->node_type == EXPAND)
+		// {
+		// 	printf("Expand\n");
+		// 	printf("%s\n", getenv(&cur->cmd[0][1]));
+		// }
+		// else
+		// {
+		// 	printf("Built-in\n");
+		// 	execute_built_in(data, cur);
+		// }
+		cur = cur->next->next;
 	}
 	return (true);
 }
