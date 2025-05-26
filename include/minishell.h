@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/23 15:58:49 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/26 10:55:30 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 # include <string.h>
 # include <stdlib.h>
 # include <stdbool.h>
+# include <sys/wait.h>
+// # include <signal.h>s
 # include <readline/history.h>
 # include <readline/readline.h>
 # include "../lib/includes/libft.h"
@@ -145,6 +147,9 @@ t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type);
 // expansion
 void	ft_init_env(t_data *data, char **env);
 void	add_env_list(t_data *data, t_env *new_node);
+
+// pipes
+void	ft_pipes(t_data *data);
 
 // built_ins
 	// echo
