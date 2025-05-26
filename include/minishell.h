@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/26 10:55:30 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/26 15:08:12 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <stdbool.h>
 # include <sys/wait.h>
 // # include <signal.h>s
+# include <sys/stat.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include "../lib/includes/libft.h"
@@ -31,6 +32,10 @@
 # define COLOR "\033[1;36m"
 # define RESET "\033[0m"
 # define NOPRINTABLE "\t\n\v\f\r "
+
+# ifndef PATH_MAX
+#  define PATH_MAX 4096
+# endif
 
 typedef enum e_token_type
 {
@@ -154,12 +159,12 @@ void	ft_pipes(t_data *data);
 // built_ins
 	// echo
 int		echo(char **args);
-
 	// env
 void	env(t_data *data, char **args);
-
 	// pwd
 void	pwd(t_data *data);
+	// cd
+void	cd(t_data *data, char **argv);
 
 // free_list
 void	ft_free_env_list(t_data *data);
