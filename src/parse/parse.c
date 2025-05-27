@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/23 16:03:24 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/26 17:19:05 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ void	print_list(t_data *data)
 	}
 }
 
+// print_list(data);
 bool	parse(t_data *data)
 {
 	if (data->double_quotes % 2 != 0 || data->single_quotes % 2 != 0)
@@ -55,7 +56,6 @@ bool	parse(t_data *data)
 		return (free_program(data, "Invalid tokens"));
 	if (!parse_args(data))
 		return (free_program(data, "Error parsing arguments"));
-	print_list(data);
 	if (!build_stack(data))
 		return (free_program(data, "Error building stack"));
 	return (true);
