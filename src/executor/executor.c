@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/27 16:23:20 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/27 19:10:40 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,27 +102,37 @@ bool	execute_one_command(t_data *data, t_node *cur)
 bool	executor(t_data *data)
 {
 	t_node	*cur;
+	pid_t	pid;
+	int		fd[2];
 
 	cur = data->exec_list;
 	if (cur->next == NULL)
 		return (execute_one_command(data, cur));
+	if (pipe(fd) == -1)
+		return (free_program(data, "Pipe creation failed"));
 	while (cur)
 	{
-		if (cur->node_type == PIPE)
-			printf("Pipe\n");
-		else if (cur->node_type == EXTERNAL)
-			execute_external(data, cur);
-		else if (cur->node_type == EXPAND)
+		pid = fork();
+		if (pid < 0)
+			return (free_program(data, "Fork failed"));
+		if (pid == 0)
 		{
-			printf("Expand\n");
-			printf("%s\n", getenv(&cur->cmd[0][1]));
+			if (cur->prev == NULL)
+				execute_first_command(data, cur, fd);
+			else if (cur->next == NULL)
+			{
+				perror("here\n");
+				execute_last_command(data, cur, fd);
+			}
+			else
+				execute_middle_command(data, cur, fd);
 		}
-		else
-		{
-			printf("Built-in\n");
-			execute_built_in(data, cur);
-		}
+		waitpid(pid, NULL, 0);
+		dup2(STDIN_FILENO, data->fd[0]);
+		dup2(STDOUT_FILENO, data->fd[1]);
 		cur = cur->next;
 	}
+	close(fd[0]);
+	close(fd[1]);
 	return (true);
 }
