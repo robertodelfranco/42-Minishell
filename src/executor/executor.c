@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/26 17:20:25 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/27 16:23:20 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,50 @@ bool	execute_built_in(t_data *data, t_node *cur)
 	else if (type == PWD)
 		pwd(data);
 	else if (type == EXIT)
-		data->exit = true;
+		b_exit(data, cur->cmd);
 	else
 	{
 		printf("Unknown built-in command: %s\n", cur->cmd[0]);
 		return (false);
 	}
+	return (true);
+}
+
+bool	execute_external(t_data *data, t_node *cur)
+{
+	char	*full_path;
+	char	**env_array;
+	int		pid;
+
+	env_array = get_env_array(data->env_list);
+	pid = fork();
+	if (cur->cmd[0][0] == '.' && cur->cmd[0][1] == '/')
+		full_path = ft_strdup(cur->cmd[0]);
+	else
+		full_path = ft_get_external_path(cur->cmd[0]);
+	if (pid < 0)
+	{
+		perror("Fork failed");
+		free(full_path);
+		ft_free_matrix(env_array);
+		return (false);
+	}
+	else if (pid == 0)
+	{
+		char *full = ft_strjoin_three(full_path, " ", cur->cmd[0]);
+		printf("fullpathcmd: %s\n", full);
+		free(full);
+		if (execve(full_path, cur->cmd, env_array) == -1)
+		{
+			free(full_path);
+			ft_free_matrix(env_array);
+			free_program(data, NULL);
+			exit(1);
+		}
+	}
+	waitpid(pid, NULL, 0);
+	free(full_path);
+	ft_free_matrix(env_array);
 	return (true);
 }
 
@@ -44,7 +82,7 @@ bool	execute_one_command(t_data *data, t_node *cur)
 	}
 	else if (cur->node_type == EXTERNAL)
 	{
-		if (execute_external(data, cur)) // -> to be implemented
+		if (execute_external(data, cur))
 			return (true);
 	}
 	else if (cur->node_type == EXPAND)
@@ -73,7 +111,7 @@ bool	executor(t_data *data)
 		if (cur->node_type == PIPE)
 			printf("Pipe\n");
 		else if (cur->node_type == EXTERNAL)
-			printf("External\n");
+			execute_external(data, cur);
 		else if (cur->node_type == EXPAND)
 		{
 			printf("Expand\n");

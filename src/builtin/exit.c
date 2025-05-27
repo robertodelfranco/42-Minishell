@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 17:06:06 by rheringe          #+#    #+#             */
-/*   Updated: 2025/05/26 17:58:31 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/05/27 15:49:39 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,25 @@
 
 static bool	is_numeric(const char *str)
 {
-    int i = 0;
+	int	i;
 
-    if (!str)
-        return false;
-    if (str[i] == '-' || str[i] == '+')
-        i++;
-    if (str[i] == '\0')
-        return false;
-    while (str[i])
-    {
-        if (!ft_isdigit(str[i]))
-            return false;
-        i++;
-    }
-    return true;
+	i = 0;
+	if (!str)
+		return (false);
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	if (str[i] == '\0')
+		return (false);
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (false);
+		i++;
+	}
+	return (true);
 }
 
-void	b_exit(t_data *data, char **argv, pid_t *pids)
+void	b_exit(t_data *data, char **argv)
 {
 	long	code;
 
@@ -49,9 +50,9 @@ void	b_exit(t_data *data, char **argv, pid_t *pids)
 			ft_printf_fd(2, "exit: %s: numeric argument required\n", argv[1]);
 			code = 2;
 		}
-		else 
+		else
 			code = ft_atol(argv[1]) % 256;
 	}
-	ft_free_pids(pids);
+	free_program(data, NULL);
 	exit(code);
 }
