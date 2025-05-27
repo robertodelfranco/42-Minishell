@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/23 16:23:53 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/27 16:23:56 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ bool	parse_args(t_data *data)
 			add_parse_list(data, get_operations(cur), cur->type);
 		else if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
 		{
-			type = ft_get_cmd_type(cur->value);
+			type = cur->type;
 			node = add_parse_list(data, get_arguments(&cur), type);
 			if (cur == NULL)
 				break ;

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 14:27:17 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/23 14:28:53 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/27 14:51:11 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,3 +88,15 @@ void	ft_free_env_list(t_data *data)
 	}
 	data->env_list = NULL;
 }
+// void	ft_free_pids(pid_t *pids)
+// {
+//     int i;
+
+//     if (!pids)
+//         return;
+
+//     for (i = 0; pids[i] != -1; ++i)
+//         waitpid(pids[i], NULL, 0);
+
+//     free(pids);
+// }

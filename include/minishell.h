@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/26 15:08:12 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/05/27 15:18:39 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <stdlib.h>
 # include <stdbool.h>
 # include <sys/wait.h>
-// # include <signal.h>s
+// # include <signal.h>
 # include <sys/stat.h>
 # include <readline/history.h>
 # include <readline/readline.h>
@@ -57,7 +57,8 @@ typedef enum e_token_type
 	ENV,
 	UNSET,
 	EXPORT,
-	EXIT
+	EXIT,
+	DOT
 }	t_type;
 
 typedef struct s_redir
@@ -154,6 +155,9 @@ void	ft_init_env(t_data *data, char **env);
 void	add_env_list(t_data *data, t_env *new_node);
 
 // pipes
+int		ft_listsize(t_env *list);
+char	**get_env_array(t_env *env_list);
+char	*ft_get_external_path(char *token_name);
 void	ft_pipes(t_data *data);
 
 // built_ins
@@ -165,12 +169,15 @@ void	env(t_data *data, char **args);
 void	pwd(t_data *data);
 	// cd
 void	cd(t_data *data, char **argv);
+	// exit
+void	b_exit(t_data *data, char **argv);
 
 // free_list
 void	ft_free_env_list(t_data *data);
 void	ft_free_node_list(t_data *data);
 void	ft_free_parse_list(t_data *data);
 void	ft_free_token_list(t_data *data);
+// void	ft_free_pids(pid_t *pids);
 
 // clean
 bool	free_program(t_data *data, char *message);

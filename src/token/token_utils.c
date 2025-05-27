@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:26:34 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/26 10:56:08 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/27 15:12:58 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 t_type	give_id_token(char *str)
 {
-	if (strcmp(str, "|") == 0)
+	if (ft_strcmp(str, "|") == 0)
 		return (PIPE);
-	else if (strcmp(str, "<<") == 0)
+	else if (ft_strcmp(str, "<<") == 0)
 		return (REDIR);
-	else if (strcmp(str, ">>") == 0)
+	else if (ft_strcmp(str, ">>") == 0)
 		return (REDIR);
-	else if (strcmp(str, "<") == 0)
+	else if (ft_strcmp(str, "<") == 0)
 		return (REDIR);
-	else if (strcmp(str, ">") == 0)
+	else if (ft_strcmp(str, ">") == 0)
 		return (REDIR);
 	else if (str[0] == '\'' && str[ft_strlen(str)-1] == '\'')
 		return (SING_QUOTE);
@@ -35,20 +35,23 @@ t_type	give_id_token(char *str)
 
 t_type	get_command(char *token_name)
 {
-	if (strcmp(token_name, "echo") == 0)
+	if (ft_strcmp(token_name, "echo") == 0)
 		return (BUILT_IN);
-	else if (strcmp(token_name, "cd") == 0)
+	else if (ft_strcmp(token_name, "cd") == 0)
 		return (BUILT_IN);
-	else if (strcmp(token_name, "pwd") == 0)
+	else if (ft_strcmp(token_name, "pwd") == 0)
 		return (BUILT_IN);
-	else if (strcmp(token_name, "export") == 0)
+	else if (ft_strcmp(token_name, "export") == 0)
 		return (BUILT_IN);
-	else if (strcmp(token_name, "unset") == 0)
+	else if (ft_strcmp(token_name, "unset") == 0)
 		return (BUILT_IN);
-	else if (strcmp(token_name, "env") == 0)
+	else if (ft_strcmp(token_name, "env") == 0)
 		return (BUILT_IN);
-	else if (strcmp(token_name, "exit") == 0)
+	else if (ft_strcmp(token_name, "exit") == 0)
 		return (BUILT_IN);
+	else if ((token_name[0] == '.' && token_name[1] == '/')
+		|| token_name[0] == '.')
+		return (EXTERNAL);
 	else if (external_command(token_name) == 1)
 		return (EXTERNAL);
 	else
