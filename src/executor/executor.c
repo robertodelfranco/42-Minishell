@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/27 16:11:22 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/27 16:23:20 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ bool	executor(t_data *data)
 		if (cur->node_type == PIPE)
 			printf("Pipe\n");
 		else if (cur->node_type == EXTERNAL)
-			printf("External\n");
+			execute_external(data, cur);
 		else if (cur->node_type == EXPAND)
 		{
 			printf("Expand\n");
