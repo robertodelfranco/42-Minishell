@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:22:45 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/26 16:01:17 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/27 17:08:36 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,18 @@ int	main(int ac, char **av, char **env)
 		data = (t_data *)ft_calloc(1, sizeof(t_data));
 		data->prompt = ft_readline();
 		if (data->prompt[0] == '\0')
+		{
+			free_program(data, NULL);
 			continue ;
+		}
 		add_history(data->prompt);
 		ft_init_env(data, env);
 		create_token(data);
 		if (data->token_list == NULL)
+		{
+			free_program(data, "No tokens found");
 			continue ;
+		}
 		if (!parse(data))
 			continue ;
 		if (!executor(data))
