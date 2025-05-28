@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 09:55:48 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/27 19:12:54 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 12:11:21 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,10 @@ bool	execute_first_command(t_data *data, t_node *cur, int fd[2])
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
-			return (true);
+		{
+			ft_free_matrix(env_array);
+			b_exit(data, cur->cmd);
+		}
 		return (false);
 	}
 	else if (cur->cmd[0][0] == '.' && cur->cmd[0][1] == '/')
@@ -103,23 +106,29 @@ bool	execute_first_command(t_data *data, t_node *cur, int fd[2])
 		perror("execve");
 		exit(free_program(data, "Command execution failed"));
 	}
+	free(full_path);
+	free(env_array);
 	return (true);
 }
 
-bool	execute_middle_command(t_data *data, t_node *cur, int fd[2])
+bool	execute_middle_command(t_data *data, t_node *cur, int fd[2], int prev_fd)
 {
 	char	**env_array;
 	char	*full_path;
 
-	dup2(fd[0], STDIN_FILENO);
+	dup2(prev_fd, STDIN_FILENO);
 	dup2(fd[1], STDOUT_FILENO);
+	close(prev_fd);
 	close(fd[0]);
 	close(fd[1]);
 	env_array = get_env_array(data->env_list);
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
-			return (true);
+		{
+			ft_free_matrix(env_array);
+			b_exit(data, cur->cmd);
+		}
 		return (false);
 	}
 	else if (cur->cmd[0][0] == '.' && cur->cmd[0][1] == '/')
@@ -134,18 +143,22 @@ bool	execute_middle_command(t_data *data, t_node *cur, int fd[2])
 	return (true);
 }
 
-bool	execute_last_command(t_data *data, t_node *cur, int fd[2])
+bool	execute_last_command(t_data *data, t_node *cur, int fd[2], int prev_fd)
 {
 	char	**env_array;
 	char	*full_path;
 
-	dup2(fd[0], STDIN_FILENO);
+	dup2(prev_fd, STDIN_FILENO);
+	close(prev_fd);
 	close(fd[0]);
 	env_array = get_env_array(data->env_list);
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
-			return (true);
+		{
+			ft_free_matrix(env_array);
+			b_exit(data, cur->cmd);
+		}
 		return (false);
 	}
 	else if (cur->cmd[0][0] == '.' && cur->cmd[0][1] == '/')

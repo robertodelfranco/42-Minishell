@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/27 19:05:27 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 11:56:06 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,8 +160,8 @@ int		ft_listsize(t_env *list);
 char	**get_env_array(t_env *env_list);
 char	*ft_get_external_path(char *token_name);
 bool	execute_first_command(t_data *data, t_node *cur, int fd[2]);
-bool	execute_last_command(t_data *data, t_node *cur, int fd[2]);
-bool	execute_middle_command(t_data *data, t_node *cur, int fd[2]);
+bool	execute_last_command(t_data *data, t_node *cur, int fd[2], int prev_fd);
+bool	execute_middle_command(t_data *data, t_node *cur, int fd[2], int prev_fd);
 void	ft_pipes(t_data *data);
 
 // built_ins
