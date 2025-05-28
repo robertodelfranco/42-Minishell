@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/28 15:26:26 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 17:52:02 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ typedef enum e_token_type
 	UNSET,
 	EXPORT,
 	EXIT,
-	DOT
 }	t_type;
 
 typedef struct s_redir
