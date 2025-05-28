@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/28 11:59:04 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 13:58:22 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,20 +48,11 @@ bool	execute_external(t_data *data, t_node *cur)
 	else
 		full_path = ft_get_external_path(cur->cmd[0]);
 	if (pid < 0)
-	{
-		perror("Fork failed");
-		free(full_path);
-		ft_free_matrix(env_array);
-		return (false);
-	}
+		return (free_program(data, "Fork failed"));
 	else if (pid == 0)
 	{
-		char *full = ft_strjoin_three(full_path, " ", cur->cmd[0]);
-		printf("fullpathcmd: %s\n", full);
-		free(full);
 		if (execve(full_path, cur->cmd, env_array) == -1)
 		{
-			perror("execve");
 			free(full_path);
 			ft_free_matrix(env_array);
 			b_exit(data, cur->cmd);
@@ -112,6 +103,8 @@ bool	executor(t_data *data)
 	prev_fd = -1;
 	while (cur)
 	{
+		// if (cur->node_type == PIPE)
+		// 	cur = cur->next;
 		if (cur->next != NULL)
 			if (pipe(fd) == -1)
 				return (free_program(data, "Pipe creation failed"));
@@ -122,17 +115,17 @@ bool	executor(t_data *data)
 		{
 			if (cur->prev == NULL)
 			{
-				perror("here first\n");
+				perror("here first ");
 				execute_first_command(data, cur, fd);
 			}
 			else if (cur->next == NULL)
 			{
-				perror("here last\n");
+				perror("here last ");
 				execute_last_command(data, cur, fd, prev_fd);
 			}
 			else
 			{
-				perror("here middle\n");
+				perror("here middle ");
 				execute_middle_command(data, cur, fd, prev_fd);
 			}
 		}
@@ -145,8 +138,6 @@ bool	executor(t_data *data)
 			prev_fd = fd[0];
 			waitpid(pid, NULL, 0);
 		}
-		// dup2(data->fd[0], STDIN_FILENO);
-		// dup2(data->fd[1], STDOUT_FILENO);
 		cur = cur->next;
 	}
 	return (true);

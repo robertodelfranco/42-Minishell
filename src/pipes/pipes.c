@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 09:55:48 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/28 12:24:25 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 13:42:03 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,14 +111,14 @@ bool	execute_first_command(t_data *data, t_node *cur, int fd[2])
 	return (true);
 }
 
-bool	execute_middle_command(t_data *data, t_node *cur, int fd[2], int prev_fd)
+bool	execute_middle_command(t_data *data, t_node *cur, int fd[2], int prev)
 {
 	char	**env_array;
 	char	*full_path;
 
-	dup2(prev_fd, STDIN_FILENO);
+	dup2(prev, STDIN_FILENO);
 	dup2(fd[1], STDOUT_FILENO);
-	close(prev_fd);
+	close(prev);
 	close(fd[0]);
 	close(fd[1]);
 	env_array = get_env_array(data->env_list);

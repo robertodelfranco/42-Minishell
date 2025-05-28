@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/27 19:05:46 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 13:58:31 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ bool	parse_args(t_data *data)
 	{
 		if (cur->type == PIPE || cur->type == EXPAND)
 			add_parse_list(data, get_operations(cur), cur->type);
-		else if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
+		if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
 		{
 			type = cur->type;
 			node = add_parse_list(data, get_arguments(&cur), type);
@@ -32,9 +32,10 @@ bool	parse_args(t_data *data)
 			if (cur->type == REDIR)
 			{
 				node->redir = create_redir(cur->value, cur->next->value);
-				cur = cur->next;
+				cur = cur->next->next;
 			}
 		}
+		// else
 		cur = cur->next;
 	}
 	print_list(data);
@@ -49,6 +50,8 @@ t_parse	*add_parse_list(t_data *data, char **args, t_type type)
 	new_node = ft_calloc(1, sizeof(t_parse));
 	if (!new_node)
 		return (NULL);
+	if (type == PIPE)
+		ft_printf("Adding pipe to parse list\n");
 	new_node->cmd = args;
 	new_node->node_type = type;
 	new_node->redir = NULL;

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/28 11:56:06 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 14:05:23 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,8 +161,7 @@ char	**get_env_array(t_env *env_list);
 char	*ft_get_external_path(char *token_name);
 bool	execute_first_command(t_data *data, t_node *cur, int fd[2]);
 bool	execute_last_command(t_data *data, t_node *cur, int fd[2], int prev_fd);
-bool	execute_middle_command(t_data *data, t_node *cur, int fd[2], int prev_fd);
-void	ft_pipes(t_data *data);
+bool	execute_middle_command(t_data *data, t_node *cur, int fd[2], int prev);
 
 // built_ins
 	// echo
@@ -187,7 +186,6 @@ void	ft_free_token_list(t_data *data);
 bool	free_program(t_data *data, char *message);
 void	error_message(char *message);
 void	ft_free_matrix(char **ptr_matrix);
-
 
 void	print_list(t_data *data);
 void	print_command(t_parse *print);
