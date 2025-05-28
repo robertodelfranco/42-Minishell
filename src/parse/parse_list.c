@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/27 16:23:56 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/27 19:05:46 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ bool	parse_args(t_data *data)
 		}
 		cur = cur->next;
 	}
+	print_list(data);
 	return (true);
 }
 

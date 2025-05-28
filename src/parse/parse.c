@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/26 17:19:05 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/27 19:06:50 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ bool	parse(t_data *data)
 		return (free_program(data, "Invalid tokens"));
 	if (!parse_args(data))
 		return (free_program(data, "Error parsing arguments"));
+	dup2(STDIN_FILENO, data->fd[0]);
+	dup2(STDOUT_FILENO, data->fd[1]);
 	if (!build_stack(data))
 		return (free_program(data, "Error building stack"));
 	return (true);

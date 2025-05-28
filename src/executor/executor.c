@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/27 16:23:20 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 11:59:04 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,10 @@ bool	execute_external(t_data *data, t_node *cur)
 		free(full);
 		if (execve(full_path, cur->cmd, env_array) == -1)
 		{
+			perror("execve");
 			free(full_path);
 			ft_free_matrix(env_array);
-			free_program(data, NULL);
-			exit(1);
+			b_exit(data, cur->cmd);
 		}
 	}
 	waitpid(pid, NULL, 0);
@@ -102,26 +102,51 @@ bool	execute_one_command(t_data *data, t_node *cur)
 bool	executor(t_data *data)
 {
 	t_node	*cur;
+	pid_t	pid;
+	int		fd[2];
+	int		prev_fd;
 
 	cur = data->exec_list;
 	if (cur->next == NULL)
 		return (execute_one_command(data, cur));
+	prev_fd = -1;
 	while (cur)
 	{
-		if (cur->node_type == PIPE)
-			printf("Pipe\n");
-		else if (cur->node_type == EXTERNAL)
-			execute_external(data, cur);
-		else if (cur->node_type == EXPAND)
+		if (cur->next != NULL)
+			if (pipe(fd) == -1)
+				return (free_program(data, "Pipe creation failed"));
+		pid = fork();
+		if (pid < 0)
+			return (free_program(data, "Fork failed"));
+		if (pid == 0)
 		{
-			printf("Expand\n");
-			printf("%s\n", getenv(&cur->cmd[0][1]));
+			if (cur->prev == NULL)
+			{
+				perror("here first\n");
+				execute_first_command(data, cur, fd);
+			}
+			else if (cur->next == NULL)
+			{
+				perror("here last\n");
+				execute_last_command(data, cur, fd, prev_fd);
+			}
+			else
+			{
+				perror("here middle\n");
+				execute_middle_command(data, cur, fd, prev_fd);
+			}
 		}
 		else
 		{
-			printf("Built-in\n");
-			execute_built_in(data, cur);
+			if (prev_fd != -1)
+				close(prev_fd);
+			if (cur->next != NULL)
+				close(fd[1]);
+			prev_fd = fd[0];
+			waitpid(pid, NULL, 0);
 		}
+		// dup2(data->fd[0], STDIN_FILENO);
+		// dup2(data->fd[1], STDOUT_FILENO);
 		cur = cur->next;
 	}
 	return (true);
