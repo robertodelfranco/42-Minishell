@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/28 14:05:23 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 15:26:26 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,10 +126,6 @@ t_type	give_id_token(char *str);
 t_type	get_command(char *token_name);
 t_token	*ft_last(t_token *lst);
 
-// executor
-bool	execute_built_in(t_data *data, t_node *cur);
-bool	executor(t_data *data);
-
 // parse
 bool	parse(t_data *data);
 bool	validate_tokens(t_data *data);
@@ -155,10 +151,17 @@ t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type);
 void	ft_init_env(t_data *data, char **env);
 void	add_env_list(t_data *data, t_env *new_node);
 
-// pipes
+// executor
+bool	execute_one_command(t_data *data, t_node *cur);
+bool	executor(t_data *data);
+	// exec_cmd
+bool	execute_built_in(t_data *data, t_node *cur);
+bool	execute_external(t_data *data, t_node *cur);
+	// exec_utils
 int		ft_listsize(t_env *list);
 char	**get_env_array(t_env *env_list);
 char	*ft_get_external_path(char *token_name);
+	// exec_pipes
 bool	execute_first_command(t_data *data, t_node *cur, int fd[2]);
 bool	execute_last_command(t_data *data, t_node *cur, int fd[2], int prev_fd);
 bool	execute_middle_command(t_data *data, t_node *cur, int fd[2], int prev);
