@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/28 15:23:06 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 15:32:41 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ bool	executor(t_data *data)
 	prev_fd = -1;
 	while (cur)
 	{
-		// if (cur->node_type == PIPE)
-		// 	cur = cur->next;
+		if (cur->node_type == PIPE)
+			cur = cur->next;
 		if (cur->next != NULL)
 			if (pipe(fd) == -1)
 				return (free_program(data, "Pipe creation failed"));

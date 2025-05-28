@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/27 19:06:50 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 15:53:00 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ bool	parse(t_data *data)
 {
 	if (data->double_quotes % 2 != 0 || data->single_quotes % 2 != 0)
 		return (free_program(data, "Quotes not closed"));
+	// if (!ft_expand(data))
+	// 	return (free_program(data, "Error expanding variables"));
 	if (!validate_tokens(data))
 		return (free_program(data, "Invalid tokens"));
 	if (!parse_args(data))
@@ -77,13 +79,14 @@ bool	validate_tokens(t_data *data)
 	while (cur)
 	{
 		if ((cur->type == PIPE && cur->next->type != BUILT_IN
-				&& cur->next->type != EXTERNAL) || (cur->type == PIPE
-				&& cur->next == NULL))
+				&& cur->next->type != EXTERNAL && cur->next->type != EXPAND)
+			|| (cur->type == PIPE && cur->next == NULL))
 			return (false);
 		if (cur->type == REDIR)
 		{
 			if (cur->next == NULL || (cur->next->type != WORD && cur
-					->next->type != BUILT_IN && cur->next->type != EXTERNAL))
+					->next->type != BUILT_IN && cur->next->type != EXTERNAL
+					&& cur->next->type != EXPAND))
 				return (false);
 		}
 		cur = cur->next;

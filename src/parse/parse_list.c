@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/28 13:58:31 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 15:43:22 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ bool	parse_args(t_data *data)
 				cur = cur->next->next;
 			}
 		}
-		// else
-		cur = cur->next;
+		else
+			cur = cur->next;
 	}
 	print_list(data);
 	return (true);
@@ -50,8 +50,6 @@ t_parse	*add_parse_list(t_data *data, char **args, t_type type)
 	new_node = ft_calloc(1, sizeof(t_parse));
 	if (!new_node)
 		return (NULL);
-	if (type == PIPE)
-		ft_printf("Adding pipe to parse list\n");
 	new_node->cmd = args;
 	new_node->node_type = type;
 	new_node->redir = NULL;
