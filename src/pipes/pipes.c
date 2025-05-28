@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 09:55:48 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/28 12:11:21 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 12:24:25 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,63 +171,4 @@ bool	execute_last_command(t_data *data, t_node *cur, int fd[2], int prev_fd)
 		exit(free_program(data, "Command execution failed"));
 	}
 	return (true);
-}
-
-void	ft_pipes(t_data *data)
-{
-	pid_t	pid;
-	pid_t	pid_two;
-	int		fd[2];
-	char	**env_array;
-	char	*full_path;
-
-	if (pipe(fd) == -1)
-	{
-		ft_printf("Error: Pipe creation failed\n");
-		return ;
-	}
-	env_array = get_env_array(data->env_list);
-	pid = fork();
-	if (pid < 0)
-	{
-		ft_printf("Error: Fork failed\n");
-		close(fd[0]);
-		close(fd[1]);
-		return ;
-	}
-	else if (pid == 0)
-	{
-		dup2(fd[1], STDOUT_FILENO);
-		close(fd[0]);
-		close(fd[1]);
-		full_path = ft_get_external_path(data->exec_list->cmd[0]);
-		if (execve(full_path, data->exec_list->cmd, env_array) == -1)
-		{
-			perror("execve");
-			exit(free_program(data, "Command execution failed"));
-		}
-	}
-	close(fd[1]);
-	pid_two = fork();
-	if (pid_two < 0)
-	{
-		ft_printf("Error: Fork failed\n");
-		close(fd[0]);
-		return ;
-	}
-	else if (pid_two == 0)
-	{
-		dup2(fd[0], STDIN_FILENO);
-		close(fd[0]);
-		full_path = ft_get_external_path(data->exec_list->next->cmd[0]);
-		if (execve(full_path, data->exec_list->next->cmd, env_array) == -1)
-		{
-			perror("execve");
-			exit(free_program(data, "Command execution failed"));
-		}
-	}
-	close(fd[0]);
-	waitpid(pid, NULL, 0);
-	waitpid(pid_two, NULL, 0);
-	ft_free_matrix(env_array);
 }
