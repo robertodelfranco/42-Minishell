@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/28 15:21:20 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 16:05:34 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,14 @@ bool	execute_built_in(t_data *data, t_node *cur)
 	type = ft_get_cmd_type(cur->cmd[0]);
 	if (type == ECHO)
 		echo(cur->cmd);
-	else if (type == ENV)
-		env(data, cur->cmd);
 	else if (type == CD)
 		cd(data, cur->cmd);
 	else if (type == PWD)
 		pwd(data);
+	else if (type == ENV)
+		env(data, cur->cmd);
+	else if (type == EXPORT)
+		b_export(data, cur->cmd);
 	else if (type == EXIT)
 		b_exit(data, cur->cmd);
 	else
