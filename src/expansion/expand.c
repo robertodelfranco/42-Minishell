@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:40:55 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/29 19:07:57 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/29 19:18:14 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,16 +147,14 @@ void	copy_value(char *str_expand, char *value, int *j)
 	*j = c;
 }
 
-char	*get_str_expanded(t_data *data, t_token *cur)
+char	*get_str_expanded(t_data *data, t_token *cur, char *expand)
 {
-	char	*expand;
 	char	*key;
 	char	*value;
 	int		key_len;
 	int		i;
 	int		j;
 
-	expand = ft_calloc(get_expand_size(data, cur->value) + 1, 1);
 	i = 0;
 	j = 0;
 	while (cur->value[i])
@@ -180,6 +178,7 @@ bool	ft_expand(t_data *data)
 {
 	t_token	*cur;
 	char	*new_str;
+	char	*expand;
 
 	cur = data->token_list;
 	while (cur)
@@ -189,12 +188,12 @@ bool	ft_expand(t_data *data)
 		{
 			if (ft_strchr(cur->value, '$'))
 			{
-				new_str = get_str_expanded(data, cur);
-				if (new_str)
-				{
-					free(cur->value);
-					cur->value = new_str;
-				}
+				expand = ft_calloc(get_expand_size(data, cur->value) + 1, 1);
+				if (!expand)
+					return (free_program(data, "calloc error"));
+				new_str = get_str_expanded(data, cur, expand);
+				free(cur->value);
+				cur->value = new_str;
 			}
 		}
 		cur = cur->next;
