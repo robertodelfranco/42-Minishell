@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:40:55 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/29 19:18:14 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/29 19:25:10 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,14 @@ char	**expand_variables(t_data *data, t_token *cur)
 	return (expanded);
 }
 
+void	ft_free_key_and_value(char *key, char *value)
+{
+	if (key)
+		free(key);
+	if (value)
+		free(value);
+}
+
 int	get_expand_size(t_data *data, const char *str)
 {
 	int		key_len;
@@ -101,8 +109,7 @@ int	get_expand_size(t_data *data, const char *str)
 			key = get_variable_key(&str[j + 1], &key_len);
 			value = get_variable_value(data, key);
 			size += ft_strlen(value);
-			free(key);
-			free(value);
+			ft_free_key_and_value(key, value);
 			j += key_len + 1;
 		}
 		else
