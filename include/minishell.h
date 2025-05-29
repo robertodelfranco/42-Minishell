@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/28 17:52:02 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/29 16:18:37 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,7 @@ t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type);
 // expansion
 void	ft_init_env(t_data *data, char **env);
 void	add_env_list(t_data *data, t_env *new_node);
+bool	ft_expand(t_data *data);
 
 // executor
 bool	execute_one_command(t_data *data, t_node *cur);
