@@ -17,6 +17,9 @@ SRCS		=	./src/main.c \
 				./src/token/token.c \
 				./src/token/token_utils.c \
 				./src/executor/executor.c \
+				./src/executor/exec_cmd.c \
+				./src/executor/exec_pipes.c \
+				./src/executor/exec_utils.c \
 				./src/parse/parse.c \
 				./src/parse/parse_list.c \
 				./src/parse/parse_stack.c \
@@ -27,7 +30,8 @@ SRCS		=	./src/main.c \
 				./src/builtin/exit.c \
 				./src/builtin/cd.c \
 				./src/expansion/init_env.c \
-				./src/pipes/pipes.c
+				./src/expansion/expand.c \
+				./src/expansion/expand_utils.c
 
 OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 OBJ_DIR		=	objs

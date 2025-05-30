@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:22:45 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/27 17:08:36 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/27 18:55:59 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,6 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		if (!executor(data))
 			continue ;
-		if (data->exit)
-			return (free_program(data, NULL));
 		free_program(data, NULL);
 		data = NULL;
 	}

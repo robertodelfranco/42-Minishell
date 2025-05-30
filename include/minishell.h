@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/27 15:18:39 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/30 15:11:06 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ typedef enum e_token_type
 	UNSET,
 	EXPORT,
 	EXIT,
-	DOT
 }	t_type;
 
 typedef struct s_redir
@@ -95,7 +94,7 @@ typedef struct s_data
 	int				double_quotes;
 	int				single_quotes;
 	int				exit_status;
-	bool			exit;
+	int				fd[2];
 	t_token			*token_list;
 	t_parse			*parse_list;
 	struct s_node	*exec_list;
@@ -126,9 +125,6 @@ t_type	give_id_token(char *str);
 t_type	get_command(char *token_name);
 t_token	*ft_last(t_token *lst);
 
-// executor
-bool	executor(t_data *data);
-
 // parse
 bool	parse(t_data *data);
 bool	validate_tokens(t_data *data);
@@ -151,14 +147,35 @@ t_node	*create_pipe_node(t_type type);
 t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type);
 
 // expansion
+	//init_env
 void	ft_init_env(t_data *data, char **env);
 void	add_env_list(t_data *data, t_env *new_node);
+	//expand
+char	*get_variable_value(t_data *data, char *str);
+char	*get_variable_key(const char *str, int *len);
+int		get_expand_size(t_data *data, const char *str);
+char	*get_str_expanded(t_data *data, t_token *cur, char *expanded);
+bool	ft_expand(t_data *data);
+	//expand_utils
+int		ft_ptr_len(char **str);
+int		ft_strchr_count(char const *str, char c);
+void	ft_free_key_and_value(char *key, char *value);
+void	copy_value(char *str_expand, char *value, int *j);
 
-// pipes
+// executor
+bool	execute_one_command(t_data *data, t_node *cur);
+bool	executor(t_data *data);
+	// exec_cmd
+bool	execute_built_in(t_data *data, t_node *cur);
+bool	execute_external(t_data *data, t_node *cur);
+	// exec_utils
 int		ft_listsize(t_env *list);
 char	**get_env_array(t_env *env_list);
 char	*ft_get_external_path(char *token_name);
-void	ft_pipes(t_data *data);
+	// exec_pipes
+bool	execute_first_command(t_data *data, t_node *cur, int fd[2]);
+bool	execute_last_command(t_data *data, t_node *cur, int fd[2], int prev_fd);
+bool	execute_middle_command(t_data *data, t_node *cur, int fd[2], int prev);
 
 // built_ins
 	// echo
@@ -183,5 +200,8 @@ void	ft_free_token_list(t_data *data);
 bool	free_program(t_data *data, char *message);
 void	error_message(char *message);
 void	ft_free_matrix(char **ptr_matrix);
+
+void	print_list(t_data *data);
+void	print_command(t_parse *print);
 
 #endif

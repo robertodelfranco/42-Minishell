@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/27 16:23:56 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/28 15:55:47 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ bool	parse_args(t_data *data)
 	{
 		if (cur->type == PIPE || cur->type == EXPAND)
 			add_parse_list(data, get_operations(cur), cur->type);
-		else if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
+		if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
 		{
 			type = cur->type;
 			node = add_parse_list(data, get_arguments(&cur), type);
@@ -32,10 +32,11 @@ bool	parse_args(t_data *data)
 			if (cur->type == REDIR)
 			{
 				node->redir = create_redir(cur->value, cur->next->value);
-				cur = cur->next;
+				cur = cur->next->next;
 			}
 		}
-		cur = cur->next;
+		else
+			cur = cur->next;
 	}
 	return (true);
 }

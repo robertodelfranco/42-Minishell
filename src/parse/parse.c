@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/26 17:19:05 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/30 16:52:21 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,15 +47,38 @@ void	print_list(t_data *data)
 	}
 }
 
+bool	get_new_types(t_data *data)
+{
+	t_token	*cur;
+
+	cur = data->token_list;
+	while (cur)
+	{
+		if (!cur->value)
+			return (false);
+		else
+			cur->type = give_id_token(cur->value);
+		cur = cur->next;
+	}
+	return (true);
+}
+
 // print_list(data);
 bool	parse(t_data *data)
 {
 	if (data->double_quotes % 2 != 0 || data->single_quotes % 2 != 0)
 		return (free_program(data, "Quotes not closed"));
+	if (!ft_expand(data))
+		return (free_program(data, "Error expanding variables"));
+	if (!get_new_types(data))
+		return (free_program(data, "Error getting new types"));
 	if (!validate_tokens(data))
 		return (free_program(data, "Invalid tokens"));
 	if (!parse_args(data))
 		return (free_program(data, "Error parsing arguments"));
+	print_list(data);
+	dup2(STDIN_FILENO, data->fd[0]);
+	dup2(STDOUT_FILENO, data->fd[1]);
 	if (!build_stack(data))
 		return (free_program(data, "Error building stack"));
 	return (true);
@@ -75,13 +98,14 @@ bool	validate_tokens(t_data *data)
 	while (cur)
 	{
 		if ((cur->type == PIPE && cur->next->type != BUILT_IN
-				&& cur->next->type != EXTERNAL) || (cur->type == PIPE
-				&& cur->next == NULL))
+				&& cur->next->type != EXTERNAL && cur->next->type != EXPAND)
+			|| (cur->type == PIPE && cur->next == NULL))
 			return (false);
 		if (cur->type == REDIR)
 		{
 			if (cur->next == NULL || (cur->next->type != WORD && cur
-					->next->type != BUILT_IN && cur->next->type != EXTERNAL))
+					->next->type != BUILT_IN && cur->next->type != EXTERNAL
+					&& cur->next->type != EXPAND))
 				return (false);
 		}
 		cur = cur->next;
