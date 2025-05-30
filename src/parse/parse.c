@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/28 16:02:28 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/30 16:52:21 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,15 +47,31 @@ void	print_list(t_data *data)
 	}
 }
 
+bool	get_new_types(t_data *data)
+{
+	t_token	*cur;
+
+	cur = data->token_list;
+	while (cur)
+	{
+		if (!cur->value)
+			return (false);
+		else
+			cur->type = give_id_token(cur->value);
+		cur = cur->next;
+	}
+	return (true);
+}
+
 // print_list(data);
 bool	parse(t_data *data)
 {
 	if (data->double_quotes % 2 != 0 || data->single_quotes % 2 != 0)
 		return (free_program(data, "Quotes not closed"));
-	// if (!ft_expand(data))
-	// 	return (free_program(data, "Error expanding variables"));
-	// if (!get_new_types(data))
-	// 	return (free_program(data, "Error getting new types"));
+	if (!ft_expand(data))
+		return (free_program(data, "Error expanding variables"));
+	if (!get_new_types(data))
+		return (free_program(data, "Error getting new types"));
 	if (!validate_tokens(data))
 		return (free_program(data, "Invalid tokens"));
 	if (!parse_args(data))

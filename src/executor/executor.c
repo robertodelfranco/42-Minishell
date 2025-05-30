@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/28 15:32:41 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/30 15:43:48 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,20 +62,11 @@ bool	executor(t_data *data)
 		if (pid == 0)
 		{
 			if (cur->prev == NULL)
-			{
-				perror("here first ");
 				execute_first_command(data, cur, fd);
-			}
 			else if (cur->next == NULL)
-			{
-				perror("here last ");
 				execute_last_command(data, cur, fd, prev_fd);
-			}
 			else
-			{
-				perror("here middle ");
 				execute_middle_command(data, cur, fd, prev_fd);
-			}
 		}
 		else
 		{

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:22:19 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/28 15:22:23 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/30 16:50:43 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,22 +30,22 @@ int	ft_listsize(t_env *list)
 char	**get_env_array(t_env *env_list)
 {
 	char	**env_array;
+	t_env	*cur;
 	int		i;
 
 	env_array = ft_calloc((ft_listsize(env_list) + 1), sizeof(char *));
 	if (!env_array)
 		return (NULL);
 	i = 0;
-	while (i < ft_listsize(env_list))
+	cur = env_list;
+	while (cur)
 	{
-		if (env_list->key && env_list->value)
-			env_array[i] = ft_strjoin_three(env_list->key, "=",
-					env_list->value);
-		else if (env_list->key)
-			env_array[i] = ft_strjoin(env_list->key, "=");
-		else
-			env_array[i] = NULL;
-		env_list = env_list->next;
+		if (cur->key && cur->value)
+			env_array[i] = ft_strjoin_three(cur->key, "=",
+					cur->value);
+		else if (cur->key)
+			env_array[i] = ft_strjoin(cur->key, "=");
+		cur = cur->next;
 		i++;
 	}
 	return (env_array);
