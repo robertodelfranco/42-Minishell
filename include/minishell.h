@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/29 16:18:37 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/30 15:11:06 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,9 +147,20 @@ t_node	*create_pipe_node(t_type type);
 t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type);
 
 // expansion
+	//init_env
 void	ft_init_env(t_data *data, char **env);
 void	add_env_list(t_data *data, t_env *new_node);
+	//expand
+char	*get_variable_value(t_data *data, char *str);
+char	*get_variable_key(const char *str, int *len);
+int		get_expand_size(t_data *data, const char *str);
+char	*get_str_expanded(t_data *data, t_token *cur, char *expanded);
 bool	ft_expand(t_data *data);
+	//expand_utils
+int		ft_ptr_len(char **str);
+int		ft_strchr_count(char const *str, char c);
+void	ft_free_key_and_value(char *key, char *value);
+void	copy_value(char *str_expand, char *value, int *j);
 
 // executor
 bool	execute_one_command(t_data *data, t_node *cur);

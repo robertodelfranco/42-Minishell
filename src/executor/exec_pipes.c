@@ -6,20 +6,26 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/28 15:20:30 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/30 15:45:49 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+void	ft_dup_and_close(int fd, int dup, int clos)
+{
+	dup2(fd, dup);
+	close(fd);
+	if (clos != -1)
+		close(clos);
+}
 
 bool	execute_first_command(t_data *data, t_node *cur, int fd[2])
 {
 	char	**env_array;
 	char	*full_path;
 
-	dup2(fd[1], STDOUT_FILENO);
-	close(fd[0]);
-	close(fd[1]);
+	ft_dup_and_close(fd[1], STDOUT_FILENO, fd[0]);
 	env_array = get_env_array(data->env_list);
 	if (cur->node_type == BUILT_IN)
 	{
@@ -39,8 +45,6 @@ bool	execute_first_command(t_data *data, t_node *cur, int fd[2])
 		perror("execve");
 		exit(free_program(data, "Command execution failed"));
 	}
-	free(full_path);
-	free(env_array);
 	return (true);
 }
 
@@ -49,11 +53,8 @@ bool	execute_middle_command(t_data *data, t_node *cur, int fd[2], int prev)
 	char	**env_array;
 	char	*full_path;
 
-	dup2(prev, STDIN_FILENO);
-	dup2(fd[1], STDOUT_FILENO);
-	close(prev);
-	close(fd[0]);
-	close(fd[1]);
+	ft_dup_and_close(prev, STDIN_FILENO, fd[0]);
+	ft_dup_and_close(fd[1], STDOUT_FILENO, -1);
 	env_array = get_env_array(data->env_list);
 	if (cur->node_type == BUILT_IN)
 	{
@@ -81,9 +82,7 @@ bool	execute_last_command(t_data *data, t_node *cur, int fd[2], int prev_fd)
 	char	**env_array;
 	char	*full_path;
 
-	dup2(prev_fd, STDIN_FILENO);
-	close(prev_fd);
-	close(fd[0]);
+	ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
 	env_array = get_env_array(data->env_list);
 	if (cur->node_type == BUILT_IN)
 	{
