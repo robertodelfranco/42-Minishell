@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/30 16:42:39 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/05/30 16:52:21 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,6 @@ bool	parse(t_data *data)
 		return (free_program(data, "Quotes not closed"));
 	if (!ft_expand(data))
 		return (free_program(data, "Error expanding variables"));
-	printf("pass\n");
-	get_env_array(data->env_list);
 	if (!get_new_types(data))
 		return (free_program(data, "Error getting new types"));
 	if (!validate_tokens(data))
