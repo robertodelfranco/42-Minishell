@@ -29,6 +29,8 @@ SRCS		=	./src/main.c \
 				./src/builtin/env.c \
 				./src/builtin/exit.c \
 				./src/builtin/cd.c \
+				./src/builtin/export.c \
+				./src/builtin/export_utils.c \
 				./src/expansion/init_env.c \
 				./src/expansion/expand.c \
 				./src/expansion/expand_utils.c
