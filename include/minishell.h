@@ -18,6 +18,7 @@
 # include <string.h>
 # include <stdlib.h>
 # include <stdbool.h>
+# include <fcntl.h>
 # include <sys/wait.h>
 // # include <signal.h>
 # include <sys/stat.h>
@@ -173,9 +174,10 @@ int		ft_listsize(t_env *list);
 char	**get_env_array(t_env *env_list);
 char	*ft_get_external_path(char *token_name);
 	// exec_pipes
-bool	execute_first_command(t_data *data, t_node *cur, int fd[2]);
-bool	execute_last_command(t_data *data, t_node *cur, int fd[2], int prev_fd);
-bool	execute_middle_command(t_data *data, t_node *cur, int fd[2], int prev);
+void	ft_dup_and_close(int fd, int dup, int clos);
+bool	execute_first_command(t_data *data, t_node *cur);
+bool	execute_last_command(t_data *data, t_node *cur);
+bool	execute_middle_command(t_data *data, t_node *cur);
 
 // built_ins
 	// echo
@@ -190,6 +192,9 @@ void	cd(t_data *data, char **argv);
 void	b_exit(t_data *data, char **argv);
 	//
 void	b_export(t_data *data, char **argv);
+
+// redirs
+void	identify_redirs(t_redir *redir, t_data *data);
 
 // free_list
 void	ft_free_env_list(t_data *data);

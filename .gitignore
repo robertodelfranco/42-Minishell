@@ -9,6 +9,10 @@ objs/
 
 # arquivos aleatórios
 *.pdf
+*.txt
+teste
+hi
+
 
 # arquivos de compilação
 minishell
