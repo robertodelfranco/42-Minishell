@@ -12,6 +12,15 @@
 
 #include "../../include/minishell.h"
 
+bool	fd_restore(t_data *data)
+{
+	dup2(data->fd[0], STDIN_FILENO);
+	dup2(data->fd[1], STDOUT_FILENO);
+	close(data->fd[0]);
+	close(data->fd[1]);
+	return (true);
+}
+
 bool	execute_one_command(t_data *data, t_node *cur)
 {
 	if (cur->redir)
@@ -19,24 +28,12 @@ bool	execute_one_command(t_data *data, t_node *cur)
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
-		{
-			dup2(data->fd[0], STDIN_FILENO);
-			dup2(data->fd[1], STDOUT_FILENO);
-			close(data->fd[0]);
-			close(data->fd[1]);
-			return (true);
-		}
+			return (fd_restore(data));
 	}
 	else if (cur->node_type == EXTERNAL)
 	{
 		if (execute_external(data, cur))
-		{
-			dup2(data->fd[0], STDIN_FILENO);
-			dup2(data->fd[1], STDOUT_FILENO);
-			close(data->fd[0]);
-			close(data->fd[1]);
-			return (true);
-		}
+			return (fd_restore(data));
 	}
 	else if (cur->node_type == EXPAND)
 	{
@@ -45,12 +42,14 @@ bool	execute_one_command(t_data *data, t_node *cur)
 		return (false);
 	}
 	else
-		return(printf("Unknown command type: %d\n", cur->node_type));
+		return (printf("Unknown command type: %d\n", cur->node_type));
 	return (false);
 }
 
 static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 {
+	if (cur->redir)
+		identify_redirs(cur->redir, data);
 	if (cur->prev == NULL)
 	{
 		if (!cur->redir)
@@ -107,11 +106,7 @@ bool	executor(t_data *data)
 		if (pid < 0)
 			return (free_program(data, "Fork failed"));
 		if (pid == 0)
-		{
-			if (cur->redir)
-				identify_redirs(cur->redir, data);
 			return (handle_child(data, cur, fd, prev_fd));
-		}
 		handle_parent(cur, fd, &prev_fd, pid);
 		cur = cur->next;
 	}

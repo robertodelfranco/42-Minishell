@@ -74,7 +74,7 @@ int	ft_envdup(t_data *data)
 void	b_export(t_data *data, char **argv)
 {
 	if (!argv[1])
-	{	
+	{
 		print_export(data);
 		return ;
 	}

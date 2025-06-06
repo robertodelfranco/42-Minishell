@@ -101,6 +101,6 @@ void	identify_redirs(t_redir *redir, t_data *data)
 		execute_redir_out(redir, data);
 	else if (redir->type == APPEND)
 		execute_redir_append(redir, data);
+}
 	// else if (redir->type == HEREDOC)
 	// 	execute_redir_heredoc(redir, node, data);
-}
