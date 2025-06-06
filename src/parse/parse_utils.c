@@ -15,9 +15,9 @@
 t_type	ft_get_redir_type(char *redir)
 {
 	if (ft_strcmp(redir, ">") == 0)
-		return (IN_REDIR);
-	else if (ft_strcmp(redir, "<") == 0)
 		return (OUT_REDIR);
+	else if (ft_strcmp(redir, "<") == 0)
+		return (IN_REDIR);
 	else if (ft_strcmp(redir, ">>") == 0)
 		return (APPEND);
 	else if (ft_strcmp(redir, "<<") == 0)

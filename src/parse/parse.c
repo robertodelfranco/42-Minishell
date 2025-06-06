@@ -77,8 +77,8 @@ bool	parse(t_data *data)
 	if (!parse_args(data))
 		return (free_program(data, "Error parsing arguments"));
 	print_list(data);
-	dup2(STDIN_FILENO, data->fd[0]);
-	dup2(STDOUT_FILENO, data->fd[1]);
+	data->fd[0] = dup(STDIN_FILENO);
+	data->fd[1] = dup(STDOUT_FILENO);
 	if (!build_stack(data))
 		return (free_program(data, "Error building stack"));
 	return (true);
@@ -90,7 +90,7 @@ bool	validate_tokens(t_data *data)
 	t_token	*last;
 
 	cur = data->token_list;
-	if (cur->type == PIPE || cur->type == WORD)
+	if (cur->type == PIPE)
 		return (false);
 	last = ft_last(data->token_list);
 	if (last->type == PIPE || last->type == REDIR)

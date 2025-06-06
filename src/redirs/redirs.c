@@ -1,0 +1,106 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirs.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/06 17:14:38 by marvin            #+#    #+#             */
+/*   Updated: 2025/06/06 17:14:38 by marvin           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../include/minishell.h"
+
+void	execute_redir_in(t_redir *redir, t_data *data)
+{
+	int	fd;
+
+	fd = open(redir->target, O_RDONLY);
+	if (fd < 0)
+	{
+		perror("redirection in error: could not open file");
+		b_exit(data, NULL);
+	}
+	if (redir->target)
+	{
+		if (dup2(fd, STDIN_FILENO) < 0)
+		{
+			close(fd);
+			perror("dup2 failed on redir in");
+			b_exit(data, NULL);
+		}
+		close(fd);
+	}
+	else
+	{
+		perror("redirection in error: no target specified\n");
+		b_exit(data, NULL);
+	}
+}
+
+void	execute_redir_out(t_redir *redir, t_data *data)
+{
+	int	fd;
+
+	fd = open(redir->target, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	if (fd < 0)
+	{
+		perror("redirection out error: could not open file");
+		b_exit(data, NULL);
+	}
+	if (redir->target)
+	{
+		if (dup2(fd, STDOUT_FILENO) < 0)
+		{
+			close(fd);
+			perror("dup2 failed on redir out");
+			b_exit(data, NULL);
+		}
+		close(fd);
+	}
+	else
+	{
+		perror("redirection out error: no target specified\n");
+		b_exit(data, NULL);
+	}
+}
+
+void	execute_redir_append(t_redir *redir, t_data *data)
+{
+	int	fd;
+
+	fd = open(redir->target, O_CREAT | O_APPEND | O_WRONLY, 0644);
+	if (fd < 0)
+	{
+		perror("redirection append error: could not open file");
+		b_exit(data, NULL);
+	}
+	if (redir->target)
+	{
+		if (dup2(fd, STDOUT_FILENO) < 0)
+		{
+			close(fd);
+			perror("dup2 failed on redir append");
+			b_exit(data, NULL);
+		}
+		close(fd);
+	}
+	else
+	{
+		perror("redirection append error: no target specified\n");
+		b_exit(data, NULL);
+	}
+}
+
+void	identify_redirs(t_redir *redir, t_data *data)
+{
+	if (redir->type == IN_REDIR)
+		execute_redir_in(redir, data);
+	else if (redir->type == OUT_REDIR)
+		execute_redir_out(redir, data);
+	else if (redir->type == APPEND)
+		execute_redir_append(redir, data);
+}
+	// else if (redir->type == HEREDOC)
+	// 	execute_redir_heredoc(redir, node, data);
