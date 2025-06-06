@@ -20,19 +20,18 @@ void	ft_dup_and_close(int fd, int dup, int clos)
 		close(clos);
 }
 
-bool	execute_first_command(t_data *data, t_node *cur, int fd[2])
+bool	execute_first_command(t_data *data, t_node *cur)
 {
 	char	**env_array;
 	char	*full_path;
 
-	ft_dup_and_close(fd[1], STDOUT_FILENO, fd[0]);
 	env_array = get_env_array(data->env_list);
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
 		{
 			ft_free_matrix(env_array);
-			b_exit(data, cur->cmd);
+			b_exit(data, NULL);
 		}
 		return (false);
 	}
@@ -48,20 +47,18 @@ bool	execute_first_command(t_data *data, t_node *cur, int fd[2])
 	return (true);
 }
 
-bool	execute_middle_command(t_data *data, t_node *cur, int fd[2], int prev)
+bool	execute_middle_command(t_data *data, t_node *cur)
 {
 	char	**env_array;
 	char	*full_path;
 
-	ft_dup_and_close(prev, STDIN_FILENO, fd[0]);
-	ft_dup_and_close(fd[1], STDOUT_FILENO, -1);
 	env_array = get_env_array(data->env_list);
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
 		{
 			ft_free_matrix(env_array);
-			b_exit(data, cur->cmd);
+			b_exit(data, NULL);
 		}
 		return (false);
 	}
@@ -77,19 +74,18 @@ bool	execute_middle_command(t_data *data, t_node *cur, int fd[2], int prev)
 	return (true);
 }
 
-bool	execute_last_command(t_data *data, t_node *cur, int fd[2], int prev_fd)
+bool	execute_last_command(t_data *data, t_node *cur)
 {
 	char	**env_array;
 	char	*full_path;
 
-	ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
 	env_array = get_env_array(data->env_list);
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
 		{
 			ft_free_matrix(env_array);
-			b_exit(data, cur->cmd);
+			b_exit(data, NULL);
 		}
 		return (false);
 	}

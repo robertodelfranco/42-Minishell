@@ -14,15 +14,29 @@
 
 bool	execute_one_command(t_data *data, t_node *cur)
 {
+	if (cur->redir)
+		identify_redirs(cur->redir, data);
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
+		{
+			dup2(data->fd[0], STDIN_FILENO);
+			dup2(data->fd[1], STDOUT_FILENO);
+			close(data->fd[0]);
+			close(data->fd[1]);
 			return (true);
+		}
 	}
 	else if (cur->node_type == EXTERNAL)
 	{
 		if (execute_external(data, cur))
+		{
+			dup2(data->fd[0], STDIN_FILENO);
+			dup2(data->fd[1], STDOUT_FILENO);
+			close(data->fd[0]);
+			close(data->fd[1]);
 			return (true);
+		}
 	}
 	else if (cur->node_type == EXPAND)
 	{
@@ -31,21 +45,33 @@ bool	execute_one_command(t_data *data, t_node *cur)
 		return (false);
 	}
 	else
-	{
-		printf("Unknown command type: %d\n", cur->node_type);
-		return (false);
-	}
+		return(printf("Unknown command type: %d\n", cur->node_type));
 	return (false);
 }
 
 static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 {
 	if (cur->prev == NULL)
-		execute_first_command(data, cur, fd);
+	{
+		if (!cur->redir)
+			ft_dup_and_close(fd[1], STDOUT_FILENO, fd[0]);
+		execute_first_command(data, cur);
+	}
 	else if (cur->next == NULL)
-		execute_last_command(data, cur, fd, prev_fd);
+	{
+		if (!cur->redir)
+			ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
+		execute_last_command(data, cur);
+	}
 	else
-		execute_middle_command(data, cur, fd, prev_fd);
+	{
+		if (!cur->redir)
+		{
+			ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
+			ft_dup_and_close(fd[1], STDOUT_FILENO, -1);
+		}
+		execute_middle_command(data, cur);
+	}
 	return (true);
 }
 
@@ -81,7 +107,11 @@ bool	executor(t_data *data)
 		if (pid < 0)
 			return (free_program(data, "Fork failed"));
 		if (pid == 0)
+		{
+			if (cur->redir)
+				identify_redirs(cur->redir, data);
 			return (handle_child(data, cur, fd, prev_fd));
+		}
 		handle_parent(cur, fd, &prev_fd, pid);
 		cur = cur->next;
 	}

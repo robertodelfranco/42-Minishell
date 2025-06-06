@@ -33,11 +33,12 @@ SRCS		=	./src/main.c \
 				./src/builtin/export_utils.c \
 				./src/expansion/init_env.c \
 				./src/expansion/expand.c \
-				./src/expansion/expand_utils.c
+				./src/expansion/expand_utils.c \
+				./src/redirs/redirs.c
 
 OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 OBJ_DIR		=	objs
-VPATH		=	./src ./src/builtin ./src/token ./src/parse ./src/executor ./src/expansion ./src/pipes
+VPATH		=	./src ./src/builtin ./src/token ./src/parse ./src/executor ./src/expansion ./src/pipes ./src/redirs
 
 all: libft ${NAME}
 
