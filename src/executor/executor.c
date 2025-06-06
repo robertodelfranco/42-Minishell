@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/30 15:43:48 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/02 15:51:16 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,28 @@ bool	execute_one_command(t_data *data, t_node *cur)
 	return (false);
 }
 
+static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
+{
+	if (cur->prev == NULL)
+		execute_first_command(data, cur, fd);
+	else if (cur->next == NULL)
+		execute_last_command(data, cur, fd, prev_fd);
+	else
+		execute_middle_command(data, cur, fd, prev_fd);
+	return (true);
+}
+
+static bool	handle_parent(t_node *cur, int fd[2], int *prev_fd, pid_t pid)
+{
+	if (*prev_fd != -1)
+		close(*prev_fd);
+	if (cur->next != NULL)
+		close(fd[1]);
+	*prev_fd = fd[0];
+	waitpid(pid, NULL, 0);
+	return (true);
+}
+
 bool	executor(t_data *data)
 {
 	t_node	*cur;
@@ -53,30 +75,14 @@ bool	executor(t_data *data)
 	{
 		if (cur->node_type == PIPE)
 			cur = cur->next;
-		if (cur->next != NULL)
-			if (pipe(fd) == -1)
-				return (free_program(data, "Pipe creation failed"));
+		if (cur->next && pipe(fd) == -1)
+			return (free_program(data, "Pipe creation failed"));
 		pid = fork();
 		if (pid < 0)
 			return (free_program(data, "Fork failed"));
 		if (pid == 0)
-		{
-			if (cur->prev == NULL)
-				execute_first_command(data, cur, fd);
-			else if (cur->next == NULL)
-				execute_last_command(data, cur, fd, prev_fd);
-			else
-				execute_middle_command(data, cur, fd, prev_fd);
-		}
-		else
-		{
-			if (prev_fd != -1)
-				close(prev_fd);
-			if (cur->next != NULL)
-				close(fd[1]);
-			prev_fd = fd[0];
-			waitpid(pid, NULL, 0);
-		}
+			return (handle_child(data, cur, fd, prev_fd));
+		handle_parent(cur, fd, &prev_fd, pid);
 		cur = cur->next;
 	}
 	return (true);

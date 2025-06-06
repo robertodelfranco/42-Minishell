@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/30 15:11:57 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/02 15:22:47 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ bool	execute_built_in(t_data *data, t_node *cur)
 		env(data, cur->cmd);
 	else if (type == EXIT)
 		b_exit(data, cur->cmd);
+	else if (type == EXPORT)
+		b_export(data, cur->cmd);
 	else
 	{
 		printf("Unknown built-in command: %s\n", cur->cmd[0]);

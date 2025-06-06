@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/30 15:11:06 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/02 15:22:09 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,6 +188,8 @@ void	pwd(t_data *data);
 void	cd(t_data *data, char **argv);
 	// exit
 void	b_exit(t_data *data, char **argv);
+	//
+void	b_export(t_data *data, char **argv);
 
 // free_list
 void	ft_free_env_list(t_data *data);

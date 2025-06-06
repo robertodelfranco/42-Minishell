@@ -3,14 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:22:45 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/27 18:55:59 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/02 13:01:42 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+bool	verify_tokens(t_data *data)
+{
+	if (data->token_list == NULL)
+	{
+		free_program(data, "No tokens found");
+		return (false);
+	}
+	return (true);
+}
 
 int	main(int ac, char **av, char **env)
 {
@@ -30,11 +40,8 @@ int	main(int ac, char **av, char **env)
 		add_history(data->prompt);
 		ft_init_env(data, env);
 		create_token(data);
-		if (data->token_list == NULL)
-		{
-			free_program(data, "No tokens found");
+		if (!verify_tokens(data))
 			continue ;
-		}
 		if (!parse(data))
 			continue ;
 		if (!executor(data))

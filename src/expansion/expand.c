@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:40:55 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/30 14:47:11 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/04 19:39:41 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ char	*get_variable_value(t_data *data, char *str)
 	t_env	*cur;
 
 	cur = data->env_list;
+	if (str[0] == '\0')
+		return (ft_strdup("$"));
 	if (str[0] == '$')
 		return (ft_itoa(getpid()));
 	if (str[0] == '?')
