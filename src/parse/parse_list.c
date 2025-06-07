@@ -12,6 +12,20 @@
 
 #include "../../include/minishell.h"
 
+void	get_redirs(t_parse *node, t_token **cur)
+{
+	while (*cur && (*cur)->type != PIPE)
+	{
+		if ((*cur)->type == REDIR)
+		{
+			append_redir(&node->redir, *cur);
+			*cur = (*cur)->next->next;
+		}
+		else
+			*cur = (*cur)->next;
+	}
+}
+
 bool	parse_args(t_data *data)
 {
 	t_type	type;
@@ -21,19 +35,14 @@ bool	parse_args(t_data *data)
 	cur = data->token_list;
 	while (cur)
 	{
-		if (cur->type == PIPE || cur->type == EXPAND || cur->type == WORD)
+		if (cur->type == PIPE || (cur->next == NULL && (cur->type == EXPAND
+					|| cur->type == WORD)))
 			add_parse_list(data, get_operations(cur), cur->type);
 		if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
 		{
 			type = cur->type;
-			node = add_parse_list(data, get_arguments(&cur), type);
-			if (cur == NULL)
-				break ;
-			if (cur->type == REDIR)
-			{
-				node->redir = create_redir(cur->value, cur->next->value);
-				cur = cur->next->next;
-			}
+			node = add_parse_list(data, get_arguments(cur), type);
+			get_redirs(node, &cur);
 		}
 		else
 			cur = cur->next;
@@ -65,16 +74,26 @@ t_parse	*add_parse_list(t_data *data, char **args, t_type type)
 	return (new_node);
 }
 
-t_redir	*create_redir(char *redir, char *target)
+void	append_redir(t_redir **redir_list, t_token *cur)
 {
 	t_redir	*new_redir;
+	t_redir	*last_redir;
 
 	new_redir = ft_calloc(1, sizeof(t_redir));
 	if (!new_redir)
-		return (NULL);
-	new_redir->target = target;
-	new_redir->type = ft_get_redir_type(redir);
-	return (new_redir);
+		return ;
+	new_redir->target = ft_strdup(cur->next->value);
+	new_redir->type = ft_get_redir_type(cur->value);
+	new_redir->next = NULL;
+	if (!*redir_list)
+		*redir_list = new_redir;
+	else
+	{
+		last_redir = *redir_list;
+		while (last_redir->next)
+			last_redir = last_redir->next;
+		last_redir->next = new_redir;
+	}
 }
 
 char	**get_operations(t_token *cur)
@@ -92,31 +111,30 @@ char	**get_operations(t_token *cur)
 	return (args);
 }
 
-char	**get_arguments(t_token **cur)
+char	**get_arguments(t_token *cur)
 {
-	t_token	*count;
+	t_token	*temp;
 	char	**args;
 	int		i;
 
-	i = 1;
-	count = (*cur)->next;
-	while (count && count->type != PIPE && count->type != REDIR)
-	{
-		i++;
-		count = count->next;
-	}
+	i = ft_count_tokens(cur);
 	args = ft_calloc(i + 1, sizeof(char *));
 	if (!args)
 		return (NULL);
 	i = 0;
-	args[i++] = ft_strdup((*cur)->value);
-	(*cur) = (*cur)->next;
-	while ((*cur) != NULL && (*cur)->type != PIPE && (*cur)->type != REDIR)
+	args[i++] = ft_strdup(cur->value);
+	temp = cur->next;
+	while (temp != NULL && temp->type != PIPE)
 	{
-		args[i++] = ft_strdup((*cur)->value);
+		if (temp->type == REDIR)
+		{
+			temp = temp->next->next;
+			continue ;
+		}
+		args[i++] = ft_strdup(temp->value);
 		if (!args[i - 1])
 			return (NULL);
-		*cur = (*cur)->next;
+		temp = temp->next;
 	}
 	return (args);
 }

@@ -101,12 +101,26 @@ bool	execute_redir_append(t_redir *redir, t_data *data)
 
 bool	identify_redirs(t_redir *redir, t_data *data)
 {
-	if (redir->type == IN_REDIR)
-		return (execute_redir_in(redir, data));
-	else if (redir->type == OUT_REDIR)
-		return (execute_redir_out(redir, data));
-	else if (redir->type == APPEND)
-		return (execute_redir_append(redir, data));
+	t_redir	*cur;
+
+	cur = redir;
+	while (cur)
+	{
+		if (cur->type == IN_REDIR)
+		{	
+			if (!execute_redir_in(cur, data))
+				return (false);
+		}
+		else if (cur->type == OUT_REDIR)
+		{
+			if (!execute_redir_out(cur, data))
+				return (false);
+		}
+		else if (cur->type == APPEND)
+			if (!execute_redir_append(cur, data))
+				return (false);
+		cur = cur->next;
+	}
 	return (true);
 }
 	// else if (redir->type == HEREDOC)
