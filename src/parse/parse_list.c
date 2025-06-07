@@ -12,20 +12,6 @@
 
 #include "../../include/minishell.h"
 
-void	get_redirs(t_parse *node, t_token **cur)
-{
-	while (*cur && (*cur)->type != PIPE)
-	{
-		if ((*cur)->type == REDIR)
-		{
-			append_redir(&node->redir, *cur);
-			*cur = (*cur)->next->next;
-		}
-		else
-			*cur = (*cur)->next;
-	}
-}
-
 bool	parse_args(t_data *data)
 {
 	t_type	type;

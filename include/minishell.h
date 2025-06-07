@@ -135,6 +135,7 @@ bool	validate_tokens(t_data *data);
 t_type	ft_get_redir_type(char *redir);
 t_type	ft_get_cmd_type(char *value);
 int		ft_count_tokens(t_token *cur);
+void	get_redirs(t_parse *node, t_token **cur);
 
 // parse_list
 bool	parse_args(t_data *data);

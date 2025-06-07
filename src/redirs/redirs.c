@@ -107,7 +107,7 @@ bool	identify_redirs(t_redir *redir, t_data *data)
 	while (cur)
 	{
 		if (cur->type == IN_REDIR)
-		{	
+		{
 			if (!execute_redir_in(cur, data))
 				return (false);
 		}
