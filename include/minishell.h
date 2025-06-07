@@ -113,7 +113,7 @@ typedef struct s_node
 }	t_node;
 
 //read
-char	*ft_readline(void);
+char	*ft_readline(t_data *data, char **env);
 
 // token
 int		create_token(t_data *data);
@@ -194,7 +194,7 @@ void	b_exit(t_data *data, char **argv);
 void	b_export(t_data *data, char **argv);
 
 // redirs
-void	identify_redirs(t_redir *redir, t_data *data);
+bool	identify_redirs(t_redir *redir, t_data *data);
 
 // free_list
 void	ft_free_env_list(t_data *data);
