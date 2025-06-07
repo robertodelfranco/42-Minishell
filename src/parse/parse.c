@@ -76,13 +76,13 @@ bool	parse(t_data *data)
 		return (free_program(data, "Invalid tokens"));
 	if (!parse_args(data))
 		return (free_program(data, "Error parsing arguments"));
-	print_list(data);
 	data->fd[0] = dup(STDIN_FILENO);
 	data->fd[1] = dup(STDOUT_FILENO);
 	if (!build_stack(data))
 		return (free_program(data, "Error building stack"));
 	return (true);
 }
+// print_list(data);
 
 bool	validate_tokens(t_data *data)
 {

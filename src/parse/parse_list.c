@@ -21,7 +21,7 @@ bool	parse_args(t_data *data)
 	cur = data->token_list;
 	while (cur)
 	{
-		if (cur->type == PIPE || cur->type == EXPAND)
+		if (cur->type == PIPE || cur->type == EXPAND || cur->type == WORD)
 			add_parse_list(data, get_operations(cur), cur->type);
 		if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
 		{
