@@ -45,3 +45,35 @@ t_type	ft_get_cmd_type(char *value)
 	else
 		return (EXTERNAL);
 }
+
+int	ft_count_tokens(t_token *cur)
+{
+	int	count;
+
+	count = 0;
+	while (cur && cur->type != PIPE)
+	{
+		if (cur->type == REDIR)
+		{
+			cur = cur->next->next;
+			continue ;
+		}
+		count++;
+		cur = cur->next;
+	}
+	return (count);
+}
+
+void	get_redirs(t_parse *node, t_token **cur)
+{
+	while (*cur && (*cur)->type != PIPE)
+	{
+		if ((*cur)->type == REDIR)
+		{
+			append_redir(&node->redir, *cur);
+			*cur = (*cur)->next->next;
+		}
+		else
+			*cur = (*cur)->next;
+	}
+}

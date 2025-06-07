@@ -63,8 +63,9 @@ typedef enum e_token_type
 
 typedef struct s_redir
 {
-	t_type	type;
-	char	*target;
+	t_type			type;
+	char			*target;
+	struct s_redir	*next;
 }	t_redir;
 
 typedef struct s_env
@@ -113,7 +114,7 @@ typedef struct s_node
 }	t_node;
 
 //read
-char	*ft_readline(void);
+char	*ft_readline(t_data *data, char **env);
 
 // token
 int		create_token(t_data *data);
@@ -133,13 +134,15 @@ bool	validate_tokens(t_data *data);
 // parse_utils
 t_type	ft_get_redir_type(char *redir);
 t_type	ft_get_cmd_type(char *value);
+int		ft_count_tokens(t_token *cur);
+void	get_redirs(t_parse *node, t_token **cur);
 
 // parse_list
 bool	parse_args(t_data *data);
 t_parse	*add_parse_list(t_data *data, char **args, t_type type);
-t_redir	*create_redir(char *redir, char *target);
+void	append_redir(t_redir **redir_list, t_token *cur);
 char	**get_operations(t_token *cur);
-char	**get_arguments(t_token **cur);
+char	**get_arguments(t_token *cur);
 
 // parse_stack
 bool	build_stack(t_data *data);
@@ -194,7 +197,7 @@ void	b_exit(t_data *data, char **argv);
 void	b_export(t_data *data, char **argv);
 
 // redirs
-void	identify_redirs(t_redir *redir, t_data *data);
+bool	identify_redirs(t_redir *redir, t_data *data);
 
 // free_list
 void	ft_free_env_list(t_data *data);

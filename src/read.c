@@ -12,7 +12,15 @@
 
 #include "../include/minishell.h"
 
-char	*ft_readline(void)
+char	*ft_readline(t_data *data, char **env)
 {
-	return (readline(COLOR "Minihell $ " RESET));
+	data->prompt = readline(COLOR "Minihell $ " RESET);
+	if (data->prompt[0] == '\0')
+	{
+		free_program(data, NULL);
+		return (NULL);
+	}
+	add_history(data->prompt);
+	ft_init_env(data, env);
+	return (data->prompt);
 }

@@ -12,15 +12,16 @@
 
 #include "../../include/minishell.h"
 
-void	execute_redir_in(t_redir *redir, t_data *data)
+bool	execute_redir_in(t_redir *redir, t_data *data)
 {
 	int	fd;
 
 	fd = open(redir->target, O_RDONLY);
+	(void)data;
 	if (fd < 0)
 	{
 		perror("redirection in error: could not open file");
-		b_exit(data, NULL);
+		return (false);
 	}
 	if (redir->target)
 	{
@@ -28,26 +29,28 @@ void	execute_redir_in(t_redir *redir, t_data *data)
 		{
 			close(fd);
 			perror("dup2 failed on redir in");
-			b_exit(data, NULL);
+			return (false);
 		}
 		close(fd);
 	}
 	else
 	{
 		perror("redirection in error: no target specified\n");
-		b_exit(data, NULL);
+		return (false);
 	}
+	return (true);
 }
 
-void	execute_redir_out(t_redir *redir, t_data *data)
+bool	execute_redir_out(t_redir *redir, t_data *data)
 {
 	int	fd;
 
 	fd = open(redir->target, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	(void)data;
 	if (fd < 0)
 	{
 		perror("redirection out error: could not open file");
-		b_exit(data, NULL);
+		return (false);
 	}
 	if (redir->target)
 	{
@@ -55,26 +58,28 @@ void	execute_redir_out(t_redir *redir, t_data *data)
 		{
 			close(fd);
 			perror("dup2 failed on redir out");
-			b_exit(data, NULL);
+			return (false);
 		}
 		close(fd);
 	}
 	else
 	{
 		perror("redirection out error: no target specified\n");
-		b_exit(data, NULL);
+		return (false);
 	}
+	return (true);
 }
 
-void	execute_redir_append(t_redir *redir, t_data *data)
+bool	execute_redir_append(t_redir *redir, t_data *data)
 {
 	int	fd;
 
 	fd = open(redir->target, O_CREAT | O_APPEND | O_WRONLY, 0644);
+	(void)data;
 	if (fd < 0)
 	{
 		perror("redirection append error: could not open file");
-		b_exit(data, NULL);
+		return (false);
 	}
 	if (redir->target)
 	{
@@ -82,25 +87,41 @@ void	execute_redir_append(t_redir *redir, t_data *data)
 		{
 			close(fd);
 			perror("dup2 failed on redir append");
-			b_exit(data, NULL);
+			return (false);
 		}
 		close(fd);
 	}
 	else
 	{
 		perror("redirection append error: no target specified\n");
-		b_exit(data, NULL);
+		return (false);
 	}
+	return (true);
 }
 
-void	identify_redirs(t_redir *redir, t_data *data)
+bool	identify_redirs(t_redir *redir, t_data *data)
 {
-	if (redir->type == IN_REDIR)
-		execute_redir_in(redir, data);
-	else if (redir->type == OUT_REDIR)
-		execute_redir_out(redir, data);
-	else if (redir->type == APPEND)
-		execute_redir_append(redir, data);
+	t_redir	*cur;
+
+	cur = redir;
+	while (cur)
+	{
+		if (cur->type == IN_REDIR)
+		{
+			if (!execute_redir_in(cur, data))
+				return (false);
+		}
+		else if (cur->type == OUT_REDIR)
+		{
+			if (!execute_redir_out(cur, data))
+				return (false);
+		}
+		else if (cur->type == APPEND)
+			if (!execute_redir_append(cur, data))
+				return (false);
+		cur = cur->next;
+	}
+	return (true);
 }
 	// else if (redir->type == HEREDOC)
 	// 	execute_redir_heredoc(redir, node, data);
