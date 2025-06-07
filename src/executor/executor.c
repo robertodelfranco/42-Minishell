@@ -24,32 +24,37 @@ bool	fd_restore(t_data *data)
 bool	execute_one_command(t_data *data, t_node *cur)
 {
 	if (cur->redir)
-		identify_redirs(cur->redir, data);
+		if (!identify_redirs(cur->redir, data))
+			return (false);
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
+		{
+			data->exit_status = 0;
 			return (fd_restore(data));
+		}
 	}
 	else if (cur->node_type == EXTERNAL)
 	{
 		if (execute_external(data, cur))
+		{
+			data->exit_status = 0;
 			return (fd_restore(data));
-	}
-	else if (cur->node_type == EXPAND)
-	{
-		ft_printf_fd(2, "bash: %s: No such file or directory\n",
-			getenv(&cur->cmd[0][1]));
-		return (false);
+		}
 	}
 	else
-		return (printf("Unknown command type: %d\n", cur->node_type));
+	{
+		data->exit_status = CMD_NOT_FOUND;
+		printf("bash: %s: command not found\n", cur->cmd[0]);
+	}
 	return (false);
 }
 
 static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 {
 	if (cur->redir)
-		identify_redirs(cur->redir, data);
+		if (!identify_redirs(cur->redir, data))
+			return (false);
 	if (cur->prev == NULL)
 	{
 		if (!cur->redir)
@@ -110,5 +115,6 @@ bool	executor(t_data *data)
 		handle_parent(cur, fd, &prev_fd, pid);
 		cur = cur->next;
 	}
+	data->exit_status = 0;
 	return (true);
 }
