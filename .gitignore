@@ -8,6 +8,8 @@ objs/
 *.txt
 teste
 teste*
+*.sh
+*.bash
 
 # arquivos de compilação
 minishell
