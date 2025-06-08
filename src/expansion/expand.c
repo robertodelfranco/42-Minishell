@@ -110,8 +110,7 @@ bool	ft_expand(t_data *data)
 	cur = data->token_list;
 	while (cur)
 	{
-		if (cur->value && (cur->type == EXPAND || cur->type == WORD
-				|| cur->type == DOUB_QUOTE))
+		if (cur->value && (cur->type == EXPAND || cur->type == WORD))
 		{
 			if (ft_strchr(cur->value, '$'))
 			{

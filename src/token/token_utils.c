@@ -49,6 +49,8 @@ t_type	get_command(char *token_name)
 		return (BUILT_IN);
 	else if (ft_strcmp(token_name, "exit") == 0)
 		return (BUILT_IN);
+	else if (token_name[0] == '\0')
+		return (WORD);
 	else if ((token_name[0] == '.' && token_name[1] == '/')
 		|| token_name[0] == '.')
 		return (EXTERNAL);
