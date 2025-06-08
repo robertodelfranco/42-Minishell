@@ -1,7 +1,3 @@
-
-teste_pipe.c
-teste.c
-
 #pastas
 .vscode/
 objs/
@@ -12,8 +8,6 @@ objs/
 *.txt
 teste
 teste*
-hi
-
 
 # arquivos de compilação
 minishell
