@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 14:44:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/30 15:11:38 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/16 12:05:17 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,24 +31,6 @@ int	ft_ptr_len(char **str)
 		i++;
 	}
 	return (total);
-}
-
-int	ft_strchr_count(char const *str, char c)
-{
-	int		i;
-	int		count;
-
-	i = 0;
-	count = 0;
-	while (str[i])
-	{
-		if (str[i] == c)
-			count += 1;
-		i++;
-	}
-	if (str[i] == c)
-		count += 1;
-	return (count);
 }
 
 void	ft_free_key_and_value(char *key, char *value)
