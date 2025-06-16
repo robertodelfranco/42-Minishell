@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 10:48:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/28 15:46:43 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/16 10:40:45 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ void	get_token(t_data *data, int start)
 	token_name = ft_substr(data->prompt, start, end - start);
 	id_token = give_id_token(token_name);
 	add_token_list(data, token_name, id_token);
-	ft_printf("%d %s\n", id_token, token_name);
 	free(token_name);
 }
 

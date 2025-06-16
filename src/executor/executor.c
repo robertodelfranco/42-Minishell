@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/02 15:51:16 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/06/16 10:48:06 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 			return (false);
 	if (cur->prev == NULL)
 	{
-		if (!cur->redir)
+		if (!cur->redir || cur->redir->type == IN_REDIR)
 			ft_dup_and_close(fd[1], STDOUT_FILENO, fd[0]);
 		execute_first_command(data, cur);
 	}

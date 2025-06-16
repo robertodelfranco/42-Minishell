@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:22:45 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/02 13:01:42 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/06/16 10:55:11 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,6 @@ bool	verify_tokens(t_data *data)
 	}
 	return (true);
 }
-
-// #include <fcntl.h>
-// #include <stdio.h>
-// int main(int ac, char **av, char **env)
-// {
-// 	int fd;
-// 	int fd2;
-
-// 	fd = open("hi", O_RDONLY);
-// 	fd2 = open("ho", O_RDONLY);
-// 	printf("fd: %d, fd2: %d\n", fd, fd2);
-// }
 
 int	main(int ac, char **av, char **env)
 {
