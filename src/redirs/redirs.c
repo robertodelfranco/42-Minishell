@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirs.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:14:38 by marvin            #+#    #+#             */
-/*   Updated: 2025/06/06 17:14:38 by marvin           ###   ########.fr       */
+/*   Updated: 2025/06/16 15:13:06 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,38 @@ bool	execute_redir_append(t_redir *redir, t_data *data)
 	}
 	return (true);
 }
+/*
+bool	execute_redir_heredoc(t_redir **redir, t_data *data)
+{
+	int		fd;
+
+	fd = open((*redir)->target, O_RDONLY);
+	if (fd < 0)
+	{
+		perror("redirection heredoc error: could not open file");
+		*redir = (*redir)->next;
+		return (false);
+	}
+	if ((*redir)->target)
+	{
+		if (dup2(fd, STDIN_FILENO) < 0)
+		{
+			close(fd);
+			perror("dup2 failed on redir heredoc");
+			*redir = (*redir)->next;
+			return (false);
+		}
+		*redir = (*redir)->next;
+		close(fd);
+	}
+	else
+	{
+		perror("redirection heredoc error: no target specified\n");
+		return (false);
+	}
+	return (true);
+}
+*/
 
 bool	identify_redirs(t_redir *redir, t_data *data)
 {
@@ -117,11 +149,13 @@ bool	identify_redirs(t_redir *redir, t_data *data)
 				return (false);
 		}
 		else if (cur->type == APPEND)
+		{
 			if (!execute_redir_append(cur, data))
 				return (false);
+		}
+		else if (cur->type == HEREDOC)
+			ft_printf("Heredoc-> >%s<\n", cur->target);
 		cur = cur->next;
 	}
 	return (true);
 }
-	// else if (redir->type == HEREDOC)
-	// 	execute_redir_heredoc(redir, node, data);

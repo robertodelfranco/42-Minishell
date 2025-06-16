@@ -6,19 +6,21 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/28 15:55:47 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/16 16:53:21 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-bool	parse_args(t_data *data)
+bool	parse_args_list(t_data *data)
 {
 	t_type	type;
 	t_parse	*node;
 	t_token	*cur;
 
 	cur = data->token_list;
+	if (cur->type == REDIR)
+		get_redir_node(data->parse_list, &cur);
 	while (cur)
 	{
 		if (cur->type == PIPE || (cur->next == NULL && (cur->type == EXPAND

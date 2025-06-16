@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 14:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/28 15:57:39 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/16 16:41:15 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,20 @@ int	ft_count_tokens(t_token *cur)
 }
 
 void	get_redirs(t_parse *node, t_token **cur)
+{
+	while (*cur && (*cur)->type != PIPE)
+	{
+		if ((*cur)->type == REDIR)
+		{
+			append_redir(&node->redir, *cur);
+			*cur = (*cur)->next->next;
+		}
+		else
+			*cur = (*cur)->next;
+	}
+}
+
+void	get_redir_node(t_parse *node, t_token **cur)
 {
 	while (*cur && (*cur)->type != PIPE)
 	{

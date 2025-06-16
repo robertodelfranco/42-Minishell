@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/06/02 15:22:09 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/06/16 16:53:12 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ typedef enum e_token_type
 	UNSET,
 	EXPORT,
 	EXIT,
+	DOC_WORD,
 }	t_type;
 
 typedef struct s_redir
@@ -129,7 +130,6 @@ t_token	*ft_last(t_token *lst);
 
 // parse
 bool	parse(t_data *data);
-bool	validate_tokens(t_data *data);
 
 // parse_utils
 t_type	ft_get_redir_type(char *redir);
@@ -138,7 +138,7 @@ int		ft_count_tokens(t_token *cur);
 void	get_redirs(t_parse *node, t_token **cur);
 
 // parse_list
-bool	parse_args(t_data *data);
+bool	parse_args_list(t_data *data);
 t_parse	*add_parse_list(t_data *data, char **args, t_type type);
 void	append_redir(t_redir **redir_list, t_token *cur);
 char	**get_operations(t_token *cur);
