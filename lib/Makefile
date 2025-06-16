@@ -14,6 +14,7 @@ SRCS		=	./libft/ft_isalpha.c \
 				./libft/ft_strcmp.c \
 				./libft/ft_strncmp.c \
 				./libft/ft_strrchr.c \
+				./libft/ft_strchr_count.c \
 				./libft/ft_toupper.c \
 				./libft/ft_tolower.c \
 				./libft/ft_strnstr.c \
