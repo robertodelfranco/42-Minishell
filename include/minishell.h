@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/06/16 16:53:12 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/17 16:15:48 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,40 +117,39 @@ typedef struct s_node
 //read
 char	*ft_readline(t_data *data, char **env);
 
-// token
+// Tokenizer
+	// token
 int		create_token(t_data *data);
 void	get_token(t_data *data, int start);
 void	add_token_list(t_data *data, char *token_name, t_type id_token);
-
-// token_utils
+	// token_utils
 t_type	external_command(char *token_name);
 t_type	give_id_token(char *str);
 t_type	get_command(char *token_name);
 t_token	*ft_last(t_token *lst);
 
-// parse
+// Parser
+	// parse
 bool	parse(t_data *data);
-
-// parse_utils
+	// parse_utils
 t_type	ft_get_redir_type(char *redir);
 t_type	ft_get_cmd_type(char *value);
 int		ft_count_tokens(t_token *cur);
 void	get_redirs(t_parse *node, t_token **cur);
-
-// parse_list
+void	get_redir_node(t_data *data, t_token **tokens);
+	// parse_list
 bool	parse_args_list(t_data *data);
 t_parse	*add_parse_list(t_data *data, char **args, t_type type);
 void	append_redir(t_redir **redir_list, t_token *cur);
 char	**get_operations(t_token *cur);
 char	**get_arguments(t_token *cur);
-
-// parse_stack
+	// parse_stack
 bool	build_stack(t_data *data);
 void	add_stack_node(t_data *data, t_node *node);
 t_node	*create_pipe_node(t_type type);
 t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type);
 
-// expansion
+// Expansion
 	//init_env
 void	ft_init_env(t_data *data, char **env);
 void	add_env_list(t_data *data, t_env *new_node);
@@ -166,7 +165,7 @@ int		ft_strchr_count(char const *str, char c);
 void	ft_free_key_and_value(char *key, char *value);
 void	copy_value(char *str_expand, char *value, int *j);
 
-// executor
+// Executor
 bool	execute_one_command(t_data *data, t_node *cur);
 bool	executor(t_data *data);
 	// exec_cmd
@@ -182,7 +181,7 @@ bool	execute_first_command(t_data *data, t_node *cur);
 bool	execute_last_command(t_data *data, t_node *cur);
 bool	execute_middle_command(t_data *data, t_node *cur);
 
-// built_ins
+// Built_ins
 	// echo
 int		echo(char **args);
 	// env
@@ -196,17 +195,17 @@ void	b_exit(t_data *data, char **argv);
 	//
 void	b_export(t_data *data, char **argv);
 
-// redirs
+// Redirects
 bool	identify_redirs(t_redir *redir, t_data *data);
 
-// free_list
+// Clear Program
+	// free_list
 void	ft_free_env_list(t_data *data);
 void	ft_free_node_list(t_data *data);
 void	ft_free_parse_list(t_data *data);
 void	ft_free_token_list(t_data *data);
 // void	ft_free_pids(pid_t *pids);
-
-// clean
+	// clean
 bool	free_program(t_data *data, char *message);
 void	error_message(char *message);
 void	ft_free_matrix(char **ptr_matrix);

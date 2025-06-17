@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 14:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/16 16:41:15 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/17 18:48:28 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,11 @@ t_type	ft_get_redir_type(char *redir)
 
 t_type	ft_get_cmd_type(char *value)
 {
+	if (value == NULL)
+	{
+		printf("Entrei\n");
+		return (REDIR);
+	}
 	if (ft_strcmp(value, "echo") == 0)
 		return (ECHO);
 	else if (ft_strcmp(value, "pwd") == 0)
@@ -78,16 +83,23 @@ void	get_redirs(t_parse *node, t_token **cur)
 	}
 }
 
-void	get_redir_node(t_parse *node, t_token **cur)
+void	get_redir_node(t_data *data, t_token **tokens)
 {
-	while (*cur && (*cur)->type != PIPE)
+	t_parse	*first_node;
+
+	first_node = ft_calloc(1, sizeof(t_parse));
+	if (!first_node)
+		return ;
+	first_node->node_type = BUILT_IN;
+	while (*tokens && ((*tokens)->type == REDIR))
 	{
-		if ((*cur)->type == REDIR)
+		if ((*tokens)->type == REDIR)
 		{
-			append_redir(&node->redir, *cur);
-			*cur = (*cur)->next->next;
+			append_redir(&first_node->redir, *tokens);
+			*tokens = (*tokens)->next->next;
 		}
 		else
-			*cur = (*cur)->next;
+			*tokens = (*tokens)->next;
 	}
+	data->parse_list = first_node;
 }
