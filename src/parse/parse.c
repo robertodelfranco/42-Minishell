@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/16 17:24:23 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/18 12:58:35 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ static bool	validate_tokens(t_data *data)
 	return (true);
 }
 
-void	print_command(t_node *print)
+void	print_command(t_parse *print)
 {
 	int	i;
 
@@ -99,9 +99,9 @@ void	print_command(t_node *print)
 
 void	print_list(t_data *data)
 {
-	t_node	*print;
+	t_parse	*print;
 
-	print = data->exec_list;
+	print = data->parse_list;
 	while (print)
 	{
 		ft_printf("type = %d, ", print->node_type);
@@ -121,8 +121,7 @@ void	print_list(t_data *data)
 	}
 }
 
-// echo hi > hi echo "hello" >> ha < hi > hu > ho >> he > hh 
-// >> hc < hh > ll > kk > kd > ds < hi > jj < kk < ll >> jj
+// echo hi > hi echo "hello" >> ha < hi > hu > ho >> he > hh >> hc < hh > ll > kk > kd > ds < hi > jj < kk < ll >> jj
 bool	parse(t_data *data)
 {
 	if (!search_heredoc(data))
@@ -141,7 +140,5 @@ bool	parse(t_data *data)
 	data->fd[1] = dup(STDOUT_FILENO);
 	if (!build_stack(data))
 		return (free_program(data, "Error building stack"));
-	printf("Stack built successfully\n");
-	print_list(data);
 	return (true);
 }

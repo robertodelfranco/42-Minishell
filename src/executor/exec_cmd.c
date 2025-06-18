@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/17 19:23:30 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/18 14:26:50 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@ bool	execute_built_in(t_data *data, t_node *cur)
 {
 	t_type	type;
 
-	if (!cur->cmd)
-		printf("Redir in built-in command\n");
 	if (!cur->cmd)
 		return (true);
 	type = ft_get_cmd_type(cur->cmd[0]);

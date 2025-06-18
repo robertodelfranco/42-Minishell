@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/06/17 16:15:48 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/18 12:57:27 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,8 @@ typedef struct s_node
 	char			**cmd;
 	t_type			node_type;
 	t_redir			*redir;
+	t_redir			*fd_in;
+	t_redir			*fd_out;
 	struct s_node	*next;
 	struct s_node	*prev;
 }	t_node;

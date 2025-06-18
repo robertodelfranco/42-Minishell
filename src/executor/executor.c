@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/17 19:24:20 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/18 14:26:46 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,12 @@ bool	fd_restore(t_data *data)
 
 bool	execute_one_command(t_data *data, t_node *cur)
 {
-	if (cur->redir)
-		if (!identify_redirs(cur->redir, data))
-			return (false);
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
 		{
 			data->exit_status = 0;
-			return (fd_restore(data));
+			return (true);
 		}
 	}
 	else if (cur->node_type == EXTERNAL)
@@ -39,7 +36,7 @@ bool	execute_one_command(t_data *data, t_node *cur)
 		if (execute_external(data, cur))
 		{
 			data->exit_status = 0;
-			return (fd_restore(data));
+			return (true);
 		}
 	}
 	else
@@ -52,9 +49,6 @@ bool	execute_one_command(t_data *data, t_node *cur)
 
 static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 {
-	if (cur->redir)
-		if (!identify_redirs(cur->redir, data))
-			return (false);
 	if (cur->prev == NULL)
 	{
 		if (!cur->redir || cur->redir->type == IN_REDIR)
@@ -63,7 +57,7 @@ static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 	}
 	else if (cur->next == NULL)
 	{
-		if (!cur->redir)
+		if (cur->redir)
 			ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
 		execute_last_command(data, cur);
 	}
@@ -85,6 +79,10 @@ static bool	handle_parent(t_node *cur, int fd[2], int *prev_fd, pid_t pid)
 		close(*prev_fd);
 	if (cur->next != NULL)
 		close(fd[1]);
+	if (cur->fd_in != -1)
+		close(cur->fd_in);
+	if (cur->fd_out != -1)
+		close(cur->fd_out);
 	*prev_fd = fd[0];
 	waitpid(pid, NULL, 0);
 	return (true);
@@ -98,9 +96,13 @@ bool	executor(t_data *data)
 	int		prev_fd;
 
 	cur = data->exec_list;
+	if (cur->redir)
+		if (!identify_redirs(cur->redir, data))
+			return (false);
 	if (cur->next == NULL)
 		return (execute_one_command(data, cur));
 	prev_fd = -1;
+	execute_multiple_commands(data, cur, fd, prev_fd);
 	while (cur)
 	{
 		if (cur->node_type == PIPE)
