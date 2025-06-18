@@ -23,7 +23,7 @@ bool	fd_restore(t_data *data)
 
 bool	execute_one_command(t_data *data, t_node *cur)
 {
-	if (cur->redir && cur->node_type == BUILT_IN)
+	if (cur->redir)
 		if (!identify_redirs(cur->redir, data))
 			return (false);
 	if (cur->node_type == BUILT_IN)
@@ -47,7 +47,6 @@ bool	execute_one_command(t_data *data, t_node *cur)
 		data->exit_status = CMD_NOT_FOUND;
 		printf("bash: %s: command not found\n", cur->cmd[0]);
 	}
-	printf("return \n");
 	return (true);
 }
 
@@ -66,14 +65,12 @@ static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 	{
 		if (!cur->redir)
 			ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
-		printf("Executing last command...\n");
 		execute_last_command(data, cur);
 	}
 	else
 	{
 		if (!cur->redir)
 		{
-			printf("Executing middle command...\n");
 			ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
 			ft_dup_and_close(fd[1], STDOUT_FILENO, -1);
 		}
@@ -103,7 +100,6 @@ bool	executor(t_data *data)
 	cur = data->exec_list;
 	if (cur->next == NULL)
 		return (execute_one_command(data, cur));
-	printf("Executing multiple commands...\n");
 	prev_fd = -1;
 	while (cur)
 	{

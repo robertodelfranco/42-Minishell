@@ -17,10 +17,9 @@ bool	execute_built_in(t_data *data, t_node *cur)
 	t_type	type;
 
 	if (!cur->cmd)
-	{
 		printf("Redir in built-in command\n");
+	if (!cur->cmd)
 		return (true);
-	}
 	type = ft_get_cmd_type(cur->cmd[0]);
 	if (type == ECHO)
 		echo(cur->cmd);
@@ -58,9 +57,6 @@ bool	execute_external(t_data *data, t_node *cur)
 		return (free_program(data, "Fork failed"));
 	else if (pid == 0)
 	{
-		if (cur->redir)
-			if (!identify_redirs(cur->redir, data))
-				return (free_program(data, "Redirection failed"));
 		if (execve(full_path, cur->cmd, env_array) == -1)
 		{
 			free(full_path);

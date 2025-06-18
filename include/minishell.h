@@ -100,6 +100,7 @@ typedef struct s_data
 	int				fd[2];
 	t_token			*token_list;
 	t_parse			*parse_list;
+	t_redir			*redir_list;
 	struct s_node	*exec_list;
 	t_env			*env_list;
 	t_env			*env_copy;
@@ -131,23 +132,26 @@ t_token	*ft_last(t_token *lst);
 // Parser
 	// parse
 bool	parse(t_data *data);
-	// parse_utils
-t_type	ft_get_redir_type(char *redir);
-t_type	ft_get_cmd_type(char *value);
-int		ft_count_tokens(t_token *cur);
-void	get_redirs(t_parse *node, t_token **cur);
-void	get_redir_node(t_data *data, t_token **tokens);
 	// parse_list
 bool	parse_args_list(t_data *data);
 t_parse	*add_parse_list(t_data *data, char **args, t_type type);
 void	append_redir(t_redir **redir_list, t_token *cur);
 char	**get_operations(t_token *cur);
 char	**get_arguments(t_token *cur);
+	//parse_list_utils
+void	verify_pipeline(t_data *data, t_token **cur);
+void	get_redirs(t_parse *node, t_token **cur);
+void	get_redir_node(t_data *data, t_token **tokens);
 	// parse_stack
 bool	build_stack(t_data *data);
 void	add_stack_node(t_data *data, t_node *node);
 t_node	*create_pipe_node(t_type type);
 t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type);
+	// parse_types
+t_type	ft_get_redir_type(char *redir);
+t_type	ft_get_cmd_type(char *value);
+bool	get_new_types(t_data *data);
+int		ft_count_tokens(t_token *cur);
 
 // Expansion
 	//init_env
@@ -209,8 +213,5 @@ void	ft_free_token_list(t_data *data);
 bool	free_program(t_data *data, char *message);
 void	error_message(char *message);
 void	ft_free_matrix(char **ptr_matrix);
-
-void	print_list(t_data *data);
-void	print_command(t_parse *print);
 
 #endif

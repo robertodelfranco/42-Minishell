@@ -20,7 +20,7 @@ bool	parse_args_list(t_data *data)
 
 	cur = data->token_list;
 	if (cur->type == REDIR)
-		get_redir_node(data, &cur);
+		verify_pipeline(data, &cur);
 	while (cur)
 	{
 		if (cur->type == PIPE || (cur->next == NULL && (cur->type == EXPAND
@@ -48,8 +48,6 @@ t_parse	*add_parse_list(t_data *data, char **args, t_type type)
 		return (NULL);
 	new_node->cmd = args;
 	new_node->node_type = type;
-	new_node->redir = NULL;
-	new_node->next = NULL;
 	if (data->parse_list == NULL)
 		data->parse_list = new_node;
 	else
@@ -116,14 +114,14 @@ char	**get_arguments(t_token *cur)
 	while (temp != NULL && temp->type != PIPE)
 	{
 		if (temp->type == REDIR)
-		{
 			temp = temp->next->next;
-			continue ;
+		else
+		{
+			args[i++] = ft_strdup(temp->value);
+			if (!args[i - 1])
+				return (NULL);
+			temp = temp->next;
 		}
-		args[i++] = ft_strdup(temp->value);
-		if (!args[i - 1])
-			return (NULL);
-		temp = temp->next;
 	}
 	return (args);
 }

@@ -51,6 +51,22 @@ t_type	ft_get_cmd_type(char *value)
 		return (EXTERNAL);
 }
 
+bool	get_new_types(t_data *data)
+{
+	t_token	*cur;
+
+	cur = data->token_list;
+	while (cur)
+	{
+		if (!cur->value)
+			return (false);
+		else
+			cur->type = give_id_token(cur->value);
+		cur = cur->next;
+	}
+	return (true);
+}
+
 int	ft_count_tokens(t_token *cur)
 {
 	int	count;
@@ -67,39 +83,4 @@ int	ft_count_tokens(t_token *cur)
 		cur = cur->next;
 	}
 	return (count);
-}
-
-void	get_redirs(t_parse *node, t_token **cur)
-{
-	while (*cur && (*cur)->type != PIPE)
-	{
-		if ((*cur)->type == REDIR)
-		{
-			append_redir(&node->redir, *cur);
-			*cur = (*cur)->next->next;
-		}
-		else
-			*cur = (*cur)->next;
-	}
-}
-
-void	get_redir_node(t_data *data, t_token **tokens)
-{
-	t_parse	*first_node;
-
-	first_node = ft_calloc(1, sizeof(t_parse));
-	if (!first_node)
-		return ;
-	first_node->node_type = BUILT_IN;
-	while (*tokens && ((*tokens)->type == REDIR))
-	{
-		if ((*tokens)->type == REDIR)
-		{
-			append_redir(&first_node->redir, *tokens);
-			*tokens = (*tokens)->next->next;
-		}
-		else
-			*tokens = (*tokens)->next;
-	}
-	data->parse_list = first_node;
 }

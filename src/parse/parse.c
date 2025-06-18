@@ -12,22 +12,6 @@
 
 #include "../../include/minishell.h"
 
-static bool	get_new_types(t_data *data)
-{
-	t_token	*cur;
-
-	cur = data->token_list;
-	while (cur)
-	{
-		if (!cur->value)
-			return (false);
-		else
-			cur->type = give_id_token(cur->value);
-		cur = cur->next;
-	}
-	return (true);
-}
-
 static bool	handle_quotes(t_data *data)
 {
 	t_token	*cur;
@@ -99,6 +83,44 @@ static bool	validate_tokens(t_data *data)
 	return (true);
 }
 
+void	print_command(t_node *print)
+{
+	int	i;
+
+	i = 0;
+	ft_printf("cmd = ");
+	while (print->cmd[i])
+	{
+		ft_printf("%s ", print->cmd[i]);
+		i++;
+	}
+	ft_printf("\n");
+}
+
+void	print_list(t_data *data)
+{
+	t_node	*print;
+
+	print = data->exec_list;
+	while (print)
+	{
+		ft_printf("type = %d, ", print->node_type);
+		if (print->redir)
+		{
+			print_command(print);
+			while (print->redir)
+			{
+				ft_printf("redir = %d - target = %s\n", print->redir->type,
+					print->redir->target);
+				print->redir = print->redir->next;
+			}
+		}
+		else
+			print_command(print);
+		print = print->next;
+	}
+}
+
 // echo hi > hi echo "hello" >> ha < hi > hu > ho >> he > hh 
 // >> hc < hh > ll > kk > kd > ds < hi > jj < kk < ll >> jj
 bool	parse(t_data *data)
@@ -119,5 +141,7 @@ bool	parse(t_data *data)
 	data->fd[1] = dup(STDOUT_FILENO);
 	if (!build_stack(data))
 		return (free_program(data, "Error building stack"));
+	printf("Stack built successfully\n");
+	print_list(data);
 	return (true);
 }
