@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/18 16:09:34 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/18 17:22:20 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,14 @@ static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 	}
 	else if (cur->next == NULL)
 	{
+		dup_fds(cur);
 		if (cur->fd_in == -1)
 			ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
 		execute_last_command(data, cur);
 	}
 	else
 	{
+		dup_fds(cur);
 		if (cur->fd_in == -1)
 			ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
 		if (cur->fd_out == -1)
