@@ -6,11 +6,35 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:22:19 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/30 16:50:43 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/18 16:08:42 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+void	dup_fds(t_node *cur)
+{
+	if (cur->fd_in != -1)
+	{
+		if (dup2(cur->fd_in, STDIN_FILENO) < 0)
+		{
+			close(cur->fd_in);
+			perror("dup2 failed on redir");
+			return ;
+		}
+		close(cur->fd_in);
+	}
+	if (cur->fd_out != -1)
+	{
+		if (dup2(cur->fd_out, STDOUT_FILENO) < 0)
+		{
+			close(cur->fd_out);
+			perror("dup2 failed on redir");
+			return ;
+		}
+		close(cur->fd_out);
+	}
+}
 
 int	ft_listsize(t_env *list)
 {
@@ -25,6 +49,19 @@ int	ft_listsize(t_env *list)
 		i++;
 	}
 	return (i);
+}
+
+bool	fd_restore(t_data *data, t_node *cur)
+{
+	if (cur->fd_in != -1)
+		close(cur->fd_in);
+	if (cur->fd_out != -1)
+		close(cur->fd_out);
+	dup2(data->fd[0], STDIN_FILENO);
+	dup2(data->fd[1], STDOUT_FILENO);
+	close(data->fd[0]);
+	close(data->fd[1]);
+	return (true);
 }
 
 char	**get_env_array(t_env *env_list)

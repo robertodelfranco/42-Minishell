@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_list_utils.c                                 :+:      :+:    :+:   */
+/*   parse_list_redirs.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:53:57 by marvin            #+#    #+#             */
-/*   Updated: 2025/06/18 12:30:19 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/18 16:01:46 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	verify_pipeline(t_data *data, t_token **cur)
 	else
 	{
 		node = get_command_node(data, *cur);
-		while (*cur)
+		while (*cur && (*cur)->type != PIPE)
 		{
 			if ((*cur)->type == REDIR)
 			{

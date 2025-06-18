@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/18 14:26:50 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/18 16:14:43 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ bool	execute_built_in(t_data *data, t_node *cur)
 	if (!cur->cmd)
 		return (true);
 	type = ft_get_cmd_type(cur->cmd[0]);
+	dup_fds(cur);
 	if (type == ECHO)
 		echo(cur->cmd);
 	else if (type == CD)
@@ -45,6 +46,7 @@ bool	execute_external(t_data *data, t_node *cur)
 	char	**env_array;
 	int		pid;
 
+	dup_fds(cur);
 	env_array = get_env_array(data->env_list);
 	pid = fork();
 	if (cur->cmd[0][0] == '.' && cur->cmd[0][1] == '/')

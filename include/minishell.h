@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/06/18 12:57:27 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/18 15:48:51 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,8 +111,8 @@ typedef struct s_node
 	char			**cmd;
 	t_type			node_type;
 	t_redir			*redir;
-	t_redir			*fd_in;
-	t_redir			*fd_out;
+	int				fd_in;
+	int				fd_out;
 	struct s_node	*next;
 	struct s_node	*prev;
 }	t_node;
@@ -172,13 +172,14 @@ void	ft_free_key_and_value(char *key, char *value);
 void	copy_value(char *str_expand, char *value, int *j);
 
 // Executor
-bool	execute_one_command(t_data *data, t_node *cur);
 bool	executor(t_data *data);
 	// exec_cmd
 bool	execute_built_in(t_data *data, t_node *cur);
 bool	execute_external(t_data *data, t_node *cur);
 	// exec_utils
+void	dup_fds(t_node *cur);
 int		ft_listsize(t_env *list);
+bool	fd_restore(t_data *data, t_node *cur);
 char	**get_env_array(t_env *env_list);
 char	*ft_get_external_path(char *token_name);
 	// exec_pipes
@@ -202,7 +203,8 @@ void	b_exit(t_data *data, char **argv);
 void	b_export(t_data *data, char **argv);
 
 // Redirects
-bool	identify_redirs(t_redir *redir, t_data *data);
+bool	identify_redirs(t_redir *redir, t_node *node);
+bool	open_redirs(t_data *data);
 
 // Clear Program
 	// free_list
