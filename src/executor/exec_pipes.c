@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/30 15:45:49 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/19 15:54:20 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,10 @@ bool	execute_first_command(t_data *data, t_node *cur)
 		if (execute_built_in(data, cur))
 		{
 			ft_free_matrix(env_array);
-			b_exit(data, NULL);
+			free_program(data, "Built-in command failed");
+			exit(1);
 		}
+		ft_free_matrix(env_array);
 		return (false);
 	}
 	else if (cur->cmd[0][0] == '.' && cur->cmd[0][1] == '/')
@@ -40,10 +42,7 @@ bool	execute_first_command(t_data *data, t_node *cur)
 	else
 		full_path = ft_get_external_path(cur->cmd[0]);
 	if (execve(full_path, cur->cmd, env_array) == -1)
-	{
-		perror("execve");
 		exit(free_program(data, "Command execution failed"));
-	}
 	return (true);
 }
 
@@ -58,8 +57,10 @@ bool	execute_middle_command(t_data *data, t_node *cur)
 		if (execute_built_in(data, cur))
 		{
 			ft_free_matrix(env_array);
-			b_exit(data, NULL);
+			free_program(data, "Built-in command failed");
+			exit(1);
 		}
+		ft_free_matrix(env_array);
 		return (false);
 	}
 	else if (cur->cmd[0][0] == '.' && cur->cmd[0][1] == '/')
@@ -67,10 +68,7 @@ bool	execute_middle_command(t_data *data, t_node *cur)
 	else
 		full_path = ft_get_external_path(cur->cmd[0]);
 	if (execve(full_path, cur->cmd, env_array) == -1)
-	{
-		perror("execve");
 		exit(free_program(data, "Command execution failed"));
-	}
 	return (true);
 }
 
@@ -85,8 +83,10 @@ bool	execute_last_command(t_data *data, t_node *cur)
 		if (execute_built_in(data, cur))
 		{
 			ft_free_matrix(env_array);
-			b_exit(data, NULL);
+			free_program(data, "Built-in command failed");
+			exit(1);
 		}
+		ft_free_matrix(env_array);
 		return (false);
 	}
 	else if (cur->cmd[0][0] == '.' && cur->cmd[0][1] == '/')
@@ -94,9 +94,8 @@ bool	execute_last_command(t_data *data, t_node *cur)
 	else
 		full_path = ft_get_external_path(cur->cmd[0]);
 	if (execve(full_path, cur->cmd, env_array) == -1)
-	{
-		perror("execve");
 		exit(free_program(data, "Command execution failed"));
-	}
+	free(full_path);
+	ft_free_matrix(env_array);
 	return (true);
 }

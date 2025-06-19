@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/18 12:58:35 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/19 15:40:47 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,45 +83,8 @@ static bool	validate_tokens(t_data *data)
 	return (true);
 }
 
-void	print_command(t_parse *print)
-{
-	int	i;
-
-	i = 0;
-	ft_printf("cmd = ");
-	while (print->cmd[i])
-	{
-		ft_printf("%s ", print->cmd[i]);
-		i++;
-	}
-	ft_printf("\n");
-}
-
-void	print_list(t_data *data)
-{
-	t_parse	*print;
-
-	print = data->parse_list;
-	while (print)
-	{
-		ft_printf("type = %d, ", print->node_type);
-		if (print->redir)
-		{
-			print_command(print);
-			while (print->redir)
-			{
-				ft_printf("redir = %d - target = %s\n", print->redir->type,
-					print->redir->target);
-				print->redir = print->redir->next;
-			}
-		}
-		else
-			print_command(print);
-		print = print->next;
-	}
-}
-
-// echo hi > hi echo "hello" >> ha < hi > hu > ho >> he > hh >> hc < hh > ll > kk > kd > ds < hi > jj < kk < ll >> jj
+// echo hi > hi echo "hello" >> ha < hi > hu > ho >> he > hh 
+// >> hc < hh > ll > kk > kd > ds < hi > jj < kk < ll >> jj
 bool	parse(t_data *data)
 {
 	if (!search_heredoc(data))
