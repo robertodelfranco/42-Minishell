@@ -3,125 +3,102 @@
 /*                                                        :::      ::::::::   */
 /*   redirs.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:14:38 by marvin            #+#    #+#             */
-/*   Updated: 2025/06/06 17:14:38 by marvin           ###   ########.fr       */
+/*   Updated: 2025/06/18 16:10:59 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-bool	execute_redir_in(t_redir *redir, t_data *data)
+bool	execute_redir_in(t_redir *redir, t_node *cur)
 {
 	int	fd;
 
 	fd = open(redir->target, O_RDONLY);
-	(void)data;
 	if (fd < 0)
 	{
 		perror("redirection in error: could not open file");
 		return (false);
 	}
-	if (redir->target)
-	{
-		if (dup2(fd, STDIN_FILENO) < 0)
-		{
-			close(fd);
-			perror("dup2 failed on redir in");
-			return (false);
-		}
-		close(fd);
-	}
-	else
-	{
-		perror("redirection in error: no target specified\n");
-		return (false);
-	}
+	if (cur->fd_in != -1)
+		close(cur->fd_in);
+	cur->fd_in = fd;
 	return (true);
 }
 
-bool	execute_redir_out(t_redir *redir, t_data *data)
+bool	execute_redir_out(t_redir *redir, t_node *cur)
 {
 	int	fd;
 
 	fd = open(redir->target, O_CREAT | O_TRUNC | O_WRONLY, 0644);
-	(void)data;
 	if (fd < 0)
 	{
 		perror("redirection out error: could not open file");
 		return (false);
 	}
-	if (redir->target)
-	{
-		if (dup2(fd, STDOUT_FILENO) < 0)
-		{
-			close(fd);
-			perror("dup2 failed on redir out");
-			return (false);
-		}
-		close(fd);
-	}
-	else
-	{
-		perror("redirection out error: no target specified\n");
-		return (false);
-	}
+	if (cur->fd_out != -1)
+		close(cur->fd_out);
+	cur->fd_out = fd;
 	return (true);
 }
 
-bool	execute_redir_append(t_redir *redir, t_data *data)
+bool	execute_redir_append(t_redir *redir, t_node *cur)
 {
 	int	fd;
 
 	fd = open(redir->target, O_CREAT | O_APPEND | O_WRONLY, 0644);
-	(void)data;
 	if (fd < 0)
 	{
 		perror("redirection append error: could not open file");
 		return (false);
 	}
-	if (redir->target)
+	if (cur->fd_out != -1)
+		close(cur->fd_out);
+	cur->fd_out = fd;
+	return (true);
+}
+
+bool	identify_redirs(t_redir *redir, t_node *node)
+{
+	while (redir)
 	{
-		if (dup2(fd, STDOUT_FILENO) < 0)
+		if (redir->type == IN_REDIR)
 		{
-			close(fd);
-			perror("dup2 failed on redir append");
-			return (false);
+			if (!execute_redir_in(redir, node))
+				return (false);
 		}
-		close(fd);
-	}
-	else
-	{
-		perror("redirection append error: no target specified\n");
-		return (false);
+		else if (redir->type == OUT_REDIR)
+		{
+			if (!execute_redir_out(redir, node))
+				return (false);
+		}
+		else if (redir->type == APPEND)
+		{
+			if (!execute_redir_append(redir, node))
+				return (false);
+		}
+		else if (redir->type == HEREDOC)
+			ft_printf("Heredoc-> >%s<\n", redir->target);
+		redir = redir->next;
 	}
 	return (true);
 }
 
-bool	identify_redirs(t_redir *redir, t_data *data)
+bool	open_redirs(t_data *data)
 {
-	t_redir	*cur;
+	t_node *cur;
 
-	cur = redir;
+	cur = data->exec_list;
 	while (cur)
 	{
-		if (cur->type == IN_REDIR)
+		if (cur->redir)
 		{
-			if (!execute_redir_in(cur, data))
+			if (!identify_redirs(cur->redir, cur))
 				return (false);
 		}
-		else if (cur->type == OUT_REDIR)
-		{
-			if (!execute_redir_out(cur, data))
-				return (false);
-		}
-		else if (cur->type == APPEND)
-			if (!execute_redir_append(cur, data))
-				return (false);
 		cur = cur->next;
 	}
 	return (true);
 }
-	// else if (redir->type == HEREDOC)
-	// 	execute_redir_heredoc(redir, node, data);

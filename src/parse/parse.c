@@ -6,27 +6,11 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/30 16:52:21 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/18 12:58:35 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-static bool	get_new_types(t_data *data)
-{
-	t_token	*cur;
-
-	cur = data->token_list;
-	while (cur)
-	{
-		if (!cur->value)
-			return (false);
-		else
-			cur->type = give_id_token(cur->value);
-		cur = cur->next;
-	}
-	return (true);
-}
 
 static bool	handle_quotes(t_data *data)
 {
@@ -56,26 +40,26 @@ static bool	handle_quotes(t_data *data)
 	return (true);
 }
 
-bool	parse(t_data *data)
+static bool	search_heredoc(t_data *data)
 {
-	if (!handle_quotes(data))
-		return (free_program(data, "Quotes not closed"));
-	if (!ft_expand(data))
-		return (free_program(data, "Error expanding variables"));
-	if (!get_new_types(data))
-		return (free_program(data, "Error getting new types"));
-	if (!validate_tokens(data))
-		return (free_program(data, "Invalid tokens"));
-	if (!parse_args(data))
-		return (free_program(data, "Error parsing arguments"));
-	data->fd[0] = dup(STDIN_FILENO);
-	data->fd[1] = dup(STDOUT_FILENO);
-	if (!build_stack(data))
-		return (free_program(data, "Error building stack"));
+	t_token	*cur;
+
+	cur = data->token_list;
+	while (cur)
+	{
+		if (ft_strcmp(cur->value, "<<") == 0)
+		{
+			if (!cur->next)
+				return (false);
+			else if (cur->next)
+				cur->next->type = DOC_WORD;
+		}
+		cur = cur->next;
+	}
 	return (true);
 }
 
-bool	validate_tokens(t_data *data)
+static bool	validate_tokens(t_data *data)
 {
 	t_token	*cur;
 	t_token	*last;
@@ -88,18 +72,73 @@ bool	validate_tokens(t_data *data)
 		return (false);
 	while (cur)
 	{
-		if ((cur->type == PIPE && cur->next->type != BUILT_IN
-				&& cur->next->type != EXTERNAL && cur->next->type != EXPAND)
-			|| (cur->type == PIPE && cur->next == NULL))
-			return (false);
-		if (cur->type == REDIR)
-		{
-			if (cur->next == NULL || (cur->next->type != WORD && cur
-					->next->type != BUILT_IN && cur->next->type != EXTERNAL
-					&& cur->next->type != EXPAND))
+		if (cur->type == PIPE)
+			if (cur->next->type == PIPE || cur->next->type == REDIR)
 				return (false);
-		}
+		if (cur->type == REDIR)
+			if (cur->next->type == PIPE || cur->next->type == REDIR)
+				return (false);
 		cur = cur->next;
 	}
+	return (true);
+}
+
+void	print_command(t_parse *print)
+{
+	int	i;
+
+	i = 0;
+	ft_printf("cmd = ");
+	while (print->cmd[i])
+	{
+		ft_printf("%s ", print->cmd[i]);
+		i++;
+	}
+	ft_printf("\n");
+}
+
+void	print_list(t_data *data)
+{
+	t_parse	*print;
+
+	print = data->parse_list;
+	while (print)
+	{
+		ft_printf("type = %d, ", print->node_type);
+		if (print->redir)
+		{
+			print_command(print);
+			while (print->redir)
+			{
+				ft_printf("redir = %d - target = %s\n", print->redir->type,
+					print->redir->target);
+				print->redir = print->redir->next;
+			}
+		}
+		else
+			print_command(print);
+		print = print->next;
+	}
+}
+
+// echo hi > hi echo "hello" >> ha < hi > hu > ho >> he > hh >> hc < hh > ll > kk > kd > ds < hi > jj < kk < ll >> jj
+bool	parse(t_data *data)
+{
+	if (!search_heredoc(data))
+		return (free_program(data, "Error searching heredoc"));
+	if (!handle_quotes(data))
+		return (free_program(data, "Quotes not closed"));
+	if (!ft_expand(data))
+		return (free_program(data, "Error expanding variables"));
+	if (!get_new_types(data))
+		return (free_program(data, "Error getting new types"));
+	if (!validate_tokens(data))
+		return (free_program(data, "Invalid tokens"));
+	if (!parse_args_list(data))
+		return (free_program(data, "Error parsing arguments"));
+	data->fd[0] = dup(STDIN_FILENO);
+	data->fd[1] = dup(STDOUT_FILENO);
+	if (!build_stack(data))
+		return (free_program(data, "Error building stack"));
 	return (true);
 }

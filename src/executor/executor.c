@@ -3,80 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/02 15:51:16 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/06/18 17:22:20 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-bool	fd_restore(t_data *data)
-{
-	dup2(data->fd[0], STDIN_FILENO);
-	dup2(data->fd[1], STDOUT_FILENO);
-	close(data->fd[0]);
-	close(data->fd[1]);
-	return (true);
-}
-
-bool	execute_one_command(t_data *data, t_node *cur)
-{
-	if (cur->redir)
-		if (!identify_redirs(cur->redir, data))
-			return (false);
-	if (cur->node_type == BUILT_IN)
-	{
-		if (execute_built_in(data, cur))
-		{
-			data->exit_status = 0;
-			return (fd_restore(data));
-		}
-	}
-	else if (cur->node_type == EXTERNAL)
-	{
-		if (execute_external(data, cur))
-		{
-			data->exit_status = 0;
-			return (fd_restore(data));
-		}
-	}
-	else
-	{
-		data->exit_status = CMD_NOT_FOUND;
-		printf("bash: %s: command not found\n", cur->cmd[0]);
-	}
-	return (false);
-}
-
 static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 {
-	if (cur->redir)
-		if (!identify_redirs(cur->redir, data))
-			return (false);
 	if (cur->prev == NULL)
 	{
-		if (!cur->redir)
+		dup_fds(cur);
+		if (cur->fd_out == -1)
 			ft_dup_and_close(fd[1], STDOUT_FILENO, fd[0]);
 		execute_first_command(data, cur);
 	}
 	else if (cur->next == NULL)
 	{
-		if (!cur->redir)
+		dup_fds(cur);
+		if (cur->fd_in == -1)
 			ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
 		execute_last_command(data, cur);
 	}
 	else
 	{
-		if (!cur->redir)
-		{
+		dup_fds(cur);
+		if (cur->fd_in == -1)
 			ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
+		if (cur->fd_out == -1)
 			ft_dup_and_close(fd[1], STDOUT_FILENO, -1);
-		}
 		execute_middle_command(data, cur);
 	}
-	return (true);
+	return (false);
 }
 
 static bool	handle_parent(t_node *cur, int fd[2], int *prev_fd, pid_t pid)
@@ -85,22 +46,45 @@ static bool	handle_parent(t_node *cur, int fd[2], int *prev_fd, pid_t pid)
 		close(*prev_fd);
 	if (cur->next != NULL)
 		close(fd[1]);
+	if (cur->fd_in != -1)
+		close(cur->fd_in);
+	if (cur->fd_out != -1)
+		close(cur->fd_out);
 	*prev_fd = fd[0];
 	waitpid(pid, NULL, 0);
 	return (true);
 }
-
-bool	executor(t_data *data)
+static bool	execute_one_command(t_data *data, t_node *cur)
 {
-	t_node	*cur;
-	pid_t	pid;
-	int		fd[2];
-	int		prev_fd;
+	if (cur->node_type == BUILT_IN)
+	{
+		if (execute_built_in(data, cur))
+		{
+			data->exit_status = 0;
+			return (fd_restore(data, cur));
+		}
+	}
+	else if (cur->node_type == EXTERNAL)
+	{
+		if (execute_external(data, cur))
+		{
+			data->exit_status = 0;
+			return (fd_restore(data, cur));
+		}
+	}
+	else
+	{
+		data->exit_status = CMD_NOT_FOUND;
+		printf("bash: %s: command not found\n", cur->cmd[0]);
+	}
+	fd_restore(data, cur);
+	return (false);
+}
 
-	cur = data->exec_list;
-	if (cur->next == NULL)
-		return (execute_one_command(data, cur));
-	prev_fd = -1;
+static bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
+{
+	pid_t	pid;
+
 	while (cur)
 	{
 		if (cur->node_type == PIPE)
@@ -115,6 +99,23 @@ bool	executor(t_data *data)
 		handle_parent(cur, fd, &prev_fd, pid);
 		cur = cur->next;
 	}
+	return (true);
+}
+
+bool	executor(t_data *data)
+{
+	t_node	*cur;
+	int		fd[2];
+	int		prev_fd;
+
+	cur = data->exec_list;
+	if (!open_redirs(data))
+		return (false);
+	if (cur->next == NULL)
+		return (execute_one_command(data, cur));
+	prev_fd = -1;
+	if(!exec_multiple_cmd(data, cur, fd, prev_fd))
+		return (false);
 	data->exit_status = 0;
 	return (true);
 }

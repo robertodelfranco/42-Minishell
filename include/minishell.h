@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/06/02 15:22:09 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/06/18 15:48:51 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ typedef enum e_token_type
 	UNSET,
 	EXPORT,
 	EXIT,
+	DOC_WORD,
 }	t_type;
 
 typedef struct s_redir
@@ -99,6 +100,7 @@ typedef struct s_data
 	int				fd[2];
 	t_token			*token_list;
 	t_parse			*parse_list;
+	t_redir			*redir_list;
 	struct s_node	*exec_list;
 	t_env			*env_list;
 	t_env			*env_copy;
@@ -109,6 +111,8 @@ typedef struct s_node
 	char			**cmd;
 	t_type			node_type;
 	t_redir			*redir;
+	int				fd_in;
+	int				fd_out;
 	struct s_node	*next;
 	struct s_node	*prev;
 }	t_node;
@@ -116,41 +120,42 @@ typedef struct s_node
 //read
 char	*ft_readline(t_data *data, char **env);
 
-// token
+// Tokenizer
+	// token
 int		create_token(t_data *data);
 void	get_token(t_data *data, int start);
 void	add_token_list(t_data *data, char *token_name, t_type id_token);
-
-// token_utils
+	// token_utils
 t_type	external_command(char *token_name);
 t_type	give_id_token(char *str);
 t_type	get_command(char *token_name);
 t_token	*ft_last(t_token *lst);
 
-// parse
+// Parser
+	// parse
 bool	parse(t_data *data);
-bool	validate_tokens(t_data *data);
-
-// parse_utils
-t_type	ft_get_redir_type(char *redir);
-t_type	ft_get_cmd_type(char *value);
-int		ft_count_tokens(t_token *cur);
-void	get_redirs(t_parse *node, t_token **cur);
-
-// parse_list
-bool	parse_args(t_data *data);
+	// parse_list
+bool	parse_args_list(t_data *data);
 t_parse	*add_parse_list(t_data *data, char **args, t_type type);
 void	append_redir(t_redir **redir_list, t_token *cur);
 char	**get_operations(t_token *cur);
 char	**get_arguments(t_token *cur);
-
-// parse_stack
+	//parse_list_utils
+void	verify_pipeline(t_data *data, t_token **cur);
+void	get_redirs(t_parse *node, t_token **cur);
+void	get_redir_node(t_data *data, t_token **tokens);
+	// parse_stack
 bool	build_stack(t_data *data);
 void	add_stack_node(t_data *data, t_node *node);
 t_node	*create_pipe_node(t_type type);
 t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type);
+	// parse_types
+t_type	ft_get_redir_type(char *redir);
+t_type	ft_get_cmd_type(char *value);
+bool	get_new_types(t_data *data);
+int		ft_count_tokens(t_token *cur);
 
-// expansion
+// Expansion
 	//init_env
 void	ft_init_env(t_data *data, char **env);
 void	add_env_list(t_data *data, t_env *new_node);
@@ -166,14 +171,15 @@ int		ft_strchr_count(char const *str, char c);
 void	ft_free_key_and_value(char *key, char *value);
 void	copy_value(char *str_expand, char *value, int *j);
 
-// executor
-bool	execute_one_command(t_data *data, t_node *cur);
+// Executor
 bool	executor(t_data *data);
 	// exec_cmd
 bool	execute_built_in(t_data *data, t_node *cur);
 bool	execute_external(t_data *data, t_node *cur);
 	// exec_utils
+void	dup_fds(t_node *cur);
 int		ft_listsize(t_env *list);
+bool	fd_restore(t_data *data, t_node *cur);
 char	**get_env_array(t_env *env_list);
 char	*ft_get_external_path(char *token_name);
 	// exec_pipes
@@ -182,7 +188,7 @@ bool	execute_first_command(t_data *data, t_node *cur);
 bool	execute_last_command(t_data *data, t_node *cur);
 bool	execute_middle_command(t_data *data, t_node *cur);
 
-// built_ins
+// Built_ins
 	// echo
 int		echo(char **args);
 	// env
@@ -196,22 +202,20 @@ void	b_exit(t_data *data, char **argv);
 	//
 void	b_export(t_data *data, char **argv);
 
-// redirs
-bool	identify_redirs(t_redir *redir, t_data *data);
+// Redirects
+bool	identify_redirs(t_redir *redir, t_node *node);
+bool	open_redirs(t_data *data);
 
-// free_list
+// Clear Program
+	// free_list
 void	ft_free_env_list(t_data *data);
 void	ft_free_node_list(t_data *data);
 void	ft_free_parse_list(t_data *data);
 void	ft_free_token_list(t_data *data);
 // void	ft_free_pids(pid_t *pids);
-
-// clean
+	// clean
 bool	free_program(t_data *data, char *message);
 void	error_message(char *message);
 void	ft_free_matrix(char **ptr_matrix);
-
-void	print_list(t_data *data);
-void	print_command(t_parse *print);
 
 #endif

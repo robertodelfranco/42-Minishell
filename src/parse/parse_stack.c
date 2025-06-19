@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 15:04:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/22 15:58:36 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/18 15:51:33 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,5 +72,7 @@ t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type)
 	cmd->cmd = prompt;
 	cmd->node_type = type;
 	cmd->redir = redir;
+	cmd->fd_in = -1;
+	cmd->fd_out = -1;
 	return (cmd);
 }
