@@ -2,6 +2,9 @@
 .vscode/
 objs/
 *.json
+42_minishell_tester/
+test*/
+tmp_test*/
 
 # arquivos aleatórios
 *.pdf

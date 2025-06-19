@@ -31,7 +31,7 @@ bool	execute_first_command(t_data *data, t_node *cur)
 		if (execute_built_in(data, cur))
 		{
 			ft_free_matrix(env_array);
-			free_program(data, "Built-in command failed");
+			free_program(data, NULL);
 			exit(1);
 		}
 		ft_free_matrix(env_array);
@@ -57,7 +57,7 @@ bool	execute_middle_command(t_data *data, t_node *cur)
 		if (execute_built_in(data, cur))
 		{
 			ft_free_matrix(env_array);
-			free_program(data, "Built-in command failed");
+			free_program(data, NULL);
 			exit(1);
 		}
 		ft_free_matrix(env_array);
@@ -83,7 +83,7 @@ bool	execute_last_command(t_data *data, t_node *cur)
 		if (execute_built_in(data, cur))
 		{
 			ft_free_matrix(env_array);
-			free_program(data, "Built-in command failed");
+			free_program(data, NULL);
 			exit(1);
 		}
 		ft_free_matrix(env_array);
