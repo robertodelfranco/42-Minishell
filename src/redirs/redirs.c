@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:14:38 by marvin            #+#    #+#             */
-/*   Updated: 2025/06/18 16:10:59 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/19 15:39:16 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ bool	identify_redirs(t_redir *redir, t_node *node)
 
 bool	open_redirs(t_data *data)
 {
-	t_node *cur;
+	t_node	*cur;
 
 	cur = data->exec_list;
 	while (cur)

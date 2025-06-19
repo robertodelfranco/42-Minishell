@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/18 17:22:20 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/19 15:41:12 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 
 static bool	handle_parent(t_node *cur, int fd[2], int *prev_fd, pid_t pid)
 {
+	waitpid(pid, NULL, 0);
 	if (*prev_fd != -1)
 		close(*prev_fd);
 	if (cur->next != NULL)
@@ -51,9 +52,9 @@ static bool	handle_parent(t_node *cur, int fd[2], int *prev_fd, pid_t pid)
 	if (cur->fd_out != -1)
 		close(cur->fd_out);
 	*prev_fd = fd[0];
-	waitpid(pid, NULL, 0);
 	return (true);
 }
+
 static bool	execute_one_command(t_data *data, t_node *cur)
 {
 	if (cur->node_type == BUILT_IN)
@@ -66,6 +67,7 @@ static bool	execute_one_command(t_data *data, t_node *cur)
 	}
 	else if (cur->node_type == EXTERNAL)
 	{
+		dup_fds(cur);
 		if (execute_external(data, cur))
 		{
 			data->exit_status = 0;
@@ -114,7 +116,7 @@ bool	executor(t_data *data)
 	if (cur->next == NULL)
 		return (execute_one_command(data, cur));
 	prev_fd = -1;
-	if(!exec_multiple_cmd(data, cur, fd, prev_fd))
+	if (!exec_multiple_cmd(data, cur, fd, prev_fd))
 		return (false);
 	data->exit_status = 0;
 	return (true);

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/18 16:02:53 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/19 15:32:28 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,7 @@ bool	parse_args_list(t_data *data)
 
 	cur = data->token_list;
 	if (cur->type == REDIR)
-	{
-		printf("I'M IN HEREEEE VERIFY PIPELINE\n");
 		verify_pipeline(data, &cur);
-	}
 	while (cur)
 	{
 		if (cur->type == PIPE || (cur->next == NULL && (cur->type == EXPAND
