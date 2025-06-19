@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 22:12:21 by marvin            #+#    #+#             */
-/*   Updated: 2025/06/16 10:39:46 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/17 17:44:11 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	print_token_list(const t_data *data)
 		print_token(cur);
 		cur = cur->next;
 	}
-	ft_printf("===================\n");
+	ft_printf("==================\n");
 }
 
 void	print_command(t_parse *print)

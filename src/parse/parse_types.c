@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_utils.c                                      :+:      :+:    :+:   */
+/*   parse_types.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 14:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/28 15:57:39 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/18 12:42:57 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,11 @@ t_type	ft_get_redir_type(char *redir)
 
 t_type	ft_get_cmd_type(char *value)
 {
+	if (value == NULL)
+	{
+		printf("Entrei\n");
+		return (REDIR);
+	}
 	if (ft_strcmp(value, "echo") == 0)
 		return (ECHO);
 	else if (ft_strcmp(value, "pwd") == 0)
@@ -46,6 +51,22 @@ t_type	ft_get_cmd_type(char *value)
 		return (EXTERNAL);
 }
 
+bool	get_new_types(t_data *data)
+{
+	t_token	*cur;
+
+	cur = data->token_list;
+	while (cur)
+	{
+		if (!cur->value)
+			return (false);
+		else
+			cur->type = give_id_token(cur->value);
+		cur = cur->next;
+	}
+	return (true);
+}
+
 int	ft_count_tokens(t_token *cur)
 {
 	int	count;
@@ -62,18 +83,4 @@ int	ft_count_tokens(t_token *cur)
 		cur = cur->next;
 	}
 	return (count);
-}
-
-void	get_redirs(t_parse *node, t_token **cur)
-{
-	while (*cur && (*cur)->type != PIPE)
-	{
-		if ((*cur)->type == REDIR)
-		{
-			append_redir(&node->redir, *cur);
-			*cur = (*cur)->next->next;
-		}
-		else
-			*cur = (*cur)->next;
-	}
 }

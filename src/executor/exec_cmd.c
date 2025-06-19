@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/02 15:22:47 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/06/19 15:41:28 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@ bool	execute_built_in(t_data *data, t_node *cur)
 {
 	t_type	type;
 
+	if (!cur->cmd)
+		return (true);
 	type = ft_get_cmd_type(cur->cmd[0]);
+	dup_fds(cur);
 	if (type == ECHO)
 		echo(cur->cmd);
 	else if (type == CD)

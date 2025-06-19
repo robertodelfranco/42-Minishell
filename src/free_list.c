@@ -6,11 +6,29 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 14:27:17 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/16 10:55:18 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/19 15:40:35 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+void	ft_free_redir_list(t_redir *redir_list)
+{
+	t_redir	*cur;
+	t_redir	*temp;
+
+	if (!redir_list)
+		return ;
+	cur = redir_list;
+	while (cur)
+	{
+		temp = cur->next;
+		free(cur->target);
+		free(cur);
+		cur = temp;
+	}
+	redir_list = NULL;
+}
 
 void	ft_free_node_list(t_data *data)
 {
@@ -23,6 +41,8 @@ void	ft_free_node_list(t_data *data)
 	while (current)
 	{
 		temp = current->next;
+		if (current->redir)
+			ft_free_redir_list(current->redir);
 		free(current);
 		current = temp;
 	}
@@ -42,8 +62,6 @@ void	ft_free_parse_list(t_data *data)
 		temp = current->next;
 		if (current->cmd)
 			ft_free_matrix(current->cmd);
-		if (current->redir)
-			free(current->redir);
 		free(current);
 		current = temp;
 	}

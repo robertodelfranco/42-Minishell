@@ -10,6 +10,7 @@ teste
 teste*
 *.sh
 *.bash
+.nfs*
 
 # arquivos de compilação
 minishell
