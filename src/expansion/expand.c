@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:40:55 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/16 12:06:17 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/20 17:17:31 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,11 @@ char	*get_variable_key(const char *str, int *len)
 	int	i;
 
 	i = 0;
+	if (str[i] == '?')
+	{
+		*len = 1;
+		return (ft_strdup("?"));
+	}
 	while (str[i] && str[i] != 32 && str[i] != '$')
 		i++;
 	if (i == 0 && str[i] != '\0')

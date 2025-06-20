@@ -6,11 +6,40 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/19 15:40:47 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/20 17:14:18 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+static char	*ft_get_str_without_quotes(t_token *cur, char *str_quoted)
+{
+	char	*str_without_quotes;
+	char	type;
+	int		i;
+	size_t	j;
+
+	str_without_quotes = ft_calloc(ft_strlen(str_quoted) - 1, sizeof(char));
+	if (!str_without_quotes)
+		return (NULL);
+	type = ft_findchar(str_quoted, "\'\"");
+	cur->type = DOUB_QUOTE;
+	if (type == '\'')
+		cur->type = SING_QUOTE;
+	i = 0;
+	j = 0;
+	while (str_quoted[i] && j < ft_strlen(str_quoted) - 1)
+	{
+		if (str_quoted[i] == '\'' && cur->type == SING_QUOTE)
+			i++;
+		if (str_quoted[i] == '\"' && cur->type == DOUB_QUOTE)
+			i++;
+		if (str_quoted[i] == '\0')
+			break ;
+		str_without_quotes[j++] = str_quoted[i++];
+	}
+	return (str_without_quotes);
+}
 
 static bool	handle_quotes(t_data *data)
 {
@@ -20,12 +49,12 @@ static bool	handle_quotes(t_data *data)
 	cur = data->token_list;
 	while (cur)
 	{
-		if (cur->type == DOUB_QUOTE || cur->type == SING_QUOTE)
+		if (ft_strchr(cur->value, '\'') || ft_strchr(cur->value, '\"'))	 
 		{
 			if (ft_strlen(cur->value) <= 2)
 				temp = ft_strdup("");
 			else
-				temp = ft_substr(cur->value, 1, ft_strlen(cur->value) - 2);
+				temp = ft_get_str_without_quotes(cur, cur->value);
 			if (!temp)
 				return (false);
 			free(cur->value);

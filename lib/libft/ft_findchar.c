@@ -1,28 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   read.c                                             :+:      :+:    :+:   */
+/*   ft_findchar.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/09 15:31:14 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/20 14:49:05 by rdel-fra         ###   ########.fr       */
+/*   Created: 2024/10/07 16:01:29 by rdel-fra          #+#    #+#             */
+/*   Updated: 2025/06/20 16:26:03 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../includes/libft.h"
 
-char	*ft_readline(t_data *data, char **env)
+char	ft_findchar(const char *s, char *find)
 {
-	data->prompt = readline(COLOR "Minihell $ " RESET);
-	data->fd[0] = -1;
-	data->fd[1] = -1;
-	if (data->prompt[0] == '\0')
+	int	i;
+
+	i = 0;
+	while (s[i] != '\0')
 	{
-		free_program(data, NULL);
-		return (NULL);
+		if (ft_strchr(find, s[i]))
+			if (ft_strchr(s, s[i]))
+				return (s[i]);
+		i++;
 	}
-	add_history(data->prompt);
-	ft_init_env(data, env);
-	return (data->prompt);
+	if (ft_strchr(find, '\0'))
+		return (s[i]);
+	return (0);
 }

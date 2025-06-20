@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/19 15:41:28 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/20 16:46:30 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,10 @@ bool	execute_built_in(t_data *data, t_node *cur)
 	else if (type == ENV)
 		env(data, cur->cmd);
 	else if (type == EXIT)
+	{
 		b_exit(data, cur->cmd);
+		return (false);
+	}
 	else if (type == EXPORT)
 		b_export(data, cur->cmd);
 	else
