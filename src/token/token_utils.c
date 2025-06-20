@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:26:34 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/27 15:12:58 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/20 18:23:20 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ t_type	get_command(char *token_name)
 	else if (token_name[0] == '\0')
 		return (WORD);
 	else if ((token_name[0] == '.' && token_name[1] == '/')
-		|| token_name[0] == '.')
+		|| token_name[0] == '.' || token_name[0] == '/')
 		return (EXTERNAL);
 	else if (external_command(token_name) == 1)
 		return (EXTERNAL);

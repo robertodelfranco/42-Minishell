@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/20 16:46:30 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/20 18:29:55 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ bool	execute_external(t_data *data, t_node *cur)
 
 	env_array = get_env_array(data->env_list);
 	pid = fork();
-	if (cur->cmd[0][0] == '.' && cur->cmd[0][1] == '/')
+	if (cur->cmd[0][0] == '.' || cur->cmd[0][0] == '/')
 		full_path = ft_strdup(cur->cmd[0]);
 	else
 		full_path = ft_get_external_path(cur->cmd[0]);
