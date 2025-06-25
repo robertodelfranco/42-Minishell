@@ -36,10 +36,7 @@ bool	execute_built_in(t_data *data, t_node *cur)
 	else if (type == EXPORT)
 		b_export(data, cur->cmd);
 	else
-	{
-		printf("Unknown built-in command: %s\n", cur->cmd[0]);
 		return (false);
-	}
 	return (true);
 }
 

@@ -24,7 +24,7 @@ bool	parse_args_list(t_data *data)
 	while (cur)
 	{
 		if (cur->type == PIPE || (cur->type == EXPAND
-					|| cur->type == WORD))
+				|| cur->type == WORD))
 			add_parse_list(data, get_operations(cur), cur->type);
 		if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
 		{
@@ -46,9 +46,7 @@ t_parse	*add_parse_list(t_data *data, char **args, t_type type)
 	new_node = ft_calloc(1, sizeof(t_parse));
 	if (!new_node)
 		return (NULL);
-	printf("Adding to parse list: %s\n", args[0]);
 	new_node->cmd = args;
-	printf("Adding to parse list: %d\n", type);
 	new_node->node_type = type;
 	if (data->parse_list == NULL)
 		data->parse_list = new_node;
