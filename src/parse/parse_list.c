@@ -23,8 +23,8 @@ bool	parse_args_list(t_data *data)
 		verify_pipeline(data, &cur);
 	while (cur)
 	{
-		if (cur->type == PIPE || (cur->next == NULL && (cur->type == EXPAND
-					|| cur->type == WORD)))
+		if (cur->type == PIPE || (cur->type == EXPAND
+				|| cur->type == WORD))
 			add_parse_list(data, get_operations(cur), cur->type);
 		if ((cur->type == BUILT_IN || cur->type == EXTERNAL))
 		{

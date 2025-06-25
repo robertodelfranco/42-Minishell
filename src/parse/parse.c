@@ -49,7 +49,7 @@ static bool	handle_quotes(t_data *data)
 	cur = data->token_list;
 	while (cur)
 	{
-		if (ft_strchr(cur->value, '\'') || ft_strchr(cur->value, '\"'))	 
+		if (ft_strchr(cur->value, '\'') || ft_strchr(cur->value, '\"'))
 		{
 			if (ft_strlen(cur->value) <= 2)
 				temp = ft_strdup("");

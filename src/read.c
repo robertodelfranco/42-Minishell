@@ -22,6 +22,15 @@ char	*ft_readline(t_data *data, char **env)
 		free_program(data, NULL);
 		return (NULL);
 	}
+	else
+	{
+		data->prompt = ft_strtrim(data->prompt, " \t\n");
+		if (data->prompt[0] == '\0')
+		{
+			free_program(data, NULL);
+			return (NULL);
+		}
+	}
 	add_history(data->prompt);
 	ft_init_env(data, env);
 	return (data->prompt);

@@ -2,17 +2,12 @@
 .vscode/
 objs/
 *.json
-minishell_tester/
-test*/
-tmp_test*/
 
 # arquivos aleatórios
 *.pdf
 *.txt
 teste
-teste*
-*.sh
-*.bash
+teste
 .nfs*
 
 # arquivos de compilação

@@ -25,8 +25,7 @@ void	env(t_data *data, char **args)
 	cur = data->env_list;
 	while (cur)
 	{
-		if (cur->value && *cur->value)
-			ft_printf("%s=%s\n", cur->key, cur->value);
+		ft_printf("%s=%s\n", cur->key, cur->value);
 		cur = cur->next;
 	}
 	data->exit_status = 0;
