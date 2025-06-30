@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:31:14 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 14:44:38 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 17:15:40 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,6 @@ char	*ft_readline(t_data *data)
 	{
 		free_program(data, NULL);
 		return (NULL);
-	}
-	else
-	{
-		data->prompt = ft_strtrim(data->prompt, " \t\n");
-		if (data->prompt[0] == '\0')
-		{
-			free_program(data, NULL);
-			return (NULL);
-		}
 	}
 	add_history(data->prompt);
 	return (data->prompt);

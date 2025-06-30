@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 15:26:33 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 17:19:33 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,15 +75,6 @@ static bool	execute_one_command(t_data *data, t_node *cur)
 	}
 	else
 	{
-		if (cur->cmd[0] && cur->cmd[1] == NULL)
-		{
-			cur->cmd[0] = ft_strtrim(cur->cmd[0], " \t\n");
-			if (cur->cmd[0][0] == '\0')
-			{
-				data->exit_status = 0;
-				return (true);
-			}
-		}
 		data->exit_status = CMD_NOT_FOUND;
 		free_program(data, "command not found");
 	}
