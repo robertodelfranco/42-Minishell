@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 15:10:52 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 16:01:36 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 16:18:24 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ bool	shutdown_program(t_data *data)
 	data = NULL;
 	return (true);
 }
-
 
 void	error_message(char *message)
 {
