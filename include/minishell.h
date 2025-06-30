@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/06/30 16:01:46 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 16:20:01 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,8 @@ bool	b_export(t_data *data, char **argv);
 bool	identify_redirs(t_redir *redir, t_node *node, t_data *data);
 bool	open_redirs(t_data *data);
 	// heredoc
-bool	read_heredoc(t_redir *redir, t_node *node, t_data *data);
+bool	init_heredoc(t_redir *redir, t_node *node, t_data *data);
+void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd);
 
 // Clear Program
 	// free_list
