@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 14:27:17 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/19 15:40:35 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 16:00:45 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,14 +87,14 @@ void	ft_free_token_list(t_data *data)
 	data->token_list = NULL;
 }
 
-void	ft_free_env_list(t_data *data)
+void	ft_free_env_list(t_env *env_list)
 {
 	t_env	*current;
 	t_env	*temp;
 
-	if (!data->env_list)
+	if (!env_list)
 		return ;
-	current = data->env_list;
+	current = env_list;
 	while (current)
 	{
 		temp = current->next;
@@ -104,5 +104,5 @@ void	ft_free_env_list(t_data *data)
 		free(current);
 		current = temp;
 	}
-	data->env_list = NULL;
+	env_list = NULL;
 }

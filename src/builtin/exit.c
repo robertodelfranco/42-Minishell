@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 17:06:06 by rheringe          #+#    #+#             */
-/*   Updated: 2025/06/30 15:22:56 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 16:10:10 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,9 @@ static bool	is_numeric(const char *str)
 
 void	b_exit(t_data *data, char **argv)
 {
+	long	exit_code;
+
+	exit_code = 0;
 	if (argv[1] && argv[2])
 	{
 		ft_putendl_fd("exit: too many arguments", 2);
@@ -45,11 +48,11 @@ void	b_exit(t_data *data, char **argv)
 		if (!is_numeric(argv[1]))
 		{
 			ft_printf_fd(2, "exit: %s: numeric argument required\n", argv[1]);
-			data->exit_status = 2;
+			exit_code = 2;
 		}
 		else
-			data->exit_status = ft_atol(argv[1]) % 256;
+			exit_code = ft_atol(argv[1]) % 256;
 	}
-	free_program(data, NULL);
-	exit(data->exit_status);
+	shutdown_program(data);
+	exit(exit_code);
 }

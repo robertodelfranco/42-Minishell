@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/06/30 15:09:30 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 16:01:46 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,13 +213,14 @@ bool	read_heredoc(t_redir *redir, t_node *node, t_data *data);
 
 // Clear Program
 	// free_list
-void	ft_free_env_list(t_data *data);
 void	ft_free_node_list(t_data *data);
 void	ft_free_parse_list(t_data *data);
 void	ft_free_token_list(t_data *data);
+void	ft_free_env_list(t_env *env_list);
 // void	ft_free_pids(pid_t *pids);
 	// clean
 bool	free_program(t_data *data, char *message);
+bool	shutdown_program(t_data *data);
 void	error_message(char *message);
 void	ft_free_matrix(char **ptr_matrix);
 

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 15:10:52 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 14:46:55 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 16:01:36 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,18 @@ bool	free_program(t_data *data, char *message)
 	data->prompt = NULL;
 	return (false);
 }
+
+bool	shutdown_program(t_data *data)
+{
+	free_program(data, NULL);
+	ft_free_env_list(data->env_list);
+	if (data->env_copy)
+		ft_free_env_list(data->env_copy);
+	free(data);
+	data = NULL;
+	return (true);
+}
+
 
 void	error_message(char *message)
 {

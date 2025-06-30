@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:14:15 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 14:37:02 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 16:09:06 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ bool	read_heredoc(t_redir *redir, t_node *node, t_data *data)
 	int			fd;
 	static int	id = 0;
 
-	filename = ft_strjoin("heredoc_", ft_itoa(id));
+	filename = ft_strjoin_free("heredoc_", ft_itoa(id));
 	fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	pid = fork();
 	if (pid < 0)
@@ -55,6 +55,7 @@ bool	read_heredoc(t_redir *redir, t_node *node, t_data *data)
 	}
 	waitpid(pid, NULL, 0);
 	fd = open(filename, O_RDONLY);
+	unlink(filename);
 	free(filename);
 	if (node->fd_in != -1)
 		close (node->fd_in);
