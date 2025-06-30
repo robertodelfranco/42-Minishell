@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/06/30 15:09:30 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 17:59:05 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,6 +195,7 @@ bool	execute_middle_command(t_data *data, t_node *cur);
 int		echo(char **args);
 	// env
 void	env(t_data *data, char **args);
+int		ft_envdup(t_data *data);
 	// pwd
 void	pwd(t_data *data);
 	// cd
@@ -203,6 +204,9 @@ bool	cd(t_data *data, char **argv);
 void	b_exit(t_data *data, char **argv);
 	// export
 bool	b_export(t_data *data, char **argv);
+void	print_export(t_data *data);
+void	append_env_node(t_env **head, t_env *new_node);
+t_env	*create_env_node(const char *key, const char *value);
 
 // Redirects
 	// redirs
