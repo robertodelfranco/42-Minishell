@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:22:45 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 14:46:12 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 17:17:55 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ bool	verify_tokens(t_data *data)
 {
 	if (data->token_list == NULL)
 	{
-		free_program(data, "No tokens found");
+		free_program(data, NULL);
 		return (false);
 	}
 	return (true);
