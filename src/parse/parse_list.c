@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/19 15:32:28 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 15:50:18 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void	append_redir(t_redir **redir_list, t_token *cur)
 		return ;
 	new_redir->target = ft_strdup(cur->next->value);
 	new_redir->type = ft_get_redir_type(cur->value);
+	new_redir->quoted = cur->next->quoted;
 	new_redir->next = NULL;
 	if (!*redir_list)
 		*redir_list = new_redir;

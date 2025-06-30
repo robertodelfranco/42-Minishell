@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/19 15:54:20 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 16:24:46 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ bool	execute_first_command(t_data *data, t_node *cur)
 		if (execute_built_in(data, cur))
 		{
 			ft_free_matrix(env_array);
-			free_program(data, NULL);
 			exit(1);
 		}
 		ft_free_matrix(env_array);
@@ -43,6 +42,8 @@ bool	execute_first_command(t_data *data, t_node *cur)
 		full_path = ft_get_external_path(cur->cmd[0]);
 	if (execve(full_path, cur->cmd, env_array) == -1)
 		exit(free_program(data, "Command execution failed"));
+	free(full_path);
+	ft_free_matrix(env_array);
 	return (true);
 }
 
@@ -57,7 +58,6 @@ bool	execute_middle_command(t_data *data, t_node *cur)
 		if (execute_built_in(data, cur))
 		{
 			ft_free_matrix(env_array);
-			free_program(data, NULL);
 			exit(1);
 		}
 		ft_free_matrix(env_array);
@@ -69,6 +69,8 @@ bool	execute_middle_command(t_data *data, t_node *cur)
 		full_path = ft_get_external_path(cur->cmd[0]);
 	if (execve(full_path, cur->cmd, env_array) == -1)
 		exit(free_program(data, "Command execution failed"));
+	free(full_path);
+	ft_free_matrix(env_array);
 	return (true);
 }
 
@@ -83,7 +85,6 @@ bool	execute_last_command(t_data *data, t_node *cur)
 		if (execute_built_in(data, cur))
 		{
 			ft_free_matrix(env_array);
-			free_program(data, NULL);
 			exit(1);
 		}
 		ft_free_matrix(env_array);
