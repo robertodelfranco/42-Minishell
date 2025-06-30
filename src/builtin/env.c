@@ -6,15 +6,13 @@
 /*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 14:32:21 by rheringe          #+#    #+#             */
-/*   Updated: 2025/06/30 14:24:32 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/06/30 17:59:10 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static t_env	*create_env_node(const char *key, const char *value);
-
-static t_env	*create_env_node(const char *key, const char *value)
+t_env	*create_env_node(const char *key, const char *value)
 {
 	t_env	*new_node;
 
@@ -37,7 +35,7 @@ static t_env	*create_env_node(const char *key, const char *value)
 	return (new_node);
 }
 
-static void	append_env_node(t_env **head, t_env *new_node)
+void	append_env_node(t_env **head, t_env *new_node)
 {
 	t_env	*last;
 

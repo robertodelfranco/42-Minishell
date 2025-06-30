@@ -1,19 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   export_utils.c                                     :+:      :+:    :+:   */
+/*   export_sort.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 15:36:43 by rheringe          #+#    #+#             */
-/*   Updated: 2025/06/30 14:14:09 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/06/30 17:59:07 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-void	print_export(t_data *data);
-int		ft_envdup(t_data *data);
 
 static int	count_env_vars(t_env *env)
 {
@@ -80,33 +77,31 @@ static void	print_sorted_env(t_env **array)
 	}
 }
 
-void print_export(t_data *data)
+void	print_export(t_data *data)
 {
-    t_env **sorted;
-    int len;
-    t_env *current;
-    t_env *next;
+	int			len;
+	t_env		**sorted;
+	t_env		*current;
+	t_env		*next;
 
-    if (ft_envdup(data))
-        return;
-    len = count_env_vars(data->env_copy);
-    sorted = malloc(sizeof(t_env *) * (len + 1));
-    if (!sorted)
-        return;
-    fill_env_array(sorted, data->env_copy);
-    sort_env_array(sorted, len);
-    print_sorted_env(sorted);
-    free(sorted);
-    
-    // Free env_copy after use
-    current = data->env_copy;
-    while (current)
-    {
-        next = current->next;
-        free(current->key);
-        free(current->value);
-        free(current);
-        current = next;
-    }
-    data->env_copy = NULL;
+	if (ft_envdup(data))
+		return ;
+	len = count_env_vars(data->env_copy);
+	sorted = malloc(sizeof(t_env *) * (len + 1));
+	if (!sorted)
+		return ;
+	fill_env_array(sorted, data->env_copy);
+	sort_env_array(sorted, len);
+	print_sorted_env(sorted);
+	free(sorted);
+	current = data->env_copy;
+	while (current)
+	{
+		next = current->next;
+		free(current->key);
+		free(current->value);
+		free(current);
+		current = next;
+	}
+	data->env_copy = NULL;
 }
