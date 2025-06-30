@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/20 17:14:18 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 14:21:00 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ static char	*ft_get_str_without_quotes(t_token *cur, char *str_quoted)
 	j = 0;
 	while (str_quoted[i] && j < ft_strlen(str_quoted) - 1)
 	{
-		if (str_quoted[i] == '\'' && cur->type == SING_QUOTE)
+		while (str_quoted[i] == '\'' && cur->type == SING_QUOTE)
 			i++;
-		if (str_quoted[i] == '\"' && cur->type == DOUB_QUOTE)
+		while (str_quoted[i] == '\"' && cur->type == DOUB_QUOTE)
 			i++;
 		if (str_quoted[i] == '\0')
 			break ;
@@ -59,6 +59,7 @@ static bool	handle_quotes(t_data *data)
 				return (false);
 			free(cur->value);
 			cur->value = temp;
+			cur->quoted = true;
 			if (cur->type == SING_QUOTE)
 				cur->type = SING_QUOTE;
 			else

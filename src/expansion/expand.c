@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:40:55 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/20 17:17:31 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 13:58:50 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int	get_expand_size(t_data *data, const char *str)
 	return (size);
 }
 
-char	*get_str_expanded(t_data *data, t_token *cur, char *expand)
+char	*get_str_expanded(t_data *data, char *input, char *expand)
 {
 	char	*key;
 	char	*value;
@@ -89,11 +89,11 @@ char	*get_str_expanded(t_data *data, t_token *cur, char *expand)
 
 	i = 0;
 	j = 0;
-	while (cur->value[i])
+	while (input[i])
 	{
-		if (cur->value[i] == '$')
+		if (input[i] == '$')
 		{
-			key = get_variable_key(&cur->value[i + 1], &key_len);
+			key = get_variable_key(&input[i + 1], &key_len);
 			value = get_variable_value(data, key);
 			copy_value(expand, value, &j);
 			free(key);
@@ -101,7 +101,7 @@ char	*get_str_expanded(t_data *data, t_token *cur, char *expand)
 			i += key_len + 1;
 		}
 		else
-			expand[j++] = cur->value[i++];
+			expand[j++] = input[i++];
 	}
 	return (expand);
 }
@@ -115,19 +115,22 @@ bool	ft_expand(t_data *data)
 	cur = data->token_list;
 	while (cur)
 	{
-		if (cur->value && (cur->type == EXPAND || cur->type == WORD))
+		if (ft_strcmp(cur->value, "<<") == 0)
+			cur = cur->next->next;
+		if (cur && cur->value && (cur->type == EXPAND || cur->type == WORD))
 		{
 			if (ft_strchr(cur->value, '$'))
 			{
 				expand = ft_calloc(get_expand_size(data, cur->value) + 1, 1);
 				if (!expand)
 					return (free_program(data, "calloc error"));
-				new_str = get_str_expanded(data, cur, expand);
+				new_str = get_str_expanded(data, cur->value, expand);
 				free(cur->value);
 				cur->value = new_str;
 			}
 		}
-		cur = cur->next;
+		if (cur)
+			cur = cur->next;
 	}
 	return (true);
 }

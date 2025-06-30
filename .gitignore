@@ -9,6 +9,7 @@ objs/
 teste
 teste
 .nfs*
+*_tester
 
 # arquivos de compilação
 minishell

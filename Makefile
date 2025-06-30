@@ -35,7 +35,8 @@ SRCS		=	./src/main.c \
 				./src/expansion/init_env.c \
 				./src/expansion/expand.c \
 				./src/expansion/expand_utils.c \
-				./src/redirs/redirs.c
+				./src/redirs/redirs.c \
+				./src/redirs/heredoc.c
 
 OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 OBJ_DIR		=	objs

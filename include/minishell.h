@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/06/18 15:48:51 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 14:44:57 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ typedef struct s_redir
 {
 	t_type			type;
 	char			*target;
+	bool			quoted;
 	struct s_redir	*next;
 }	t_redir;
 
@@ -88,6 +89,7 @@ typedef struct s_token
 {
 	char			*value;
 	t_type			type;
+	bool			quoted;
 	struct s_token	*next;
 }	t_token;
 
@@ -118,7 +120,7 @@ typedef struct s_node
 }	t_node;
 
 //read
-char	*ft_readline(t_data *data, char **env);
+char	*ft_readline(t_data *data);
 
 // Tokenizer
 	// token
@@ -163,7 +165,7 @@ void	add_env_list(t_data *data, t_env *new_node);
 char	*get_variable_value(t_data *data, char *str);
 char	*get_variable_key(const char *str, int *len);
 int		get_expand_size(t_data *data, const char *str);
-char	*get_str_expanded(t_data *data, t_token *cur, char *expanded);
+char	*get_str_expanded(t_data *data, char *input, char *expanded);
 bool	ft_expand(t_data *data);
 	//expand_utils
 int		ft_ptr_len(char **str);
@@ -203,8 +205,11 @@ void	b_exit(t_data *data, char **argv);
 void	b_export(t_data *data, char **argv);
 
 // Redirects
-bool	identify_redirs(t_redir *redir, t_node *node);
+	// redirs
+bool	identify_redirs(t_redir *redir, t_node *node, t_data *data);
 bool	open_redirs(t_data *data);
+	// heredoc
+bool	read_heredoc(t_redir *redir, t_node *node, t_data *data);
 
 // Clear Program
 	// free_list

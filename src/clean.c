@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 15:10:52 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/20 16:33:39 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 14:46:55 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ bool	free_program(t_data *data, char *message)
 {
 	if (message)
 		error_message(message);
-	ft_free_env_list(data);
 	ft_free_node_list(data);
 	ft_free_parse_list(data);
 	ft_free_token_list(data);
@@ -25,7 +24,7 @@ bool	free_program(t_data *data, char *message)
 	if (data->fd[1] != -1)
 		close(data->fd[1]);
 	free(data->prompt);
-	free(data);
+	data->prompt = NULL;
 	return (false);
 }
 

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 11:25:41 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/20 16:23:48 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 14:34:52 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ char	ft_findchar(const char *s, char *find);
 int		ft_strchr_count(char const *str, char c);
 char	**ft_split(char const *s, char c);
 char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strjoin_free(char const *s1, char *s2);
 char	*ft_strtrim(char const *s1, char const *set);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
