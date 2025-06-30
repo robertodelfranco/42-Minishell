@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/19 15:41:12 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 15:26:33 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ static bool	execute_one_command(t_data *data, t_node *cur)
 		dup_fds(cur);
 		if (execute_external(data, cur))
 		{
-			data->exit_status = 0;
 			return (fd_restore(data, cur));
 		}
 	}
@@ -86,7 +85,7 @@ static bool	execute_one_command(t_data *data, t_node *cur)
 			}
 		}
 		data->exit_status = CMD_NOT_FOUND;
-		ft_printf_fd(2, "command not found\n");
+		free_program(data, "command not found");
 	}
 	fd_restore(data, cur);
 	return (false);
@@ -127,6 +126,5 @@ bool	executor(t_data *data)
 	prev_fd = -1;
 	if (!exec_multiple_cmd(data, cur, fd, prev_fd))
 		return (false);
-	data->exit_status = 0;
 	return (true);
 }

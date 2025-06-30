@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 17:34:57 by rheringe          #+#    #+#             */
-/*   Updated: 2025/05/26 15:55:10 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 15:11:18 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static bool	cd_to_path(t_data *data, char *path)
 	return (true);
 }
 
-void	cd(t_data *data, char **argv)
+bool	cd(t_data *data, char **argv)
 {
 	if (!argv[1] || (argv[1][0] == '~' && argv[1][1] == '\0'))
 		cd_to_home(data);
@@ -59,7 +59,10 @@ void	cd(t_data *data, char **argv)
 	{
 		ft_putendl_fd("cd: too many arguments", 2);
 		data->exit_status = 1;
+		return (false);
 	}
 	else
-		cd_to_path(data, argv[1]);
+		if (!cd_to_path(data, argv[1]))
+			return (false);
+	return (true);
 }

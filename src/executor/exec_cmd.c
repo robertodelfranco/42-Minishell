@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/20 18:29:55 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 15:27:42 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ bool	execute_built_in(t_data *data, t_node *cur)
 	if (type == ECHO)
 		echo(cur->cmd);
 	else if (type == CD)
-		cd(data, cur->cmd);
+		return (cd(data, cur->cmd));
 	else if (type == PWD)
 		pwd(data);
 	else if (type == ENV)
@@ -34,7 +34,7 @@ bool	execute_built_in(t_data *data, t_node *cur)
 		return (false);
 	}
 	else if (type == EXPORT)
-		b_export(data, cur->cmd);
+		return (b_export(data, cur->cmd));
 	else
 		return (false);
 	return (true);
@@ -60,7 +60,7 @@ bool	execute_external(t_data *data, t_node *cur)
 		{
 			free(full_path);
 			ft_free_matrix(env_array);
-			b_exit(data, cur->cmd);
+			exit(data->exit_status);
 		}
 	}
 	waitpid(pid, NULL, 0);

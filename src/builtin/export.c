@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 12:21:38 by rheringe          #+#    #+#             */
-/*   Updated: 2025/06/30 14:24:29 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/06/30 15:04:28 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ static t_env	*create_env_node(const char *key, const char *value)
 	return (new_node);
 }
 
-void	b_export(t_data *data, char **argv)
+bool	b_export(t_data *data, char **argv)
 {
 	int		i;
 	char	*key;
@@ -139,42 +139,45 @@ void	b_export(t_data *data, char **argv)
 	if (!argv[1])
 	{
 		print_export(data);
-		return ;
+		return (false);
 	}
 	
 	i = 1;
 	while (argv[i])
 	{
-		printf("DEBUG: Processando '%s'\n", argv[i]); // DEBUG
+		// printf("DEBUG: Processando '%s'\n", argv[i]); // DEBUG
 		
 		key = NULL;
 		value = NULL;
 		
 		if (parse_export_arg(argv[i], &key, &value) != 0)
 		{
-			printf("export: memory allocation error\n");
+			printf("export: key error\n");
 			data->exit_status = 1;
 		}
 		else 
 		{
-			printf("DEBUG: key='%s', value='%s'\n", key, value ? value : "NULL"); // DEBUG
+			// printf("DEBUG: key='%s', value='%s'\n", key, value ? value : "NULL"); // DEBUG
 			
 			if (!is_valid_identifier(key))
 			{
-				printf("export: `%s': not a valid identifier\n", argv[i]);
+				ft_printf_fd(2, "export: `%s': not a valid identifier\n", argv[i]);
 				data->exit_status = 1;
+				free(key);
+				free(value);
+				return (false);
 			}
 			else
 			{
-				printf("DEBUG: Chamando update_or_add_env\n"); // DEBUG
+				// printf("DEBUG: Chamando update_or_add_env\n"); // DEBUG
 				if (update_or_add_env(data, key, value) != 0)
 				{
-					printf("export: memory allocation error\n");
+					printf("export: update or add error\n");
 					data->exit_status = 1;
 				}
 				else
 				{
-					printf("DEBUG: Variável adicionada com sucesso!\n"); // DEBUG
+					// printf("DEBUG: Variável adicionada com sucesso!\n"); // DEBUG
 				}
 			}
 		}
@@ -183,4 +186,5 @@ void	b_export(t_data *data, char **argv)
 		free(value);
 		i++;
 	}
+	return (true);
 }

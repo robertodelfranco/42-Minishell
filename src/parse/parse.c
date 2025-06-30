@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 14:21:00 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 15:37:56 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,8 @@ static bool	validate_tokens(t_data *data)
 // >> hc < hh > ll > kk > kd > ds < hi > jj < kk < ll >> jj
 bool	parse(t_data *data)
 {
+	if (!validate_tokens(data))
+		return (free_program(data, "Invalid tokens"));
 	if (!search_heredoc(data))
 		return (free_program(data, "Error searching heredoc"));
 	if (!handle_quotes(data))
@@ -125,8 +127,6 @@ bool	parse(t_data *data)
 		return (free_program(data, "Error expanding variables"));
 	if (!get_new_types(data))
 		return (free_program(data, "Error getting new types"));
-	if (!validate_tokens(data))
-		return (free_program(data, "Invalid tokens"));
 	if (!parse_args_list(data))
 		return (free_program(data, "Error parsing arguments"));
 	data->fd[0] = dup(STDIN_FILENO);

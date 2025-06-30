@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/06/30 14:44:57 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/06/30 15:09:30 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,11 +198,11 @@ void	env(t_data *data, char **args);
 	// pwd
 void	pwd(t_data *data);
 	// cd
-void	cd(t_data *data, char **argv);
+bool	cd(t_data *data, char **argv);
 	// exit
 void	b_exit(t_data *data, char **argv);
-	//
-void	b_export(t_data *data, char **argv);
+	// export
+bool	b_export(t_data *data, char **argv);
 
 // Redirects
 	// redirs
