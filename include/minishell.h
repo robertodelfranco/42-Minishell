@@ -6,7 +6,7 @@
 /*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/01 11:50:05 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/07/01 14:19:33 by rafaelherin      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,7 +208,7 @@ void	print_export(t_data *data);
 void	append_env_node(t_env **head, t_env *new_node);
 t_env	*create_env_node(const char *key, const char *value);
 	// unset
-bool b_unset(t_data *data, char **args);
+bool	b_unset(t_data *data, char **argv);
 
 // Redirects
 	// redirs
