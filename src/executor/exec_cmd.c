@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/01 11:47:33 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/06/30 15:27:42 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,6 @@ bool	execute_built_in(t_data *data, t_node *cur)
 	}
 	else if (type == EXPORT)
 		return (b_export(data, cur->cmd));
-	else if (type == UNSET)
-		return (b_unset(data, cur->cmd));
 	else
 		return (false);
 	return (true);
