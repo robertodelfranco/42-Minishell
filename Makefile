@@ -32,6 +32,7 @@ SRCS		=	./src/main.c \
 				./src/builtin/cd.c \
 				./src/builtin/export.c \
 				./src/builtin/export_sort.c \
+				./src/builtin/unset.c \
 				./src/expansion/init_env.c \
 				./src/expansion/expand.c \
 				./src/expansion/expand_utils.c \
