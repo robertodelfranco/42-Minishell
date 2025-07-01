@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 17:54:41 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/26 13:47:18 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/07/01 19:12:05 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static void	print_cmd(char **args, int n_flag)
 		printf("\n");
 }
 
-int	echo(char **args)
+bool	echo(char **args)
 {
 	int	i;
 	int	n_flag;
@@ -54,5 +54,5 @@ int	echo(char **args)
 		n_flag = 1;
 	}
 	print_cmd(args, n_flag);
-	return (0);
+	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 15:37:56 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/01 18:05:29 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,8 @@ static bool	validate_tokens(t_data *data)
 	t_token	*cur;
 	t_token	*last;
 
+	if (data->unclosed_quote == true)
+		return (false);
 	cur = data->token_list;
 	if (cur->type == PIPE)
 		return (false);

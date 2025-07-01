@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/01 14:50:09 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/01 19:13:59 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,7 @@
 # define COLOR "\033[1;36m"
 # define RESET "\033[0m"
 # define NOPRINTABLE "\t\n\v\f\r "
-
-# ifndef PATH_MAX
-#  define PATH_MAX 4096
-# endif
+# define PATH_MAX 4096
 
 typedef enum e_token_type
 {
@@ -96,10 +93,9 @@ typedef struct s_token
 typedef struct s_data
 {
 	char			*prompt;
-	int				double_quotes;
-	int				single_quotes;
 	int				exit_status;
 	int				fd[2];
+	bool			unclosed_quote;
 	t_token			*token_list;
 	t_parse			*parse_list;
 	t_redir			*redir_list;
@@ -125,8 +121,7 @@ char	*ft_readline(t_data *data);
 // Tokenizer
 	// token
 int		create_token(t_data *data);
-void	get_token(t_data *data, int start);
-void	add_token_list(t_data *data, char *token_name, t_type id_token);
+void	add_token_list(t_data *data, char *value, t_type id_token);
 	// token_utils
 t_type	external_command(char *token_name);
 t_type	give_id_token(char *str);
@@ -191,7 +186,7 @@ bool	execute_command(t_data *data, t_node *cur, char **env_array);
 
 // Built_ins
 	// echo
-int		echo(char **args);
+bool	echo(char **args);
 	// env
 bool	env(t_data *data, char **args);
 int		ft_envdup(t_data *data);
