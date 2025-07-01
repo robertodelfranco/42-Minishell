@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:04:00 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/01 19:09:28 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/01 19:40:51 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,25 @@ static int	handle_word_token(t_data *data, int i)
 
 	start = i;
 	while (data->prompt[i] && !ft_strchr(NOPRINTABLE, data->prompt[i])
-		&& data->prompt[i] != '\'' && data->prompt[i] != '\"'
 		&& data->prompt[i] != '>' && data->prompt[i] != '<'
 		&& data->prompt[i] != '|')
+	{
+		if (data->prompt[i] == '\'')
+		{
+			i++;
+			while (data->prompt[i] && data->prompt[i] != '\'')
+				i++;
+		}
+		else if (data->prompt[i] == '\"')
+		{
+			i++;
+			while (data->prompt[i] && data->prompt[i] != '\"')
+				i++;
+		}
+		if (data->prompt[i] == '\0')
+			break ;
 		i++;
+	}
 	token = ft_substr(data->prompt, start, i - start);
 	add_token_list(data, token, give_id_token(token));
 	free(token);

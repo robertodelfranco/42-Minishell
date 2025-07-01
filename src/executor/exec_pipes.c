@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/01 15:02:45 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/01 19:53:12 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 	return (false);
 }
 
-static bool	handle_parent(t_node *cur, int fd[2], int *prev_fd, pid_t pid)
+static int	handle_parent(t_node *cur, int fd[2], int *prev_fd, pid_t pid)
 {
 	int	status;
 	int	exit_code;
@@ -75,8 +75,10 @@ bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 		if (pid < 0)
 			return (free_program(data, "Fork failed"));
 		if (pid == 0)
-			handle_child(data, cur, fd, prev_fd);
+			return (handle_child(data, cur, fd, prev_fd));
 		data->exit_status = handle_parent(cur, fd, &prev_fd, pid);
+		if (data->exit_status != 0)
+			return (false);
 		cur = cur->next;
 	}
 	return (true);
@@ -91,7 +93,7 @@ bool	execute_command(t_data *data, t_node *cur, char **env_array)
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
-			exit(1);
+			exit(0);
 		return (false);
 	}
 	else if (cur->cmd[0][0] == '.' && cur->cmd[0][0] == '/')
@@ -104,6 +106,8 @@ bool	execute_command(t_data *data, t_node *cur, char **env_array)
 		free(full_path);
 		exit(exit_code);
 	}
+	else
+		data->exit_status = 0;
 	free(full_path);
 	return (true);
 }

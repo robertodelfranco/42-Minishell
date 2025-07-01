@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/01 14:54:12 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/01 19:55:33 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,10 @@ bool	executor(t_data *data)
 
 	cur = data->exec_list;
 	if (!open_redirs(data))
+	{
+		data->exit_status = 1;
 		return (false);
+	}
 	while (cur && cur->cmd[0] && cur->cmd[1] == NULL)
 	{
 		cur->cmd[0] = ft_strtrim(cur->cmd[0], " \t\n");

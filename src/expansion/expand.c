@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:40:55 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 15:38:13 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/01 20:00:26 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	get_expand_size(t_data *data, const char *str)
 	j = 0;
 	while (str[j])
 	{
-		if (str[j] == '$')
+		if (str[j] == '$' && str[j + 1] != '\0' && str[j + 1] != ' ')
 		{
 			key = get_variable_key(&str[j + 1], &key_len);
 			value = get_variable_value(data, key);
@@ -89,7 +89,7 @@ char	*get_str_expanded(t_data *data, char *input, char *expand)
 	j = 0;
 	while (input[i])
 	{
-		if (input[i] == '$')
+		if (input[i] == '$' && input[i + 1] != '\0' && input[i + 1] != ' ')
 		{
 			key = get_variable_key(&input[i + 1], &key_len);
 			value = get_variable_value(data, key);
