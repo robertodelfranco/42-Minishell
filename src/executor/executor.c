@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/01 14:45:25 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/01 14:54:12 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,11 @@ static bool	execute_one_command(t_data *data, t_node *cur)
 	{
 		if (execute_external(data, cur))
 			return (fd_restore(data, cur));
+	}
+	else
+	{
+		data->exit_status = CMD_NOT_FOUND;
+		ft_printf_fd(2, "minishell: %s: command not found\n", cur->cmd[0]);
 	}
 	fd_restore(data, cur);
 	return (false);

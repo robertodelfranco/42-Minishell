@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/01 14:40:14 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/01 14:52:09 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,21 +31,16 @@ bool	execute_built_in(t_data *data, t_node *cur)
 	if (type == CD)
 		return (cd(data, cur->cmd));
 	else if (type == PWD)
-		pwd(data);
+		return (pwd(data));
 	else if (type == ENV)
-		env(data, cur->cmd);
+		return (env(data, cur->cmd));
 	else if (type == EXIT)
-	{
-		b_exit(data, cur->cmd);
-		return (false);
-	}
+		return (b_exit(data, cur->cmd));
 	else if (type == EXPORT)
 		return (b_export(data, cur->cmd));
 	else if (type == UNSET)
 		return (b_unset(data, cur->cmd));
-	else
-		return (false);
-	return (true);
+	return (false);
 }
 
 bool	execute_external(t_data *data, t_node *cur)

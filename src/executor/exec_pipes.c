@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/01 14:20:55 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/01 15:02:45 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,8 @@ bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 		if (pid < 0)
 			return (free_program(data, "Fork failed"));
 		if (pid == 0)
-			return (handle_child(data, cur, fd, prev_fd));
-		handle_parent(cur, fd, &prev_fd, pid);
+			handle_child(data, cur, fd, prev_fd);
+		data->exit_status = handle_parent(cur, fd, &prev_fd, pid);
 		cur = cur->next;
 	}
 	return (true);

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/01 14:09:03 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/01 14:50:09 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,14 +193,14 @@ bool	execute_command(t_data *data, t_node *cur, char **env_array);
 	// echo
 int		echo(char **args);
 	// env
-void	env(t_data *data, char **args);
+bool	env(t_data *data, char **args);
 int		ft_envdup(t_data *data);
 	// pwd
-void	pwd(t_data *data);
+bool	pwd(t_data *data);
 	// cd
 bool	cd(t_data *data, char **argv);
 	// exit
-void	b_exit(t_data *data, char **argv);
+bool	b_exit(t_data *data, char **argv);
 	// export
 bool	b_export(t_data *data, char **argv);
 void	print_export(t_data *data);
