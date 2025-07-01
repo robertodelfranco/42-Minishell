@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:14:38 by marvin            #+#    #+#             */
-/*   Updated: 2025/06/30 16:11:43 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/01 20:24:24 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,10 @@ bool	open_redirs(t_data *data)
 		if (cur->redir)
 		{
 			if (!identify_redirs(cur->redir, cur, data))
+			{
+				data->exit_status = 1;
 				return (false);
+			}
 		}
 		cur = cur->next;
 	}

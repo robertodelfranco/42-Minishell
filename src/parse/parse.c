@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/01 18:05:29 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/01 20:19:27 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ static bool	validate_tokens(t_data *data)
 	while (cur)
 	{
 		if (cur->type == PIPE)
-			if (cur->next->type == PIPE || cur->next->type == REDIR)
+			if (cur->next->type == PIPE)
 				return (false);
 		if (cur->type == REDIR)
 			if (cur->next->type == PIPE || cur->next->type == REDIR)
