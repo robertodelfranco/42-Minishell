@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 10:06:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/01 12:01:40 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/07/01 14:27:15 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static bool is_valid_arg(const char *args)
+static bool	is_valid_arg(const char *args)
 {
 	int	i;
 
@@ -29,7 +29,7 @@ static bool is_valid_arg(const char *args)
 	return (true);
 }
 
-static bool remove_var_from_env_list(t_data *data, const char *arg)
+static bool	remove_var_from_env_list(t_data *data, const char *arg)
 {
 	t_env	*current;
 	t_env	*prev;
@@ -55,29 +55,23 @@ static bool remove_var_from_env_list(t_data *data, const char *arg)
 	return (false);
 }
 
-bool b_unset(t_data *data, char **args)
+bool	b_unset(t_data *data, char **args)
 {
 	int	i;
 
+	data->exit_status = 0;
 	if (!args[1] || !args)
-	{
-		ft_printf_fd(2, "unset: not enough arguments\n");
-		data->exit_status = 1;
-		return (false);
-	}
+		return (true);
 	i = 1;
 	while (args[i])
 	{
 		if (!is_valid_arg(args[i]))
-		{ 
+		{
 			ft_printf_fd(2, "unset: `%s': not a valid identifier\n", args[i]);
 			data->exit_status = 1;
 		}
 		else
-		{
-			if (!remove_var_from_env_list(data, args[i]))
-				data->exit_status = 1;
-		}
+			remove_var_from_env_list(data, args[i]);
 		i++;
 	}
 	return (true);

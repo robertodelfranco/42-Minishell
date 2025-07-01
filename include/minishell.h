@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/01 11:50:05 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/07/01 14:09:03 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,6 @@ char	*get_str_expanded(t_data *data, char *input, char *expanded);
 bool	ft_expand(t_data *data);
 	//expand_utils
 int		ft_ptr_len(char **str);
-int		ft_strchr_count(char const *str, char c);
 void	ft_free_key_and_value(char *key, char *value);
 void	copy_value(char *str_expand, char *value, int *j);
 
@@ -184,11 +183,11 @@ int		ft_listsize(t_env *list);
 bool	fd_restore(t_data *data, t_node *cur);
 char	**get_env_array(t_env *env_list);
 char	*ft_get_external_path(char *token_name);
+int		get_execve_exit_code(char *cmd, char *full_path);
 	// exec_pipes
 void	ft_dup_and_close(int fd, int dup, int clos);
-bool	execute_first_command(t_data *data, t_node *cur);
-bool	execute_last_command(t_data *data, t_node *cur);
-bool	execute_middle_command(t_data *data, t_node *cur);
+bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd);
+bool	execute_command(t_data *data, t_node *cur, char **env_array);
 
 // Built_ins
 	// echo
@@ -208,7 +207,7 @@ void	print_export(t_data *data);
 void	append_env_node(t_env **head, t_env *new_node);
 t_env	*create_env_node(const char *key, const char *value);
 	// unset
-bool b_unset(t_data *data, char **args);
+bool	b_unset(t_data *data, char **args);
 
 // Redirects
 	// redirs
