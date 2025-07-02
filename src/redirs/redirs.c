@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:14:38 by marvin            #+#    #+#             */
-/*   Updated: 2025/07/02 12:18:03 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/02 14:21:44 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,26 +83,6 @@ bool	identify_redirs(t_redir *redir, t_node *node, t_data *data)
 			if (!init_heredoc(redir, node, data))
 				return (false);
 		redir = redir->next;
-	}
-	return (true);
-}
-
-bool	open_redirs(t_data *data)
-{
-	t_node	*cur;
-
-	cur = data->exec_list;
-	while (cur)
-	{
-		if (cur->redir)
-		{
-			if (!identify_redirs(cur->redir, cur, data))
-			{
-				data->exit_status = 1;
-				return (false);
-			}
-		}
-		cur = cur->next;
 	}
 	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/01 19:13:59 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/02 15:37:20 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,8 +157,6 @@ int		ft_count_tokens(t_token *cur);
 void	ft_init_env(t_data *data, char **env);
 void	add_env_list(t_data *data, t_env *new_node);
 	//expand
-char	*get_variable_value(t_data *data, char *str);
-char	*get_variable_key(const char *str, int *len);
 int		get_expand_size(t_data *data, const char *str);
 char	*get_str_expanded(t_data *data, char *input, char *expanded);
 bool	ft_expand(t_data *data);
