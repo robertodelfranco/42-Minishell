@@ -6,69 +6,69 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/02 12:30:02 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/02 18:21:49 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static char	*ft_get_str_without_quotes(t_token *cur, char *str_quoted)
-{
-	char	*str_without_quotes;
-	char	type;
-	int		i;
-	size_t	j;
+// static char	*ft_get_str_without_quotes(t_token *cur, char *str_quoted)
+// {
+// 	char	*str_without_quotes;
+// 	char	type;
+// 	int		i;
+// 	size_t	j;
 
-	str_without_quotes = ft_calloc(ft_strlen(str_quoted) - 1, sizeof(char));
-	if (!str_without_quotes)
-		return (NULL);
-	type = ft_findchar(str_quoted, "\'\"");
-	cur->type = DOUB_QUOTE;
-	if (type == '\'')
-		cur->type = SING_QUOTE;
-	i = 0;
-	j = 0;
-	while (str_quoted[i] && j < ft_strlen(str_quoted) - 1)
-	{
-		while (str_quoted[i] == '\'' && cur->type == SING_QUOTE)
-			i++;
-		while (str_quoted[i] == '\"' && cur->type == DOUB_QUOTE)
-			i++;
-		if (str_quoted[i] == '\0')
-			break ;
-		str_without_quotes[j++] = str_quoted[i++];
-	}
-	return (str_without_quotes);
-}
+// 	str_without_quotes = ft_calloc(ft_strlen(str_quoted) - 1, sizeof(char));
+// 	if (!str_without_quotes)
+// 		return (NULL);
+// 	type = ft_findchar(str_quoted, "\'\"");
+// 	cur->type = DOUB_QUOTE;
+// 	if (type == '\'')
+// 		cur->type = SING_QUOTE;
+// 	i = 0;
+// 	j = 0;
+// 	while (str_quoted[i] && j < ft_strlen(str_quoted) - 1)
+// 	{
+// 		while (str_quoted[i] == '\'' && cur->type == SING_QUOTE)
+// 			i++;
+// 		while (str_quoted[i] == '\"' && cur->type == DOUB_QUOTE)
+// 			i++;
+// 		if (str_quoted[i] == '\0')
+// 			break ;
+// 		str_without_quotes[j++] = str_quoted[i++];
+// 	}
+// 	return (str_without_quotes);
+// }
 
-static bool	handle_quotes(t_data *data)
-{
-	t_token	*cur;
-	char	*temp;
+// static bool	handle_quotes(t_data *data)
+// {
+// 	t_token	*cur;
+// 	char	*temp;
 
-	cur = data->token_list;
-	while (cur)
-	{
-		if (ft_strchr(cur->value, '\'') || ft_strchr(cur->value, '\"'))
-		{
-			if (ft_strlen(cur->value) <= 2)
-				temp = ft_strdup("");
-			else
-				temp = ft_get_str_without_quotes(cur, cur->value);
-			if (!temp)
-				return (false);
-			free(cur->value);
-			cur->value = temp;
-			cur->quoted = true;
-			if (cur->type == SING_QUOTE)
-				cur->type = SING_QUOTE;
-			else
-				cur->type = EXPAND;
-		}
-		cur = cur->next;
-	}
-	return (true);
-}
+// 	cur = data->token_list;
+// 	while (cur)
+// 	{
+// 		if (ft_strchr(cur->value, '\'') || ft_strchr(cur->value, '\"'))
+// 		{
+// 			if (ft_strlen(cur->value) <= 2)
+// 				temp = ft_strdup("");
+// 			else
+// 				temp = ft_get_str_without_quotes(cur, cur->value);
+// 			if (!temp)
+// 				return (false);
+// 			free(cur->value);
+// 			cur->value = temp;
+// 			cur->quoted = true;
+// 			if (cur->type == SING_QUOTE)
+// 				cur->type = SING_QUOTE;
+// 			else
+// 				cur->type = EXPAND;
+// 		}
+// 		cur = cur->next;
+// 	}
+// 	return (true);
+// }
 
 static bool	search_heredoc(t_data *data)
 {
@@ -123,8 +123,6 @@ bool	parse(t_data *data)
 		return (free_program(data, "Invalid tokens"));
 	if (!search_heredoc(data))
 		return (free_program(data, "Error searching heredoc"));
-	if (!handle_quotes(data))
-		return (free_program(data, "Quotes not closed"));
 	if (!ft_expand(data))
 		return (free_program(data, "Error expanding variables"));
 	if (!get_new_types(data))

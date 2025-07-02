@@ -6,72 +6,43 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:40:55 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/01 20:00:26 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/02 18:31:49 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-char	*get_variable_value(t_data *data, char *str)
+static int	process_variable(t_data *data, const char *str, int *i)
 {
-	t_env	*cur;
+	char	*key;
+	char	*value;
+	int		var_size;
 
-	cur = data->env_list;
-	if (str[0] == '\0')
-		return (ft_strdup("$"));
-	if (str[0] == '?')
-		return (ft_itoa(data->exit_status));
-	while (cur)
-	{
-		if (ft_strcmp(str, cur->key) == 0)
-			return (ft_strdup(cur->value));
-		cur = cur->next;
-	}
-	return (ft_strdup(""));
-}
-
-char	*get_variable_key(const char *str, int *len)
-{
-	int	i;
-
-	i = 0;
-	if (str[i] == '?')
-	{
-		*len = 1;
-		return (ft_strdup("?"));
-	}
-	while (str[i] && str[i] != 32 && str[i] != '$')
-		i++;
-	if (i == 0 && str[i] != '\0')
-		i = 1;
-	*len = i;
-	return (ft_substr(str, 0, i));
+	key = get_variable_key(&str[*i + 1]);
+	value = get_variable_value(data, key);
+	var_size = ft_strlen(value);
+	*i += ft_strlen(key) + 1;
+	ft_free_key_and_value(key, value);
+	return (var_size);
 }
 
 int	get_expand_size(t_data *data, const char *str)
 {
-	int		key_len;
-	char	*value;
-	char	*key;
 	int		size;
-	int		j;
+	int		i;
 
+	i = 0;
 	size = 0;
-	j = 0;
-	while (str[j])
+	while (str[i])
 	{
-		if (str[j] == '$' && str[j + 1] != '\0' && str[j + 1] != ' ')
-		{
-			key = get_variable_key(&str[j + 1], &key_len);
-			value = get_variable_value(data, key);
-			size += ft_strlen(value);
-			ft_free_key_and_value(key, value);
-			j += key_len + 1;
-		}
+		if (str[i] == '\'' || str[i] == '\"')
+			i += jump_quotes(data, &str[i], &size);
+		else if (str[i] == '$' && str[i + 1] != '\0' && str[i + 1] != ' ')
+			size += process_variable(data, str, &i);
 		else
 		{
 			size++;
-			j++;
+			i++;
 		}
 	}
 	return (size);
@@ -81,7 +52,6 @@ char	*get_str_expanded(t_data *data, char *input, char *expand)
 {
 	char	*key;
 	char	*value;
-	int		key_len;
 	int		i;
 	int		j;
 
@@ -89,14 +59,15 @@ char	*get_str_expanded(t_data *data, char *input, char *expand)
 	j = 0;
 	while (input[i])
 	{
-		if (input[i] == '$' && input[i + 1] != '\0' && input[i + 1] != ' ')
+		if (input[i] == '\'' || input[i] == '\"')
+			i += copy_quotes(data, &input[i], expand, &j);
+		else if (input[i] == '$' && input[i + 1] != '\0' && input[i + 1] != ' ')
 		{
-			key = get_variable_key(&input[i + 1], &key_len);
+			key = get_variable_key(&input[i + 1]);
 			value = get_variable_value(data, key);
 			copy_value(expand, value, &j);
-			free(key);
-			free(value);
-			i += key_len + 1;
+			i += ft_strlen(key) + 1;
+			ft_free_key_and_value(key, value);
 		}
 		else
 			expand[j++] = input[i++];
@@ -115,9 +86,10 @@ bool	ft_expand(t_data *data)
 	{
 		if (ft_strcmp(cur->value, "<<") == 0)
 			cur = cur->next->next;
-		if (cur && cur->value && (cur->type == EXPAND || cur->type == WORD))
+		if (cur && cur->value)
 		{
-			if (ft_strchr(cur->value, '$'))
+			if (ft_strchr(cur->value, '$') || ft_strchr(cur->value, '\"')
+				|| ft_strchr(cur->value, '\''))
 			{
 				expand = ft_calloc(get_expand_size(data, cur->value) + 1, 1);
 				if (!expand)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/02 14:57:01 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/07/02 18:25:53 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,9 +123,9 @@ char	*ft_readline(t_data *data);
 int		create_token(t_data *data);
 void	add_token_list(t_data *data, char *value, t_type id_token);
 	// token_utils
-t_type	external_command(char *token_name);
 t_type	give_id_token(char *str);
 t_type	get_command(char *token_name);
+t_type	external_command(char *token_name);
 t_token	*ft_last(t_token *lst);
 	// token_handle_quotes
 int		handle_word_token(t_data *data, int i);
@@ -157,10 +157,7 @@ int		ft_count_tokens(t_token *cur);
 // Expansion
 	//init_env
 void	ft_init_env(t_data *data, char **env);
-void	add_env_list(t_data *data, t_env *new_node);
 	//expand
-char	*get_variable_value(t_data *data, char *str);
-char	*get_variable_key(const char *str, int *len);
 int		get_expand_size(t_data *data, const char *str);
 char	*get_str_expanded(t_data *data, char *input, char *expanded);
 bool	ft_expand(t_data *data);
@@ -168,23 +165,29 @@ bool	ft_expand(t_data *data);
 int		ft_ptr_len(char **str);
 void	ft_free_key_and_value(char *key, char *value);
 void	copy_value(char *str_expand, char *value, int *j);
+char	*get_variable_value(t_data *data, char *str);
+char	*get_variable_key(const char *str);
+	// expand_quotes
+int		jump_quotes(t_data *data, const char *str, int *size);
+int		copy_quotes(t_data *data, char *input, char *str_expand, int *j);
 
 // Executor
+	// executor
 bool	executor(t_data *data);
 	// exec_cmd
+void	ft_dup_and_close(int fd, int dup, int clos);
 bool	execute_built_in(t_data *data, t_node *cur);
 bool	execute_external(t_data *data, t_node *cur);
+int		get_execve_exit_code(char *cmd, char *full_path);
+	// exec_pipes
+bool	execute_command(t_data *data, t_node *cur, char **env_array);
+bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd);
 	// exec_utils
 void	dup_fds(t_node *cur);
 int		ft_listsize(t_env *list);
 bool	fd_restore(t_data *data, t_node *cur);
 char	**get_env_array(t_env *env_list);
 char	*ft_get_external_path(char *token_name);
-int		get_execve_exit_code(char *cmd, char *full_path);
-	// exec_pipes
-void	ft_dup_and_close(int fd, int dup, int clos);
-bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd);
-bool	execute_command(t_data *data, t_node *cur, char **env_array);
 
 // Built_ins
 	// echo
