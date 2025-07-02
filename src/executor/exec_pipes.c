@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/01 19:53:12 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/02 12:46:44 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,22 @@ bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 			cur = cur->next;
 		if (cur->next && pipe(fd) == -1)
 			return (free_program(data, "Pipe creation failed"));
+		if (!identify_redirs(cur->redir, cur, data))
+		{
+			data->exit_status = 1;
+			fd_restore(data, cur);
+			if (prev_fd != -1)
+				close(prev_fd);
+			if (cur->next != NULL)
+				close(fd[1]);
+			if (cur->fd_in != -1)
+				close(cur->fd_in);
+			if (cur->fd_out != -1)
+				close(cur->fd_out);
+			prev_fd = fd[0];
+			cur = cur->next;
+			continue ;
+		}
 		pid = fork();
 		if (pid < 0)
 			return (free_program(data, "Fork failed"));

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:14:38 by marvin            #+#    #+#             */
-/*   Updated: 2025/07/01 20:24:24 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/02 12:18:03 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ bool	execute_redir_in(t_redir *redir, t_node *cur)
 	fd = open(redir->target, O_RDONLY);
 	if (fd < 0)
 	{
-		perror("redirection in error: could not open file");
+		perror(redir->target);
 		return (false);
 	}
 	if (cur->fd_in != -1)
@@ -35,7 +35,7 @@ bool	execute_redir_out(t_redir *redir, t_node *cur)
 	fd = open(redir->target, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	if (fd < 0)
 	{
-		perror("redirection out error: could not open file");
+		perror(redir->target);
 		return (false);
 	}
 	if (cur->fd_out != -1)
@@ -51,7 +51,7 @@ bool	execute_redir_append(t_redir *redir, t_node *cur)
 	fd = open(redir->target, O_CREAT | O_APPEND | O_WRONLY, 0644);
 	if (fd < 0)
 	{
-		perror("redirection append error: could not open file");
+		perror(redir->target);
 		return (false);
 	}
 	if (cur->fd_out != -1)

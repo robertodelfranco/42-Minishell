@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/01 20:24:31 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/02 12:16:00 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,12 @@
 
 static bool	execute_one_command(t_data *data, t_node *cur)
 {
+	if (!identify_redirs(cur->redir, cur, data))
+	{
+		data->exit_status = 1;
+		fd_restore(data, cur);
+		return (false);
+	}
 	dup_fds(cur);
 	if (cur->node_type == BUILT_IN)
 	{
@@ -42,8 +48,6 @@ bool	executor(t_data *data)
 	int		prev_fd;
 
 	cur = data->exec_list;
-	if (!open_redirs(data))
-		return (false);
 	while (cur && cur->cmd[0] && cur->cmd[1] == NULL)
 	{
 		cur->cmd[0] = ft_strtrim(cur->cmd[0], " \t\n");
