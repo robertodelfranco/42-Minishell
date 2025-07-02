@@ -16,6 +16,7 @@ SRCS		=	./src/main.c \
 				./src/free_list.c \
 				./src/token/token.c \
 				./src/token/token_utils.c \
+				./src/token/token_handle_quotes.c \
 				./src/executor/executor.c \
 				./src/executor/exec_cmd.c \
 				./src/executor/exec_pipes.c \
