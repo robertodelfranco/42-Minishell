@@ -6,13 +6,13 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 17:41:55 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/05/30 16:31:55 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/02 18:14:56 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	add_env_list(t_data *data, t_env *new_node)
+static void	add_env_list(t_data *data, t_env *new_node)
 {
 	t_env	*last;
 

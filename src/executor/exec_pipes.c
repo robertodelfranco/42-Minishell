@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/02 12:46:44 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/02 18:23:43 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,34 @@ static int	handle_parent(t_node *cur, int fd[2], int *prev_fd, pid_t pid)
 	return (exit_code);
 }
 
+bool	execute_command(t_data *data, t_node *cur, char **env_array)
+{
+	char	*full_path;
+	int		exit_code;
+
+	exit_code = 0;
+	if (cur->node_type == BUILT_IN)
+	{
+		if (execute_built_in(data, cur))
+			exit(0);
+		return (false);
+	}
+	else if (cur->cmd[0][0] == '.' && cur->cmd[0][0] == '/')
+		full_path = ft_strdup(cur->cmd[0]);
+	else
+		full_path = ft_get_external_path(cur->cmd[0]);
+	if (execve(full_path, cur->cmd, env_array) == -1)
+	{
+		exit_code = get_execve_exit_code(cur->cmd[0], full_path);
+		free(full_path);
+		exit(exit_code);
+	}
+	else
+		data->exit_status = 0;
+	free(full_path);
+	return (true);
+}
+
 bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 {
 	pid_t	pid;
@@ -97,33 +125,5 @@ bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 			return (false);
 		cur = cur->next;
 	}
-	return (true);
-}
-
-bool	execute_command(t_data *data, t_node *cur, char **env_array)
-{
-	char	*full_path;
-	int		exit_code;
-
-	exit_code = 0;
-	if (cur->node_type == BUILT_IN)
-	{
-		if (execute_built_in(data, cur))
-			exit(0);
-		return (false);
-	}
-	else if (cur->cmd[0][0] == '.' && cur->cmd[0][0] == '/')
-		full_path = ft_strdup(cur->cmd[0]);
-	else
-		full_path = ft_get_external_path(cur->cmd[0]);
-	if (execve(full_path, cur->cmd, env_array) == -1)
-	{
-		exit_code = get_execve_exit_code(cur->cmd[0], full_path);
-		free(full_path);
-		exit(exit_code);
-	}
-	else
-		data->exit_status = 0;
-	free(full_path);
 	return (true);
 }

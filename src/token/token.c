@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:04:00 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/02 14:55:18 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/07/02 18:25:24 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,30 @@ static int	handle_quoted_token(t_data *data, int i)
 
 	start = i;
 	quote = data->prompt[i++];
-	while (data->prompt[i] && data->prompt[i] != quote)
+	while (data->prompt[i])
+	{
+		if (data->prompt[i] == quote && ft_strchr(NOPRINTABLE, data->prompt[i + 1]))
+		{
+			quote = '\0';
+			break ;
+		}
+		else if (data->prompt[i] == quote && (data->prompt[i + 1] == '\'' || data->prompt[i + 1] == '\"'))
+		{
+			quote = data->prompt[i + 1];
+			i++;
+		}
+		else if (data->prompt[i] == quote)
+			quote = '\0';
+		else if (data->prompt[i] == '\'' || data->prompt[i] == '\"')
+			quote = data->prompt[i];
 		i++;
-	if (data->prompt[i] == '\0')
-		data->unclosed_quote = true;
-	if (data->prompt[i] == quote)
-		i++;
+	}
+	// if (!count_quotes(data->prompt, start, i - start))
+	// 	data->unclosed_quote = true;
 	token = ft_substr(data->prompt, start, i - start);
 	add_token_list(data, token, give_id_token(token));
 	free(token);
-	return (i);
+	return (i + 1);
 }
 
 static int	handle_operator_token(t_data *data, int i)
@@ -47,6 +61,28 @@ static int	handle_operator_token(t_data *data, int i)
 	add_token_list(data, token, give_id_token(token));
 	free(token);
 	return (i + len);
+}
+
+int	create_token(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (data->prompt[i] && ft_strchr(NOPRINTABLE, data->prompt[i]))
+		i++;
+	while (data->prompt[i])
+	{
+		if (data->prompt[i] == '\'' || data->prompt[i] == '\"')
+			i = handle_quoted_token(data, i);
+		else if (data->prompt[i] == '>' || data->prompt[i] == '<'
+			|| data->prompt[i] == '|')
+			i = handle_operator_token(data, i);
+		else if (!ft_strchr(NOPRINTABLE, data->prompt[i]))
+			i = handle_word_token(data, i);
+		else
+			i++;
+	}
+	return (i);
 }
 
 void	add_token_list(t_data *data, char *value, t_type id_token)
@@ -73,38 +109,4 @@ void	add_token_list(t_data *data, char *value, t_type id_token)
 		last = ft_last(data->token_list);
 		last->next = new_token;
 	}
-}
-
-static bool	is_redir_w_quote(t_data *data, int pos)
-{
-	if (pos > 0 && (data->prompt[pos - 1] == '>'
-			|| data->prompt[pos - 1] == '<'))
-	{
-		if (data->prompt[pos] == '\"' || data->prompt[pos] == '\'')
-			return (true);
-	}
-	return (false);
-}
-
-int	create_token(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	while (data->prompt[i] && ft_strchr(NOPRINTABLE, data->prompt[i]))
-		i++;
-	while (data->prompt[i])
-	{
-		if ((data->prompt[i] == '\'' || data->prompt[i] == '\"')
-			&& !is_redir_w_quote(data, i))
-			i = handle_quoted_token(data, i);
-		else if (data->prompt[i] == '>' || data->prompt[i] == '<'
-			|| data->prompt[i] == '|')
-			i = handle_operator_token(data, i);
-		else if (!ft_strchr(NOPRINTABLE, data->prompt[i]))
-			i = handle_word_token(data, i);
-		else
-			i++;
-	}
-	return (i);
 }
