@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/01 19:13:59 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/02 14:57:01 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,8 @@ t_type	external_command(char *token_name);
 t_type	give_id_token(char *str);
 t_type	get_command(char *token_name);
 t_token	*ft_last(t_token *lst);
+	// token_handle_quotes
+int		handle_word_token(t_data *data, int i);
 
 // Parser
 	// parse
