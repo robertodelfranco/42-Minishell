@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 15:50:18 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/02 18:41:57 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,12 @@ bool	parse_args_list(t_data *data)
 	t_token	*cur;
 
 	cur = data->token_list;
-	if (cur->type == REDIR)
-		verify_pipeline(data, &cur);
 	while (cur)
 	{
+		if (cur->type == REDIR)
+			verify_pipeline(data, &cur);
+		if (!cur)
+			break ;
 		if (cur->type == PIPE || (cur->type == EXPAND
 				|| cur->type == WORD))
 			add_parse_list(data, get_operations(cur), cur->type);
