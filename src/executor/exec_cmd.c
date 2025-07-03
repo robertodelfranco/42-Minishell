@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/02 12:30:50 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 17:20:50 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,8 @@ bool	execute_external(t_data *data, t_node *cur)
 	int		status;
 
 	env_array = get_env_array(data->env_list);
-	if (cur->cmd[0][0] == '.' || cur->cmd[0][0] == '/')
+	if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
+		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
 		full_path = ft_strdup(cur->cmd[0]);
 	else
 		full_path = ft_get_external_path(cur->cmd[0]);

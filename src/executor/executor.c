@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/02 12:16:00 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 16:55:42 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,10 @@ bool	executor(t_data *data)
 		{
 			cur = cur->next;
 			if (!cur)
+			{
+				data->exit_status = 0;
 				return (true);
+			}
 		}
 		else
 			break ;

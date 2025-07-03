@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/02 18:25:53 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 19:12:41 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@
 # define SUCCESS 0
 # define FAILURE 1
 # define CMD_NOT_FOUND 127
-# define COLOR "\033[1;36m"
-# define RESET "\033[0m"
+# define COLOR "\001\033[1;36m\002"
+# define RESET "\001\033[0m\002"
 # define NOPRINTABLE "\t\n\v\f\r "
 # define PATH_MAX 4096
 
@@ -43,9 +43,6 @@ typedef enum e_token_type
 	OUT_REDIR,
 	APPEND,
 	HEREDOC,
-	EXPAND,
-	SING_QUOTE,
-	DOUB_QUOTE,
 	BUILT_IN,
 	EXTERNAL,
 	WORD,
@@ -56,7 +53,6 @@ typedef enum e_token_type
 	UNSET,
 	EXPORT,
 	EXIT,
-	DOC_WORD,
 }	t_type;
 
 typedef struct s_redir
@@ -135,31 +131,27 @@ int		handle_word_token(t_data *data, int i);
 bool	parse(t_data *data);
 	// parse_list
 bool	parse_args_list(t_data *data);
-t_parse	*add_parse_list(t_data *data, char **args, t_type type);
-void	append_redir(t_redir **redir_list, t_token *cur);
-char	**get_operations(t_token *cur);
 char	**get_arguments(t_token *cur);
-	//parse_list_utils
+	//parse_list_redirs
+void	append_redir(t_redir **redir_list, t_token *cur);
 void	verify_pipeline(t_data *data, t_token **cur);
-void	get_redirs(t_parse *node, t_token **cur);
-void	get_redir_node(t_data *data, t_token **tokens);
 	// parse_stack
 bool	build_stack(t_data *data);
-void	add_stack_node(t_data *data, t_node *node);
-t_node	*create_pipe_node(t_type type);
-t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type);
 	// parse_types
 t_type	ft_get_redir_type(char *redir);
 t_type	ft_get_cmd_type(char *value);
 bool	get_new_types(t_data *data);
 int		ft_count_tokens(t_token *cur);
+t_parse	*ft_last_parse(t_parse *lst);
+	// parse_quotes
+bool	handle_quotes(t_token *cur);
 
 // Expansion
 	//init_env
 void	ft_init_env(t_data *data, char **env);
 	//expand
-int		get_expand_size(t_data *data, const char *str);
-char	*get_str_expanded(t_data *data, char *input, char *expanded);
+int		get_expand_size(t_data *data, const char *str, bool heredoc);
+char	*get_str_expand(t_data *data, char *input, char *expand, bool heredoc);
 bool	ft_expand(t_data *data);
 	//expand_utils
 int		ft_ptr_len(char **str);
@@ -212,7 +204,6 @@ bool	b_unset(t_data *data, char **args);
 // Redirects
 	// redirs
 bool	identify_redirs(t_redir *redir, t_node *node, t_data *data);
-bool	open_redirs(t_data *data);
 	// heredoc
 bool	init_heredoc(t_redir *redir, t_node *node, t_data *data);
 void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd);

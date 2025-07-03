@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:22:19 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/01 14:06:16 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 17:26:54 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ char	*ft_get_external_path(char *token_name)
 	char	*full_path;
 	char	**new_path;
 
-	new_path = ft_split(getenv("PATH"), ':');
+	new_path = ft_split(getenv("PATH"), ':'); // function to get PATH from env list
 	if (new_path == NULL)
 		return (0);
 	i = 0;

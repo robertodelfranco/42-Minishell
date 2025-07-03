@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:14:15 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 16:21:40 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 16:20:20 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,8 @@ void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd)
 		}
 		if (redir->quoted == false)
 		{
-			expand = ft_calloc(get_expand_size(data, input) + 1, 1);
-			new_str = get_str_expanded(data, input, expand);
+			expand = ft_calloc(get_expand_size(data, input, true) + 1, 1);
+			new_str = get_str_expand(data, input, expand, true);
 			free(input);
 			input = new_str;
 		}
