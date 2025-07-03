@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 16:55:42 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 19:50:08 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,20 +48,23 @@ bool	executor(t_data *data)
 	int		prev_fd;
 
 	cur = data->exec_list;
-	while (cur && cur->cmd[0] && cur->cmd[1] == NULL)
+	if (cur->cmd != NULL)
 	{
-		cur->cmd[0] = ft_strtrim(cur->cmd[0], " \t\n");
-		if (cur->cmd[0][0] == '\0')
+		while (cur && cur->cmd[0] && cur->cmd[1] == NULL)
 		{
-			cur = cur->next;
-			if (!cur)
+			cur->cmd[0] = ft_strtrim(cur->cmd[0], " \t\n");
+			if (cur->cmd[0][0] == '\0')
 			{
-				data->exit_status = 0;
-				return (true);
+				cur = cur->next;
+				if (!cur)
+				{
+					data->exit_status = 0;
+					return (true);
+				}
 			}
+			else
+				break ;
 		}
-		else
-			break ;
 	}
 	if (cur->next == NULL)
 		return (execute_one_command(data, cur));

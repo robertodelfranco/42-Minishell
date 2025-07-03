@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 15:04:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 19:28:05 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 19:51:19 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,14 @@ bool	build_stack(t_data *data)
 		{
 			node = create_cmd_node(cur->cmd, cur->redir, cur->node_type);
 			add_stack_node(data, node);
-			cur->cmd = NULL; // Mark as transferred to avoid double free
-			cur->redir = NULL; // Mark as transferred to avoid double free
+			cur->cmd = NULL;
+			cur->redir = NULL;
 		}
 		else if (cur->node_type == PIPE)
 		{
 			node = create_pipe_node(cur->cmd, cur->node_type);
 			add_stack_node(data, node);
-			cur->cmd = NULL; // Mark as transferred to avoid double free
+			cur->cmd = NULL;
 		}
 		cur = cur->next;
 	}

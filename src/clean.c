@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 15:10:52 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 19:01:15 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 19:51:56 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ void	ft_free_matrix(char **ptr_matrix)
 	int	i;
 
 	i = 0;
+	if (!ptr_matrix)
+		return ;
 	while (ptr_matrix[i] != NULL)
 	{
 		free(ptr_matrix[i]);

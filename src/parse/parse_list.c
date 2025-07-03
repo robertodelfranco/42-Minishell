@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 19:23:39 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 19:44:13 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,10 @@ static char	**get_operations(t_token *cur)
 		return (NULL);
 	args[0] = ft_strdup(cur->value);
 	if (!args[0])
+	{
+		free(args);
 		return (NULL);
+	}
 	return (args);
 }
 
@@ -71,11 +74,7 @@ bool	parse_args_list(t_data *data)
 	while (cur)
 	{
 		if (cur->type == REDIR)
-		{
 			verify_pipeline(data, &cur);
-			if (!cur)
-				break ;
-		}
 		else if (cur->type == BUILT_IN || cur->type == EXTERNAL)
 		{
 			type = cur->type;
