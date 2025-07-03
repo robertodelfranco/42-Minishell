@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 19:44:13 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 20:06:23 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static char	**get_operations(t_token *cur)
 	return (args);
 }
 
-static t_parse	*add_parse_list(t_data *data, char **args, t_type type)
+static t_parse	*add_parse_list(t_data *data, t_token *cur, t_type type)
 {
 	t_parse	*new_node;
 	t_parse	*last;
@@ -36,7 +36,10 @@ static t_parse	*add_parse_list(t_data *data, char **args, t_type type)
 	new_node = ft_calloc(1, sizeof(t_parse));
 	if (!new_node)
 		return (NULL);
-	new_node->cmd = args;
+	if (cur->type == BUILT_IN || cur->type == EXTERNAL)
+		new_node->cmd = get_arguments(cur);
+	else
+		new_node->cmd = get_operations(cur);
 	new_node->node_type = type;
 	if (data->parse_list == NULL)
 		data->parse_list = new_node;
@@ -78,12 +81,12 @@ bool	parse_args_list(t_data *data)
 		else if (cur->type == BUILT_IN || cur->type == EXTERNAL)
 		{
 			type = cur->type;
-			node = add_parse_list(data, get_arguments(cur), type);
+			node = add_parse_list(data, cur, type);
 			get_redirs(node, &cur);
 		}
 		else if (cur->type == PIPE || cur->type == WORD)
 		{
-			add_parse_list(data, get_operations(cur), cur->type);
+			add_parse_list(data, cur, cur->type);
 			cur = cur->next;
 		}
 		else
