@@ -6,74 +6,107 @@
 /*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 10:48:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/07 12:59:02 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/07/02 18:25:24 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+static int	handle_quoted_token(t_data *data, int i)
+{
+	int		start;
+	char	quote;
+	char	*token;
+
+	start = i;
+	quote = data->prompt[i++];
+	while (data->prompt[i])
+	{
+		if (data->prompt[i] == quote && ft_strchr(NOPRINTABLE, data->prompt[i + 1]))
+		{
+			quote = '\0';
+			break ;
+		}
+		else if (data->prompt[i] == quote && (data->prompt[i + 1] == '\'' || data->prompt[i + 1] == '\"'))
+		{
+			quote = data->prompt[i + 1];
+			i++;
+		}
+		else if (data->prompt[i] == quote)
+			quote = '\0';
+		else if (data->prompt[i] == '\'' || data->prompt[i] == '\"')
+			quote = data->prompt[i];
+		i++;
+	}
+	// if (!count_quotes(data->prompt, start, i - start))
+	// 	data->unclosed_quote = true;
+	token = ft_substr(data->prompt, start, i - start);
+	add_token_list(data, token, give_id_token(token));
+	free(token);
+	return (i + 1);
+}
+
+static int	handle_operator_token(t_data *data, int i)
+{
+	int		start;
+	int		len;
+	char	*token;
+
+	start = i;
+	len = 1;
+	if ((data->prompt[i] == '>' || data->prompt[i] == '<')
+		&& data->prompt[i + 1] == data->prompt[i])
+		len = 2;
+	token = ft_substr(data->prompt, start, len);
+	add_token_list(data, token, give_id_token(token));
+	free(token);
+	return (i + len);
+}
 
 int	create_token(t_data *data)
 {
 	int	i;
 
 	i = 0;
-	while (ft_strchr(NOPRINTABLE, data->prompt[i]) != NULL
-		&& data->prompt[i] != '\0')
+	while (data->prompt[i] && ft_strchr(NOPRINTABLE, data->prompt[i]))
 		i++;
-	while (data->prompt[i] != '\0')
+	while (data->prompt[i])
 	{
-		if (!ft_strchr(NOPRINTABLE, data->prompt[i]))
-		{
-			get_token(data, i);
-			while (data->prompt[i] && !ft_strchr(NOPRINTABLE, data->prompt[i]))
-				i++;
-		}
+		if (data->prompt[i] == '\'' || data->prompt[i] == '\"')
+			i = handle_quoted_token(data, i);
+		else if (data->prompt[i] == '>' || data->prompt[i] == '<'
+			|| data->prompt[i] == '|')
+			i = handle_operator_token(data, i);
+		else if (!ft_strchr(NOPRINTABLE, data->prompt[i]))
+			i = handle_word_token(data, i);
 		else
 			i++;
 	}
 	return (i);
 }
 
-void	get_token(t_data *data, int start)
-{
-	int		end;
-	char	*token_name;
-	t_type	id_token;
-
-	end = start;
-	while (data->prompt[end] && !ft_strchr(NOPRINTABLE, data->prompt[end]))
-		end++;
-	token_name = ft_substr(data->prompt, start, end - start);
-	id_token = give_id_token(token_name);
-	add_token_list(data, token_name, id_token);
-	free(token_name);
-}
-
-void	add_token_list(t_data *data, char *token_name, t_type id_token)
+void	add_token_list(t_data *data, char *value, t_type id_token)
 {
 	t_token	*new_token;
 	t_token	*last;
 
-	new_token = ft_calloc(1, sizeof(t_token));
+	new_token = (t_token *)malloc(sizeof(t_token));
 	if (!new_token)
 		return ;
-	if (token_name)
+	new_token->value = ft_strdup(value);
+	if (!new_token->value)
 	{
-		new_token->value = ft_strdup(token_name);
-		if (!new_token->value)
-			return (free(new_token));
+		free(new_token);
+		return ;
 	}
-	else
-		new_token->value = NULL;
 	new_token->type = id_token;
+	new_token->quoted = false;
 	new_token->next = NULL;
-	if (data->token_list == NULL)
+	if (!data->token_list)
 		data->token_list = new_token;
 	else
 	{
-		last = data->token_list;
-		while (last->next != NULL)
-			last = last->next;
+		last = ft_last(data->token_list);
 		last->next = new_token;
 	}
 }

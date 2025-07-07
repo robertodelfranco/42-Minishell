@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:26:34 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/20 18:23:20 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 19:12:09 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,6 @@ t_type	give_id_token(char *str)
 		return (REDIR);
 	else if (ft_strcmp(str, ">") == 0)
 		return (REDIR);
-	else if (str[0] == '\'' && str[ft_strlen(str)-1] == '\'')
-		return (SING_QUOTE);
-	else if (str[0] == '"' && str[ft_strlen(str)-1] == '"')
-		return (DOUB_QUOTE);
-	else if (str[0] == '$')
-		return (EXPAND);
 	return (get_command(str));
 }
 
@@ -51,8 +45,8 @@ t_type	get_command(char *token_name)
 		return (BUILT_IN);
 	else if (token_name[0] == '\0')
 		return (WORD);
-	else if ((token_name[0] == '.' && token_name[1] == '/')
-		|| token_name[0] == '.' || token_name[0] == '/')
+	else if (token_name[0] == '/' || ft_strncmp(token_name, "./", 2) == 0
+		|| ft_strncmp(token_name, "../", 3) == 0)
 		return (EXTERNAL);
 	else if (external_command(token_name) == 1)
 		return (EXTERNAL);

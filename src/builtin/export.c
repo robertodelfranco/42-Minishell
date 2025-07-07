@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 12:21:38 by rheringe          #+#    #+#             */
-/*   Updated: 2025/06/30 17:59:08 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/07/01 18:14:37 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ bool	b_export(t_data *data, char **argv)
 	if (!argv[1])
 	{
 		print_export(data);
-		return (false);
+		return (true);
 	}
 	i = 1;
 	while (argv[i])

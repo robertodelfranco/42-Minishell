@@ -16,6 +16,7 @@ SRCS		=	./src/main.c \
 				./src/free_list.c \
 				./src/token/token.c \
 				./src/token/token_utils.c \
+				./src/token/token_handle_quotes.c \
 				./src/executor/executor.c \
 				./src/executor/exec_cmd.c \
 				./src/executor/exec_pipes.c \
@@ -25,6 +26,7 @@ SRCS		=	./src/main.c \
 				./src/parse/parse_stack.c \
 				./src/parse/parse_list_redirs.c \
 				./src/parse/parse_types.c \
+				./src/parse/parse_quotes.c \
 				./src/builtin/echo.c \
 				./src/builtin/unset.c \
 				./src/builtin/pwd.c \
@@ -36,6 +38,7 @@ SRCS		=	./src/main.c \
 				./src/expansion/init_env.c \
 				./src/expansion/expand.c \
 				./src/expansion/expand_utils.c \
+				./src/expansion/expand_quotes.c \
 				./src/redirs/redirs.c \
 				./src/redirs/heredoc.c
 

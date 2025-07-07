@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 17:54:41 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/05/26 13:47:18 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/07/02 18:00:32 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ static void	print_cmd(char **args, int n_flag)
 	int	i;
 
 	i = 1;
+	if (n_flag)
+		i = 2;
 	while (args[i])
 	{
 		printf("%s", args[i]);
@@ -28,31 +30,18 @@ static void	print_cmd(char **args, int n_flag)
 		printf("\n");
 }
 
-int	echo(char **args)
+bool	echo(char **args)
 {
 	int	i;
 	int	n_flag;
-	int	j;
-	int	check_n_flag;
 
 	i = 0;
 	n_flag = 0;
-	while (i++, args[i] && args[i][0] == '-')
+	if (args[1] != NULL)
 	{
-		j = 1;
-		check_n_flag = 1;
-		while (j++, args[i][j] != '\0')
-		{
-			if (args[i][j] != 'n')
-			{
-				check_n_flag = 0;
-				break ;
-			}
-		}
-		if (!check_n_flag || j == 1)
-			break ;
-		n_flag = 1;
+		if (ft_strcmp(args[1], "-n") == 0)
+			n_flag = 1;
 	}
 	print_cmd(args, n_flag);
-	return (0);
+	return (true);
 }

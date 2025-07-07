@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 14:32:21 by rheringe          #+#    #+#             */
-/*   Updated: 2025/06/30 17:59:10 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/07/01 14:48:25 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	ft_envdup(t_data *data)
 	return (0);
 }
 
-void	env(t_data *data, char **args)
+bool	env(t_data *data, char **args)
 {
 	t_env	*cur;
 
@@ -76,7 +76,7 @@ void	env(t_data *data, char **args)
 	{
 		ft_printf("env: %s: No such file or directory\n", args[1]);
 		data->exit_status = 126;
-		return ;
+		return (false);
 	}
 	cur = data->env_list;
 	while (cur)
@@ -85,4 +85,5 @@ void	env(t_data *data, char **args)
 		cur = cur->next;
 	}
 	data->exit_status = 0;
+	return (true);
 }

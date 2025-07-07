@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 14:27:17 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 16:00:45 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 19:53:55 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ void	ft_free_node_list(t_data *data)
 	while (current)
 	{
 		temp = current->next;
+		if (current->cmd)
+			ft_free_matrix(current->cmd);
 		if (current->redir)
 			ft_free_redir_list(current->redir);
 		free(current);

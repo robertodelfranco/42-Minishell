@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 17:06:06 by rheringe          #+#    #+#             */
-/*   Updated: 2025/06/30 16:10:10 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/01 14:49:39 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static bool	is_numeric(const char *str)
 	return (true);
 }
 
-void	b_exit(t_data *data, char **argv)
+bool	b_exit(t_data *data, char **argv)
 {
 	long	exit_code;
 
@@ -41,7 +41,7 @@ void	b_exit(t_data *data, char **argv)
 	{
 		ft_putendl_fd("exit: too many arguments", 2);
 		data->exit_status = 1;
-		return ;
+		return (false);
 	}
 	if (argv[1])
 	{

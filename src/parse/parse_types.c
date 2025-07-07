@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 14:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/18 12:42:57 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 20:17:37 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,14 @@ int	ft_count_tokens(t_token *cur)
 		cur = cur->next;
 	}
 	return (count);
+}
+
+t_parse	*ft_last_parse(t_parse *lst)
+{
+	t_parse	*nav;
+
+	nav = lst;
+	while (nav->next)
+		nav = (*nav).next;
+	return (nav);
 }

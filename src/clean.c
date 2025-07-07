@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 15:10:52 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 16:18:24 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/03 20:16:52 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@ bool	free_program(t_data *data, char *message)
 {
 	if (message)
 		error_message(message);
-	ft_free_node_list(data);
-	ft_free_parse_list(data);
 	ft_free_token_list(data);
+	ft_free_parse_list(data);
+	ft_free_node_list(data);
 	if (data->fd[0] != -1)
 		close(data->fd[0]);
 	if (data->fd[1] != -1)
@@ -51,6 +51,8 @@ void	ft_free_matrix(char **ptr_matrix)
 	int	i;
 
 	i = 0;
+	if (!ptr_matrix)
+		return ;
 	while (ptr_matrix[i] != NULL)
 	{
 		free(ptr_matrix[i]);
