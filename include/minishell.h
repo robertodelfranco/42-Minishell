@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/07 13:13:00 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/07/07 17:08:06 by rafaelherin      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # include <stdbool.h>
 # include <fcntl.h>
 # include <sys/wait.h>
-// # include <signal.h>
+# include <signal.h>
 # include <sys/stat.h>
 # include <readline/history.h>
 # include <readline/readline.h>
@@ -34,7 +34,8 @@
 # define RESET "\001\033[0m\002"
 # define NOPRINTABLE "\t\n\v\f\r "
 # define PATH_MAX 4096
-
+# define _DEFAULT_SOURCE
+# define _GNU_SOURCE
 typedef enum e_token_type
 {
 	PIPE = 1,
@@ -207,6 +208,13 @@ bool	identify_redirs(t_redir *redir, t_node *node, t_data *data);
 	// heredoc
 bool	init_heredoc(t_redir *redir, t_node *node, t_data *data);
 void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd);
+
+// Signals
+void sigint_handler_prompt(int sig);
+void sigint_handler_exec(int sig);
+void sigpipe_handler(int sig);
+void signal_setup_prompt(void);
+void setup_signals_exec(void);
 
 // Clear Program
 	// free_list

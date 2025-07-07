@@ -40,11 +40,12 @@ SRCS		=	./src/main.c \
 				./src/expansion/expand_utils.c \
 				./src/expansion/expand_quotes.c \
 				./src/redirs/redirs.c \
-				./src/redirs/heredoc.c
+				./src/redirs/heredoc.c \
+				./src/signals/signal.c
 
 OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 OBJ_DIR		=	objs
-VPATH		=	./src ./src/builtin ./src/token ./src/parse ./src/executor ./src/expansion ./src/pipes ./src/redirs
+VPATH		=	./src ./src/builtin ./src/token ./src/parse ./src/executor ./src/expansion ./src/pipes ./src/redirs ./src/signals
 
 all: libft ${NAME}
 
