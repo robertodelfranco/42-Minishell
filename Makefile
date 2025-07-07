@@ -26,6 +26,7 @@ SRCS		=	./src/main.c \
 				./src/parse/parse_list_redirs.c \
 				./src/parse/parse_types.c \
 				./src/builtin/echo.c \
+				./src/builtin/unset.c \
 				./src/builtin/pwd.c \
 				./src/builtin/env.c \
 				./src/builtin/exit.c \
