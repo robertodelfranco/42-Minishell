@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 15:48:45 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/07 17:14:28 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/07/08 11:27:24 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-char *rl_replace_line(const char *text, int clear_undo);
-void rl_redisplay(void);
 
 void sigint_handler_prompt(int sig)
 {

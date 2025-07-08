@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/07 17:08:06 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/07/08 11:27:22 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,7 @@
 # define RESET "\001\033[0m\002"
 # define NOPRINTABLE "\t\n\v\f\r "
 # define PATH_MAX 4096
-# define _DEFAULT_SOURCE
-# define _GNU_SOURCE
+
 typedef enum e_token_type
 {
 	PIPE = 1,
