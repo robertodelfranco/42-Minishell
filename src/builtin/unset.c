@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 10:06:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/01 14:27:15 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 11:36:45 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,23 +61,19 @@
 
  	if (!args[1] || !args)
  	{
- 		ft_printf_fd(2, "unset: not enough arguments\n");
- 		data->exit_status = 1;
- 		return (false);
+ 		data->exit_status = 0;
+ 		return (true);
  	}
  	i = 1;
  	while (args[i])
  	{
  		if (!is_valid_arg(args[i]))
- 		{ 
+ 		{
  			ft_printf_fd(2, "unset: `%s': not a valid identifier\n", args[i]);
  			data->exit_status = 1;
  		}
  		else
- 		{
- 			if (!remove_var_from_env_list(data, args[i]))
- 				data->exit_status = 1;
- 		}
+	 		remove_var_from_env_list(data, args[i]);
  		i++;
  	}
  	return (true);
