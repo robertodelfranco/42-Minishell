@@ -6,11 +6,32 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/08 12:51:43 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 13:25:50 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+int	handle_redir_pipe_error(t_data *data, int fd[2], t_node *cur, int *prev)
+{
+	t_node	*last_node;
+	int		last;
+
+	last_node = get_last_command_node(data->exec_list);
+	last = 0;
+	if (cur == last_node)
+		last = 1;
+	if (*prev != -1)
+		close(*prev);
+	if (cur->next != NULL)
+		close(fd[1]);
+	if (cur->fd_in != -1)
+		close(cur->fd_in);
+	if (cur->fd_out != -1)
+		close(cur->fd_out);
+	*prev = fd[0];
+	return (last);
+}
 
 bool	execute_command(t_data *data, t_node *cur, char **env_array)
 {

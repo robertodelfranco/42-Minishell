@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/08 13:01:51 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 13:26:02 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,7 @@ int		copy_quotes(t_data *data, char *input, char *str_expand, int *j);
 // Executor
 	// executor
 bool	executor(t_data *data);
+int	handle_redir_pipe_error(t_data *data, int fd[2], t_node *cur, int *prev);
 	// exec_cmd
 void	ft_dup_and_close(int fd, int dup, int clos);
 bool	execute_built_in(t_data *data, t_node *cur);

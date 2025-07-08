@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 10:48:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/02 18:25:24 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 13:27:30 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,6 @@ static int	handle_quoted_token(t_data *data, int i)
 			quote = data->prompt[i];
 		i++;
 	}
-	// if (!count_quotes(data->prompt, start, i - start))
-	// 	data->unclosed_quote = true;
 	token = ft_substr(data->prompt, start, i - start);
 	add_token_list(data, token, give_id_token(token));
 	free(token);

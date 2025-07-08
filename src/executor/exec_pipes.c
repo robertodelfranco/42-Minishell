@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/08 13:19:52 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 13:25:23 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,28 +87,6 @@ static int	wait_for_all_children(pid_t *pids, int count)
 		i++;
 	}
 	return (exit_code);
-}
-
-int	handle_redir_pipe_error(t_data *data, int fd[2], t_node *cur, int *prev)
-{
-	t_node	*last_node;
-	int		last;
-
-	last_node = get_last_command_node(data->exec_list);
-	last = 0;
-	if (cur == last_node)
-		last = 1;
-	// fd_restore(data, cur);
-	if (*prev != -1)
-		close(*prev);
-	if (cur->next != NULL)
-		close(fd[1]);
-	if (cur->fd_in != -1)
-		close(cur->fd_in);
-	if (cur->fd_out != -1)
-		close(cur->fd_out);
-	*prev = fd[0];
-	return (last);
 }
 
 bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
