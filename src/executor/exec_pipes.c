@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 17:20:05 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 13:19:52 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,15 +40,8 @@ static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 	return (false);
 }
 
-static int	handle_parent(t_node *cur, int fd[2], int *prev_fd, pid_t pid)
+static int	handle_parent_no_wait(t_node *cur, int fd[2], int *prev_fd)
 {
-	int	status;
-	int	exit_code;
-
-	exit_code = 0;
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		exit_code = WEXITSTATUS(status);
 	if (*prev_fd != -1)
 		close(*prev_fd);
 	if (cur->next != NULL)
@@ -58,42 +51,78 @@ static int	handle_parent(t_node *cur, int fd[2], int *prev_fd, pid_t pid)
 	if (cur->fd_out != -1)
 		close(cur->fd_out);
 	*prev_fd = fd[0];
+	return (0);
+}
+
+static int	count_commands(t_node *cur)
+{
+	int	count;
+
+	count = 0;
+	while (cur)
+	{
+		if (cur->node_type != PIPE)
+			count++;
+		cur = cur->next;
+	}
+	return (count);
+}
+
+static int	wait_for_all_children(pid_t *pids, int count)
+{
+	int	i;
+	int	status;
+	int	exit_code;
+
+	exit_code = 0;
+	i = 0;
+	while (i < count)
+	{
+		waitpid(pids[i], &status, 0);
+		if (WIFEXITED(status))
+		{
+			if (i == count - 1)
+				exit_code = WEXITSTATUS(status);
+		}
+		i++;
+	}
 	return (exit_code);
 }
 
-bool	execute_command(t_data *data, t_node *cur, char **env_array)
+int	handle_redir_pipe_error(t_data *data, int fd[2], t_node *cur, int *prev)
 {
-	char	*full_path;
-	int		exit_code;
+	t_node	*last_node;
+	int		last;
 
-	exit_code = 0;
-	if (cur->node_type == BUILT_IN)
-	{
-		if (execute_built_in(data, cur))
-			exit(0);
-		return (false);
-	}
-	else if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
-		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
-		full_path = ft_strdup(cur->cmd[0]);
-	else
-		full_path = ft_get_external_path(cur->cmd[0]);
-	if (execve(full_path, cur->cmd, env_array) == -1)
-	{
-		exit_code = get_execve_exit_code(cur->cmd[0], full_path);
-		free(full_path);
-		exit(exit_code);
-	}
-	else
-		data->exit_status = 0;
-	free(full_path);
-	return (true);
+	last_node = get_last_command_node(data->exec_list);
+	last = 0;
+	if (cur == last_node)
+		last = 1;
+	// fd_restore(data, cur);
+	if (*prev != -1)
+		close(*prev);
+	if (cur->next != NULL)
+		close(fd[1]);
+	if (cur->fd_in != -1)
+		close(cur->fd_in);
+	if (cur->fd_out != -1)
+		close(cur->fd_out);
+	*prev = fd[0];
+	return (last);
 }
 
 bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 {
+	int		i;
+	int		last_cmd_error;
 	pid_t	pid;
+	pid_t	*pids;
 
+	pids = malloc(sizeof(pid_t) * count_commands(cur));
+	if (!pids)
+		return (free_program(data, "Memory allocation failed"));
+	i = 0;
+	last_cmd_error = 0;
 	while (cur)
 	{
 		if (cur->node_type == PIPE)
@@ -102,17 +131,7 @@ bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 			return (free_program(data, "Pipe creation failed"));
 		if (!identify_redirs(cur->redir, cur, data))
 		{
-			data->exit_status = 1;
-			fd_restore(data, cur);
-			if (prev_fd != -1)
-				close(prev_fd);
-			if (cur->next != NULL)
-				close(fd[1]);
-			if (cur->fd_in != -1)
-				close(cur->fd_in);
-			if (cur->fd_out != -1)
-				close(cur->fd_out);
-			prev_fd = fd[0];
+			last_cmd_error = handle_redir_pipe_error(data, fd, cur, &prev_fd);
 			cur = cur->next;
 			continue ;
 		}
@@ -120,11 +139,15 @@ bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 		if (pid < 0)
 			return (free_program(data, "Fork failed"));
 		if (pid == 0)
-			return (handle_child(data, cur, fd, prev_fd));
-		data->exit_status = handle_parent(cur, fd, &prev_fd, pid);
-		if (data->exit_status != 0)
-			return (false);
+			handle_child(data, cur, fd, prev_fd);
+		pids[i++] = pid;
+		handle_parent_no_wait(cur, fd, &prev_fd);
 		cur = cur->next;
 	}
+	if (last_cmd_error)
+		data->exit_status = 1;
+	else
+		data->exit_status = wait_for_all_children(pids, i);
+	free(pids);
 	return (true);
 }

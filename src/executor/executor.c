@@ -6,11 +6,40 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 20:21:33 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 12:51:43 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+bool	execute_command(t_data *data, t_node *cur, char **env_array)
+{
+	char	*full_path;
+	int		exit_code;
+
+	exit_code = 0;
+	if (cur->node_type == BUILT_IN)
+	{
+		if (execute_built_in(data, cur))
+			exit(0);
+		return (false);
+	}
+	else if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
+		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
+		full_path = ft_strdup(cur->cmd[0]);
+	else
+		full_path = ft_get_external_path(cur->cmd[0]);
+	if (execve(full_path, cur->cmd, env_array) == -1)
+	{
+		exit_code = get_execve_exit_code(cur->cmd[0], full_path);
+		free(full_path);
+		exit(exit_code);
+	}
+	else
+		data->exit_status = 0;
+	free(full_path);
+	return (true);
+}
 
 static bool	execute_one_command(t_data *data, t_node *cur)
 {

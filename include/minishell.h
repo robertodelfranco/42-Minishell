@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/08 11:27:22 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 13:01:51 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 # define NOPRINTABLE "\t\n\v\f\r "
 # define PATH_MAX 4096
 
+extern int	g_sig;
 typedef enum e_token_type
 {
 	PIPE = 1,
@@ -171,6 +172,7 @@ void	ft_dup_and_close(int fd, int dup, int clos);
 bool	execute_built_in(t_data *data, t_node *cur);
 bool	execute_external(t_data *data, t_node *cur);
 int		get_execve_exit_code(char *cmd, char *full_path);
+t_node	*get_last_command_node(t_node *cur);
 	// exec_pipes
 bool	execute_command(t_data *data, t_node *cur, char **env_array);
 bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd);

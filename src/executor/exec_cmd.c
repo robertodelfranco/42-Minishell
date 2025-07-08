@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 17:20:50 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 12:51:10 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,4 +101,18 @@ int	get_execve_exit_code(char *cmd, char *full_path)
 	}
 	ft_printf_fd(2, "minishell: %s: command not found\n", cmd);
 	return (127);
+}
+
+t_node	*get_last_command_node(t_node *cur)
+{
+	t_node	*last_cmd;
+
+	last_cmd = NULL;
+	while (cur)
+	{
+		if (cur->node_type != PIPE)
+			last_cmd = cur;
+		cur = cur->next;
+	}
+	return (last_cmd);
 }
