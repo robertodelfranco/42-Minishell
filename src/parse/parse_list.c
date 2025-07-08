@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:10:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 20:06:23 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 18:50:53 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,8 @@ bool	parse_args_list(t_data *data)
 	{
 		if (cur->type == REDIR)
 			verify_pipeline(data, &cur);
-		else if (cur->type == BUILT_IN || cur->type == EXTERNAL)
+		else if (cur->type == BUILT_IN || cur->type == EXTERNAL
+			|| (cur->type == WORD && cur->value[0] != '\0'))
 		{
 			type = cur->type;
 			node = add_parse_list(data, cur, type);

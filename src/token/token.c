@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 10:48:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/08 13:27:30 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 18:51:33 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,22 @@ static int	handle_quoted_token(t_data *data, int i)
 	quote = data->prompt[i++];
 	while (data->prompt[i])
 	{
-		if (data->prompt[i] == quote && ft_strchr(NOPRINTABLE, data->prompt[i + 1]))
+		if (data->prompt[i] == quote
+			&& ft_strchr(NOPRINTABLE, data->prompt[i + 1]))
 		{
 			quote = '\0';
 			break ;
 		}
-		else if (data->prompt[i] == quote && (data->prompt[i + 1] == '\'' || data->prompt[i + 1] == '\"'))
+		else if (data->prompt[i] == quote
+			&& (data->prompt[i + 1] == '\'' || data->prompt[i + 1] == '\"'))
 		{
 			quote = data->prompt[i + 1];
 			i++;
 		}
 		else if (data->prompt[i] == quote)
 			quote = '\0';
-		else if (data->prompt[i] == '\'' || data->prompt[i] == '\"')
+		else if ((data->prompt[i] == '\'' || data->prompt[i] == '\"')
+			&& quote == '\0')
 			quote = data->prompt[i];
 		i++;
 	}
@@ -66,6 +69,8 @@ int	create_token(t_data *data)
 	int	i;
 
 	i = 0;
+	if (!data->prompt)
+		return (0);
 	while (data->prompt[i] && ft_strchr(NOPRINTABLE, data->prompt[i]))
 		i++;
 	while (data->prompt[i])

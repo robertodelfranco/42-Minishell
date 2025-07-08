@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 16:06:14 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 18:50:37 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,38 +32,43 @@ static bool	search_heredoc(t_data *data)
 	return (true);
 }
 
-static bool	validate_tokens(t_data *data)
+static t_token	*validate_tokens(t_data *data)
 {
 	t_token	*cur;
 	t_token	*last;
 
-	if (data->unclosed_quote == true)
-		return (false);
 	cur = data->token_list;
+	if (data->unclosed_quote == true)
+		return (cur);
 	if (cur->type == PIPE)
-		return (false);
+		return (cur);
 	last = ft_last(data->token_list);
 	if (last->type == PIPE || last->type == REDIR)
-		return (false);
+		return (cur);
 	while (cur)
 	{
 		if (cur->type == PIPE)
 			if (cur->next->type == PIPE)
-				return (false);
+				return (cur);
 		if (cur->type == REDIR)
 			if (cur->next->type == PIPE || cur->next->type == REDIR)
-				return (false);
+				return (cur);
 		cur = cur->next;
 	}
-	return (true);
+	return (NULL);
 }
 
-// echo hi > hi echo "hello" >> ha < hi > hu > ho >> he > hh 
-// >> hc < hh > ll > kk > kd > ds < hi > jj < kk < ll >> jj
 bool	parse(t_data *data)
 {
-	if (!validate_tokens(data))
-		return (free_program(data, "Invalid tokens"));
+	t_token	*cur;
+
+	cur = validate_tokens(data);
+	if (cur)
+	{
+		data->exit_status = 2;
+		ft_printf_fd(2, "minishell: syntax error near unexpected token\n");
+		return (free_program(data, NULL));
+	}
 	if (!search_heredoc(data))
 		return (free_program(data, "Error searching heredoc"));
 	if (!ft_expand(data))

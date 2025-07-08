@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/08 13:25:50 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 17:05:14 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ bool	execute_command(t_data *data, t_node *cur, char **env_array)
 	{
 		if (execute_built_in(data, cur))
 			exit(0);
-		return (false);
+		exit(CMD_NOT_FOUND);
 	}
 	else if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
 		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rafaelheringer <rafaelheringer@student.    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 17:54:41 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/07 13:37:35 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/07/08 16:28:30 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	print_cmd(char **args, int n_flag)
 		printf("\n");
 }
 
-bool	echo(char **args)
+bool	echo(t_data *data, char **args)
 {
 	int	n_flag;
 
@@ -41,5 +41,6 @@ bool	echo(char **args)
 			n_flag = 1;
 	}
 	print_cmd(args, n_flag);
+	data->exit_status = 0;
 	return (true);
 }

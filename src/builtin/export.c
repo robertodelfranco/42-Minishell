@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 12:21:38 by rheringe          #+#    #+#             */
-/*   Updated: 2025/07/01 18:14:37 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 16:16:24 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ static bool	process_export_arg(t_data *data, char *arg)
 	result = true;
 	if (parse_export_arg(arg, &key, &value) != 0)
 	{
-		printf("export: key error\n");
+		ft_printf_fd(2, "export: key error\n");
 		data->exit_status = 1;
 		return (true);
 	}
@@ -105,7 +105,7 @@ static bool	process_export_arg(t_data *data, char *arg)
 	}
 	else if (update_or_add_env(data, key, value) != 0)
 	{
-		printf("export: update or add error\n");
+		ft_printf_fd(2, "export: update or add error\n");
 		data->exit_status = 1;
 	}
 	free(key);

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/08 13:26:02 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 16:28:44 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ char	*ft_get_external_path(char *token_name);
 
 // Built_ins
 	// echo
-bool	echo(char **args);
+bool	echo(t_data *data, char **args);
 	// env
 bool	env(t_data *data, char **args);
 int		ft_envdup(t_data *data);

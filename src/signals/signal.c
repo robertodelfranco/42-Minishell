@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 15:48:45 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/08 13:24:30 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/08 18:50:26 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,10 @@ void	sigint_handler_exec(int sig)
 void	sigpipe_handler(int sig)
 {
 	(void)sig;
-	return ;
+	write(STDOUT_FILENO, "Quit (core dumped)\n", 20);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
 
 void	signal_setup_prompt(void)
@@ -41,7 +44,7 @@ void	signal_setup_prompt(void)
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	sigaction(SIGINT, &sa, NULL);
-	sa.sa_handler = sigpipe_handler;
+	sa.sa_handler = SIG_IGN;
 	sigaction(SIGQUIT, &sa, NULL);
 }
 
