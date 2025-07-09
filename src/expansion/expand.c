@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:40:55 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/08 13:26:39 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:56:14 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static int	process_variable(t_data *data, const char *str, int *i)
 	return (var_size);
 }
 
-int	get_expand_size(t_data *data, const char *str, bool heredoc)
+int	get_exp_size(t_data *data, const char *str, bool heredoc)
 {
 	int		size;
 	int		i;
@@ -79,7 +79,7 @@ bool	ft_expand(t_data *data)
 {
 	t_token	*cur;
 	char	*new_str;
-	char	*expand;
+	char	*exp;
 
 	cur = data->token_list;
 	while (cur)
@@ -91,10 +91,10 @@ bool	ft_expand(t_data *data)
 			if (ft_strchr(cur->value, '$') || ft_strchr(cur->value, '\"')
 				|| ft_strchr(cur->value, '\''))
 			{
-				expand = ft_calloc(get_expand_size(data, cur->value, false) + 1, 1);
-				if (!expand)
+				exp = ft_calloc(get_exp_size(data, cur->value, false) + 1, 1);
+				if (!exp)
 					return (free_program(data, "calloc error"));
-				new_str = get_str_expand(data, cur->value, expand, false);
+				new_str = get_str_expand(data, cur->value, exp, false);
 				free(cur->value);
 				cur->value = new_str;
 			}
