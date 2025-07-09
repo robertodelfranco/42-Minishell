@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 18:13:28 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 16:42:35 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 16:47:11 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,7 @@ static int	get_variable_key_length(const char *str)
 	i = 0;
 	if (str[i] == '?')
 		return (1);
-	while (str[i] && str[i] != 32 && str[i] != '$'
-		&& str[i] != '\'' && str[i] != '\"')
+	while (str[i] && !is_variable_delimiter(str[i]))
 		i++;
 	if (i == 0 && str[i] != '\0')
 		i = 1;

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/08 16:50:16 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 17:17:26 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 			return (free_program(data, "Pipe creation failed"));
 		if (!identify_redirs(cur->redir, cur, data))
 		{
-			last_cmd_error = handle_redir_pipe_error(data, fd, cur, &prev_fd);
+			last_cmd_error = handle_redir_pipe(data, fd, cur, &prev_fd);
 			cur = cur->next;
 			continue ;
 		}

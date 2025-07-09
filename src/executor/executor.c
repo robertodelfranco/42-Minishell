@@ -6,13 +6,13 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/08 17:05:14 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 17:17:30 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	handle_redir_pipe_error(t_data *data, int fd[2], t_node *cur, int *prev)
+int	handle_redir_pipe(t_data *data, int fd[2], t_node *cur, int *prev)
 {
 	t_node	*last_node;
 	int		last;
@@ -74,12 +74,12 @@ static bool	execute_one_command(t_data *data, t_node *cur)
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
-			return (fd_restore(data, cur));
+			return (true);
 	}
 	else if (cur->node_type == EXTERNAL)
 	{
 		if (execute_external(data, cur))
-			return (fd_restore(data, cur));
+			return (true);
 	}
 	else
 	{
