@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 15:36:43 by rheringe          #+#    #+#             */
-/*   Updated: 2025/07/09 14:32:52 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 17:18:10 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,8 @@ static void	print_sorted_env(t_env **array)
 	while (array[i])
 	{
 		if (array[i]->value)
-			ft_printf_fd(STDOUT_FILENO, "declare -x %s=\"%s\"\n", array[i]->key, array[i]->value);
+			ft_printf_fd(STDOUT_FILENO, "declare -x %s=\"%s\"\n",
+				array[i]->key, array[i]->value);
 		else
 			ft_printf_fd(STDOUT_FILENO, "declare -x %s\n", array[i]->key);
 		i++;

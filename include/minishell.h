@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/09 16:49:25 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 17:17:10 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ int		copy_quotes(t_data *data, char *input, char *str_expand, int *j);
 // Executor
 	// executor
 bool	executor(t_data *data);
-int	handle_redir_pipe_error(t_data *data, int fd[2], t_node *cur, int *prev);
+int		handle_redir_pipe(t_data *data, int fd[2], t_node *cur, int *prev);
 	// exec_cmd
 void	ft_dup_and_close(int fd, int dup, int clos);
 bool	execute_built_in(t_data *data, t_node *cur);
@@ -215,11 +215,11 @@ bool	init_heredoc(t_redir *redir, t_node *node, t_data *data);
 void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd);
 
 // Signals
-void sigint_handler_prompt(int sig);
-void sigint_handler_exec(int sig);
-void sigpipe_handler(int sig);
-void signal_setup_prompt(void);
-void setup_signals_exec(void);
+void	sigint_handler_prompt(int sig);
+void	sigint_handler_exec(int sig);
+void	sigpipe_handler(int sig);
+void	signal_setup_prompt(void);
+void	setup_signals_exec(void);
 
 // Clear Program
 	// free_list
