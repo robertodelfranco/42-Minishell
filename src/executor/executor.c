@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/09 17:17:30 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 17:39:01 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,12 @@ static bool	execute_one_command(t_data *data, t_node *cur)
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
-			return (true);
+			return (fd_restore(data, cur));
 	}
 	else if (cur->node_type == EXTERNAL)
 	{
 		if (execute_external(data, cur))
-			return (true);
+			return (fd_restore(data, cur));
 	}
 	else
 	{
@@ -89,7 +89,6 @@ static bool	execute_one_command(t_data *data, t_node *cur)
 	fd_restore(data, cur);
 	return (false);
 }
-// if the command fails, i need to catch the error
 
 bool	executor(t_data *data)
 {

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:22:19 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/08 13:25:04 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 17:40:17 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ char	*ft_get_external_path(char *token_name)
 
 	new_path = ft_split(getenv("PATH"), ':');
 	if (new_path == NULL)
-		return (0);
+		return (NULL);
 	i = 0;
 	while (new_path[i])
 	{
