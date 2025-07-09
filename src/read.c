@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:31:14 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/09 14:44:07 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 15:06:09 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*ft_readline(t_data *data)
 	if (!data->prompt)
 	{
 		ft_putendl_fd("exit", STDOUT_FILENO);
-		free_program(data, NULL);
+		shutdown_program(data);
 		exit(0);
 	}
 	if (data->prompt[0] == '\0')

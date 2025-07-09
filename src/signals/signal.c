@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 15:48:45 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/08 18:50:26 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 17:26:56 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void	sigpipe_handler(int sig)
 	write(STDOUT_FILENO, "Quit (core dumped)\n", 20);
 	rl_on_new_line();
 	rl_replace_line("", 0);
-	rl_redisplay();
 }
 
 void	signal_setup_prompt(void)

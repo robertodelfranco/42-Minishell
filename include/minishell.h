@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
 /*   Updated: 2025/07/09 17:17:10 by rdel-fra         ###   ########.fr       */
@@ -153,7 +153,7 @@ bool	handle_quotes(t_token *cur);
 	//init_env
 void	ft_init_env(t_data *data, char **env);
 	//expand
-int		get_expand_size(t_data *data, const char *str, bool heredoc);
+int		get_exp_size(t_data *data, const char *str, bool heredoc);
 char	*get_str_expand(t_data *data, char *input, char *expand, bool heredoc);
 void	copy_value(char *str_expand, char *value, int *j);
 bool	ft_expand(t_data *data);
@@ -220,6 +220,8 @@ void	sigint_handler_exec(int sig);
 void	sigpipe_handler(int sig);
 void	signal_setup_prompt(void);
 void	setup_signals_exec(void);
+void	handle_heredoc(int sig);
+void	heredoc_signal(void);
 
 // Clear Program
 	// free_list
