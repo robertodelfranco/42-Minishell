@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:40:55 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/08 13:26:39 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 16:48:34 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,18 @@ static int	process_variable(t_data *data, const char *str, int *i)
 	*i += ft_strlen(key) + 1;
 	ft_free_key_and_value(key, value);
 	return (var_size);
+}
+
+void	copy_value(char *str_expand, char *value, int *j)
+{
+	int	i;
+	int	c;
+
+	i = 0;
+	c = *j;
+	while (value[i])
+		str_expand[c++] = value[i++];
+	*j = c;
 }
 
 int	get_expand_size(t_data *data, const char *str, bool heredoc)

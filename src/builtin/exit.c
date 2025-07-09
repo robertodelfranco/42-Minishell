@@ -43,7 +43,8 @@ bool	b_exit(t_data *data, char **argv)
 		data->exit_status = 1;
 		return (false);
 	}
-	ft_printf("exit\n");
+	if (data->interactive_mode)
+		ft_printf("exit\n");
 	if (argv[1])
 	{
 		if (!is_numeric(argv[1]))

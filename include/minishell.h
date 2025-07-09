@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/08 16:28:44 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 16:49:25 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include <readline/readline.h>
 # include "../lib/includes/libft.h"
 # include "../lib/includes/ft_printf_bonus.h"
+# include "../lib/includes/get_next_line_bonus.h"
 
 # define SUCCESS 0
 # define FAILURE 1
@@ -93,6 +94,7 @@ typedef struct s_data
 	int				exit_status;
 	int				fd[2];
 	bool			unclosed_quote;
+	bool			interactive_mode;
 	t_token			*token_list;
 	t_parse			*parse_list;
 	t_redir			*redir_list;
@@ -153,11 +155,12 @@ void	ft_init_env(t_data *data, char **env);
 	//expand
 int		get_expand_size(t_data *data, const char *str, bool heredoc);
 char	*get_str_expand(t_data *data, char *input, char *expand, bool heredoc);
+void	copy_value(char *str_expand, char *value, int *j);
 bool	ft_expand(t_data *data);
 	//expand_utils
 int		ft_ptr_len(char **str);
 void	ft_free_key_and_value(char *key, char *value);
-void	copy_value(char *str_expand, char *value, int *j);
+int		is_variable_delimiter(char c);
 char	*get_variable_value(t_data *data, char *str);
 char	*get_variable_key(const char *str);
 	// expand_quotes

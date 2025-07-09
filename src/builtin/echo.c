@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 17:54:41 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/08 16:28:30 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:34:17 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,13 @@ static void	print_cmd(char **args, int n_flag)
 		i = 2;
 	while (args[i])
 	{
-		printf("%s", args[i]);
+		ft_printf_fd(STDOUT_FILENO, "%s", args[i]);
 		if (args[i + 1])
-			printf(" ");
+			ft_printf_fd(STDOUT_FILENO, " ");
 		i++;
 	}
 	if (!n_flag)
-		printf("\n");
+		ft_printf_fd(STDOUT_FILENO, "\n");
 }
 
 bool	echo(t_data *data, char **args)
