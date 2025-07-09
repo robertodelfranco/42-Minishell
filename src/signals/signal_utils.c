@@ -1,33 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   read.c                                             :+:      :+:    :+:   */
+/*   signal_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/09 15:31:14 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/09 15:06:09 by rheringe         ###   ########.fr       */
+/*   Created: 2025/07/09 12:58:06 by rheringe          #+#    #+#             */
+/*   Updated: 2025/07/09 14:51:43 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
-char	*ft_readline(t_data *data)
+void	handle_heredoc(int sig)
 {
-	data->prompt = readline(COLOR "Minihell $ " RESET);
-	data->fd[0] = -1;
-	data->fd[1] = -1;
-	if (!data->prompt)
-	{
-		ft_putendl_fd("exit", STDOUT_FILENO);
-		shutdown_program(data);
-		exit(0);
-	}
-	if (data->prompt[0] == '\0')
-	{
-		free_program(data, NULL);
-		return (NULL);
-	}
-	add_history(data->prompt);
-	return (data->prompt);
+	(void)sig;
+	g_sig = SIGINT;
+	write(STDOUT_FILENO, "\n", 1);
+	close(STDIN_FILENO);
+}
+
+void	heredoc_signal(void)
+{
+	signal(SIGINT, handle_heredoc);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGPIPE, SIG_IGN);
 }

@@ -41,7 +41,8 @@ SRCS		=	./src/main.c \
 				./src/expansion/expand_quotes.c \
 				./src/redirs/redirs.c \
 				./src/redirs/heredoc.c \
-				./src/signals/signal.c
+				./src/signals/signal.c \
+				./src/signals/signal_utils.c
 
 OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 OBJ_DIR		=	objs

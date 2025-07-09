@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/08 16:28:44 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:55:27 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ bool	handle_quotes(t_token *cur);
 	//init_env
 void	ft_init_env(t_data *data, char **env);
 	//expand
-int		get_expand_size(t_data *data, const char *str, bool heredoc);
+int		get_exp_size(t_data *data, const char *str, bool heredoc);
 char	*get_str_expand(t_data *data, char *input, char *expand, bool heredoc);
 bool	ft_expand(t_data *data);
 	//expand_utils
@@ -167,7 +167,8 @@ int		copy_quotes(t_data *data, char *input, char *str_expand, int *j);
 // Executor
 	// executor
 bool	executor(t_data *data);
-int	handle_redir_pipe_error(t_data *data, int fd[2], t_node *cur, int *prev);
+int		handle_redir_pipe_error(t_data *data, int fd[2],
+			t_node *cur, int *prev);
 	// exec_cmd
 void	ft_dup_and_close(int fd, int dup, int clos);
 bool	execute_built_in(t_data *data, t_node *cur);
@@ -212,11 +213,13 @@ bool	init_heredoc(t_redir *redir, t_node *node, t_data *data);
 void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd);
 
 // Signals
-void sigint_handler_prompt(int sig);
-void sigint_handler_exec(int sig);
-void sigpipe_handler(int sig);
-void signal_setup_prompt(void);
-void setup_signals_exec(void);
+void	sigint_handler_prompt(int sig);
+void	sigint_handler_exec(int sig);
+void	sigpipe_handler(int sig);
+void	signal_setup_prompt(void);
+void	setup_signals_exec(void);
+void	handle_heredoc(int sig);
+void	heredoc_signal(void);
 
 // Clear Program
 	// free_list
