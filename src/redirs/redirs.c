@@ -6,13 +6,13 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 17:14:38 by marvin            #+#    #+#             */
-/*   Updated: 2025/07/02 14:21:44 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/10 15:03:04 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-bool	execute_redir_in(t_redir *redir, t_node *cur)
+static bool	execute_redir_in(t_redir *redir, t_node *cur)
 {
 	int	fd;
 
@@ -28,7 +28,7 @@ bool	execute_redir_in(t_redir *redir, t_node *cur)
 	return (true);
 }
 
-bool	execute_redir_out(t_redir *redir, t_node *cur)
+static bool	execute_redir_out(t_redir *redir, t_node *cur)
 {
 	int	fd;
 
@@ -44,7 +44,7 @@ bool	execute_redir_out(t_redir *redir, t_node *cur)
 	return (true);
 }
 
-bool	execute_redir_append(t_redir *redir, t_node *cur)
+static bool	execute_redir_append(t_redir *redir, t_node *cur)
 {
 	int	fd;
 
@@ -60,7 +60,24 @@ bool	execute_redir_append(t_redir *redir, t_node *cur)
 	return (true);
 }
 
-bool	identify_redirs(t_redir *redir, t_node *node, t_data *data)
+static bool	execute_redir_heredoc(t_redir *redir, t_node *cur)
+{
+	int	fd;
+
+	fd = open(redir->target, O_RDONLY);
+	if (fd < 0)
+	{
+		perror(redir->target);
+		return (false);
+	}
+	unlink(redir->target);
+	if (cur->fd_in != -1)
+		close(cur->fd_in);
+	cur->fd_in = fd;
+	return (true);
+}
+
+bool	identify_redirs(t_redir *redir, t_node *node)
 {
 	while (redir)
 	{
@@ -80,7 +97,7 @@ bool	identify_redirs(t_redir *redir, t_node *node, t_data *data)
 				return (false);
 		}
 		else if (redir->type == HEREDOC)
-			if (!init_heredoc(redir, node, data))
+			if (!execute_redir_heredoc(redir, node))
 				return (false);
 		redir = redir->next;
 	}

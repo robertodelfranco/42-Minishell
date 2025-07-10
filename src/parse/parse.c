@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/08 18:50:37 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/10 16:02:05 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,32 @@ static t_token	*validate_tokens(t_data *data)
 	return (NULL);
 }
 
+static bool	open_heredocs(t_data *data)
+{
+	t_node	*cur;
+	t_redir	*cur_redir;
+
+	cur = data->exec_list;
+	while (cur)
+	{
+		if (cur->redir)
+		{
+			cur_redir = cur->redir;
+			while (cur_redir)
+			{
+				if (cur_redir->type == HEREDOC)
+				{
+					if (!init_heredoc(cur_redir, data))
+						return (false);
+				}
+				cur_redir = cur_redir->next;
+			}
+		}
+		cur = cur->next;
+	}
+	return (true);
+}
+
 bool	parse(t_data *data)
 {
 	t_token	*cur;
@@ -81,5 +107,7 @@ bool	parse(t_data *data)
 	data->fd[1] = dup(STDOUT_FILENO);
 	if (!build_stack(data))
 		return (free_program(data, "Error building stack"));
+	if (!open_heredocs(data))
+		return (free_program(data, "Error opening heredocs"));
 	return (true);
 }

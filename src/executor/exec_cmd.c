@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/08 18:37:12 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/10 16:05:10 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,24 +51,33 @@ bool	execute_external(t_data *data, t_node *cur)
 	char	**env_array;
 	int		pid;
 	int		status;
+	int		wait_result;
 
+	status = 0;
 	env_array = get_env_array(data->env_list);
 	if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
 		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
 		full_path = ft_strdup(cur->cmd[0]);
 	else
-		full_path = ft_get_external_path(cur->cmd[0]);
+		full_path = ft_get_external_path(data, cur->cmd[0]);
 	pid = fork();
 	if (pid < 0)
 		return (free_program(data, "Fork failed"));
 	else if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		if (execve(full_path, cur->cmd, env_array) == -1)
 			exit(get_execve_exit_code(cur->cmd[0], full_path));
 	}
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		data->exit_status = WEXITSTATUS(status);
+	wait_result = waitpid(pid, &status, 0);
+	if (wait_result != -1)
+	{
+		if (WIFEXITED(status))
+			data->exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			data->exit_status = 128 + WTERMSIG(status);
+	}
 	free(full_path);
 	ft_free_matrix(env_array);
 	return (true);

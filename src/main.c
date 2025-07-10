@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:22:45 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/09 14:52:19 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/07/10 15:50:52 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int	main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
+	g_sig = 0;
 	data = (t_data *)ft_calloc(1, sizeof(t_data));
 	data->interactive_mode = isatty(STDIN_FILENO);
 	ft_init_env(data, env);
@@ -47,6 +48,11 @@ int	main(int ac, char **av, char **env)
 		if (data->interactive_mode)
 			setup_signals_exec();
 		executor(data);
+		if (g_sig != 0)
+		{
+			data->exit_status = g_sig;
+			g_sig = 0;
+		}
 		free_program(data, NULL);
 	}
 }

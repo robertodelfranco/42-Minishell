@@ -686,6 +686,7 @@ main_tests() {
     # =============================
     echo -e "${YELLOW}=== LIMPEZA ===${NC}"
     rm -f /tmp/mini_test*.txt /tmp/user_info.txt 2>/dev/null
+    rm -f arquivo.txt 2>/dev/null
     echo "Arquivos temporários removidos"
     echo
 }

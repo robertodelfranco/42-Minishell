@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:22:19 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/09 17:40:17 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/10 16:04:52 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,14 +88,14 @@ char	**get_env_array(t_env *env_list)
 	return (env_array);
 }
 
-char	*ft_get_external_path(char *token_name)
+char	*ft_get_external_path(t_data *data, char *token_name)
 {
 	int		i;
 	char	*full_cmd;
 	char	*full_path;
 	char	**new_path;
 
-	new_path = ft_split(getenv("PATH"), ':');
+	new_path = ft_split(get_variable_value(data, "PATH"), ':');
 	if (new_path == NULL)
 		return (NULL);
 	i = 0;
