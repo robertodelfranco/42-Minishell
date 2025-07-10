@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:14:15 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/09 16:37:57 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/07/10 13:13:14 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,24 +20,18 @@ bool	init_heredoc(t_redir *redir, t_node *node, t_data *data)
 	static int	id = 0;
 	int			status;
 
-	g_sig = 0;
-	filename = ft_strjoin_free("heredoc_", ft_itoa(id));
+	filename = ft_strjoin_free("/tmp/here_doc", ft_itoa(id));
 	fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	if (fd < 0)
 		return (free_program(data, "Heredoc file creation failed"));
 	pid = fork();
-	if (pid < 0)
-		return (free_program(data, "Fork failed"));
 	if (pid == 0)
 		read_heredoc(redir, redir->target, data, fd);
-	waitpid(pid, &status, 0);
-	signal_setup_prompt();
-	if (WIFSIGNALED(status) || g_sig == SIGINT)
+	else
 	{
-		g_sig = 0;
-		unlink(filename);
-		free(filename);
-		return (false);
+		signal(SIGINT, SIG_IGN);
+		waitpid(pid, &status, 0);
+		data->exit_status = WEXITSTATUS(status);
 	}
 	fd = open(filename, O_RDONLY);
 	unlink(filename);
@@ -56,29 +50,16 @@ void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd)
 	char		*input;
 
 	g_sig = 0;
-	heredoc_signal();
 	while (true)
 	{
-		if (g_sig == SIGINT)
-		{
-			close(fd);
-			exit(1);
-		}
+		signal(SIGQUIT, SIG_IGN);
+		signal(SIGINT, handle_heredoc);
 		input = readline(COLOR "> " RESET);
-		if (g_sig == SIGINT)
-		{
-			if (input)
-				free(input);
-			close(fd);
-			exit(1);
-		}
 		if (!input)
 		{
-			fprintf(stderr,
-				"minishell: warning: here-document delimited by end-of-file "
-				"(wanted `%s')\n", delimiter);
-			close(fd);
-			exit(0);
+			ft_printf_fd(2, "minishell: warning: here-document delimited by "
+				"end-of-file (wanted `%s')\n", delimiter);
+			break ;
 		}
 		if (ft_strcmp(input, delimiter) == 0)
 		{
@@ -92,8 +73,7 @@ void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd)
 			free(input);
 			input = new_str;
 		}
-		ft_putstr_fd(input, fd);
-		ft_putstr_fd("\n", fd);
+		ft_putendl_fd(input, fd);
 		free(input);
 	}
 	close(fd);
