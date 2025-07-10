@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/09 17:17:10 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/10 16:08:03 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ typedef struct s_data
 	bool			interactive_mode;
 	t_token			*token_list;
 	t_parse			*parse_list;
-	t_redir			*redir_list;
 	struct s_node	*exec_list;
 	t_env			*env_list;
 	t_env			*env_copy;
@@ -185,7 +184,7 @@ void	dup_fds(t_node *cur);
 int		ft_listsize(t_env *list);
 bool	fd_restore(t_data *data, t_node *cur);
 char	**get_env_array(t_env *env_list);
-char	*ft_get_external_path(char *token_name);
+char	*ft_get_external_path(t_data *data, char *token_name);
 
 // Built_ins
 	// echo
@@ -209,9 +208,9 @@ bool	b_unset(t_data *data, char **args);
 
 // Redirects
 	// redirs
-bool	identify_redirs(t_redir *redir, t_node *node, t_data *data);
+bool	identify_redirs(t_redir *redir, t_node *node);
 	// heredoc
-bool	init_heredoc(t_redir *redir, t_node *node, t_data *data);
+bool	init_heredoc(t_redir *redir, t_data *data);
 void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd);
 
 // Signals
@@ -221,7 +220,7 @@ void	sigpipe_handler(int sig);
 void	signal_setup_prompt(void);
 void	setup_signals_exec(void);
 void	handle_heredoc(int sig);
-void	heredoc_signal(void);
+void	handle_sigquit(int sig);
 
 // Clear Program
 	// free_list

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/09 17:17:26 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/10 15:54:16 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 {
 	char	**env_array;
 
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	dup_fds(cur);
 	env_array = get_env_array(data->env_list);
 	if (cur->prev == NULL)
@@ -73,16 +75,24 @@ static int	wait_for_all_children(pid_t *pids, int count)
 	int	i;
 	int	status;
 	int	exit_code;
+	int	wait_result;
 
-	exit_code = 0;
 	i = 0;
+	status = 0;
+	exit_code = 0;
 	while (i < count)
 	{
-		waitpid(pids[i], &status, 0);
-		if (WIFEXITED(status))
+		wait_result = waitpid(pids[i], &status, 0);
+		if (wait_result != -1)
 		{
-			if (i == count - 1)
-				exit_code = WEXITSTATUS(status);
+			if (WIFEXITED(status))
+			{
+				if (i == count - 1)
+					exit_code = WEXITSTATUS(status);
+			}
+			else if (WIFSIGNALED(status))
+				if (i == count - 1)
+					exit_code = 128 + WTERMSIG(status);
 		}
 		i++;
 	}
@@ -107,7 +117,7 @@ bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 			cur = cur->next;
 		if (cur->next && pipe(fd) == -1)
 			return (free_program(data, "Pipe creation failed"));
-		if (!identify_redirs(cur->redir, cur, data))
+		if (!identify_redirs(cur->redir, cur))
 		{
 			last_cmd_error = handle_redir_pipe(data, fd, cur, &prev_fd);
 			cur = cur->next;

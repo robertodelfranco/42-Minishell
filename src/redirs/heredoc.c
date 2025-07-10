@@ -6,13 +6,13 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:14:15 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/10 13:13:14 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/10 16:00:42 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-bool	init_heredoc(t_redir *redir, t_node *node, t_data *data)
+bool	init_heredoc(t_redir *redir, t_data *data)
 {
 	char		*filename;
 	int			pid;
@@ -33,12 +33,9 @@ bool	init_heredoc(t_redir *redir, t_node *node, t_data *data)
 		waitpid(pid, &status, 0);
 		data->exit_status = WEXITSTATUS(status);
 	}
-	fd = open(filename, O_RDONLY);
-	unlink(filename);
-	free(filename);
-	if (node->fd_in != -1)
-		close (node->fd_in);
-	node->fd_in = fd;
+	free(redir->target);
+	redir->target = filename;
+	close(fd);
 	id++;
 	return (true);
 }
@@ -49,10 +46,8 @@ void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd)
 	char		*expand;
 	char		*input;
 
-	g_sig = 0;
 	while (true)
 	{
-		signal(SIGQUIT, SIG_IGN);
 		signal(SIGINT, handle_heredoc);
 		input = readline(COLOR "> " RESET);
 		if (!input)

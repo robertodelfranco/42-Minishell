@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/09 17:39:01 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/10 16:05:20 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ bool	execute_command(t_data *data, t_node *cur, char **env_array)
 		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
 		full_path = ft_strdup(cur->cmd[0]);
 	else
-		full_path = ft_get_external_path(cur->cmd[0]);
+		full_path = ft_get_external_path(data, cur->cmd[0]);
 	if (execve(full_path, cur->cmd, env_array) == -1)
 	{
 		exit_code = get_execve_exit_code(cur->cmd[0], full_path);
@@ -64,7 +64,7 @@ bool	execute_command(t_data *data, t_node *cur, char **env_array)
 
 static bool	execute_one_command(t_data *data, t_node *cur)
 {
-	if (!identify_redirs(cur->redir, cur, data))
+	if (!identify_redirs(cur->redir, cur))
 	{
 		data->exit_status = 1;
 		fd_restore(data, cur);

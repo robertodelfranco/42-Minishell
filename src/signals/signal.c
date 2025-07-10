@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 15:48:45 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/10 13:12:34 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/10 15:41:27 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ void	signal_setup_prompt(void)
 {
 	struct sigaction	sa;
 
+	ft_memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = sigint_handler_prompt;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
@@ -52,6 +53,7 @@ void	setup_signals_exec(void)
 {
 	struct sigaction	sa;
 
+	ft_memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = sigint_handler_exec;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
