@@ -12,41 +12,6 @@
 
 #include "../../include/minishell.h"
 
-static int	handle_quoted_token(t_data *data, int i)
-{
-	int		start;
-	char	quote;
-	char	*token;
-
-	start = i;
-	quote = data->prompt[i++];
-	while (data->prompt[i])
-	{
-		if (data->prompt[i] == quote
-			&& ft_strchr(NOPRINTABLE, data->prompt[i + 1]))
-		{
-			quote = '\0';
-			break ;
-		}
-		else if (data->prompt[i] == quote
-			&& (data->prompt[i + 1] == '\'' || data->prompt[i + 1] == '\"'))
-		{
-			quote = data->prompt[i + 1];
-			i++;
-		}
-		else if (data->prompt[i] == quote)
-			quote = '\0';
-		else if ((data->prompt[i] == '\'' || data->prompt[i] == '\"')
-			&& quote == '\0')
-			quote = data->prompt[i];
-		i++;
-	}
-	token = ft_substr(data->prompt, start, i - start);
-	add_token_list(data, token, give_id_token(token));
-	free(token);
-	return (i + 1);
-}
-
 static int	handle_operator_token(t_data *data, int i)
 {
 	int		start;
@@ -75,9 +40,7 @@ int	create_token(t_data *data)
 		i++;
 	while (data->prompt[i])
 	{
-		if (data->prompt[i] == '\'' || data->prompt[i] == '\"')
-			i = handle_quoted_token(data, i);
-		else if (data->prompt[i] == '>' || data->prompt[i] == '<'
+		if (data->prompt[i] == '>' || data->prompt[i] == '<'
 			|| data->prompt[i] == '|')
 			i = handle_operator_token(data, i);
 		else if (!ft_strchr(NOPRINTABLE, data->prompt[i]))

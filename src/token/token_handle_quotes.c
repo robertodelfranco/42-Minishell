@@ -19,6 +19,11 @@ static int	process_quotes(t_data *data, int i)
 	quote = data->prompt[i++];
 	while (data->prompt[i] && data->prompt[i] != quote)
 		i++;
+	if (data->prompt[i] == '\0')
+	{
+		data->unclosed_quote = true;
+		return (i);
+	}
 	if (data->prompt[i])
 		i++;
 	return (i);

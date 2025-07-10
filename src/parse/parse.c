@@ -32,30 +32,28 @@ static bool	search_heredoc(t_data *data)
 	return (true);
 }
 
-static t_token	*validate_tokens(t_data *data)
+static bool	validate_tokens(t_data *data)
 {
 	t_token	*cur;
 	t_token	*last;
 
 	cur = data->token_list;
-	if (data->unclosed_quote == true)
-		return (cur);
 	if (cur->type == PIPE)
-		return (cur);
+		return (false);
 	last = ft_last(data->token_list);
 	if (last->type == PIPE || last->type == REDIR)
-		return (cur);
+		return (false);
 	while (cur)
 	{
 		if (cur->type == PIPE)
 			if (cur->next->type == PIPE)
-				return (cur);
+				return (false);
 		if (cur->type == REDIR)
 			if (cur->next->type == PIPE || cur->next->type == REDIR)
-				return (cur);
+				return (false);
 		cur = cur->next;
 	}
-	return (NULL);
+	return (true);
 }
 
 static bool	open_heredocs(t_data *data)
@@ -86,10 +84,7 @@ static bool	open_heredocs(t_data *data)
 
 bool	parse(t_data *data)
 {
-	t_token	*cur;
-
-	cur = validate_tokens(data);
-	if (cur)
+	if (!validate_tokens(data))
 	{
 		data->exit_status = 2;
 		ft_printf_fd(2, "minishell: syntax error near unexpected token\n");

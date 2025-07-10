@@ -21,6 +21,13 @@ bool	verify_tokens(t_data *data)
 		free_program(data, NULL);
 		return (false);
 	}
+	else if (data->unclosed_quote == true)
+	{
+		ft_printf_fd(2, "minishell: unclosed quote\n");
+		data->exit_status = 2;
+		free_program(data, NULL);
+		return (false);
+	}
 	return (true);
 }
 
