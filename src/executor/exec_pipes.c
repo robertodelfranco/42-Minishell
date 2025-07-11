@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/10 15:54:16 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/11 17:28:58 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 			ft_dup_and_close(fd[1], STDOUT_FILENO, -1);
 	}
 	execute_command(data, cur, env_array);
-	ft_free_matrix(env_array);
 	return (false);
 }
 
@@ -124,10 +123,11 @@ bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 			continue ;
 		}
 		pid = fork();
-		if (pid < 0)
-			return (free_program(data, "Fork failed"));
 		if (pid == 0)
+		{
+			free(pids);
 			handle_child(data, cur, fd, prev_fd);
+		}
 		pids[i++] = pid;
 		handle_parent_no_wait(cur, fd, &prev_fd);
 		cur = cur->next;

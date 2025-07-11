@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/10 16:05:10 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/11 17:02:20 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ bool	execute_external(t_data *data, t_node *cur)
 	int		pid;
 	int		status;
 	int		wait_result;
+	int		exit_code;
 
 	status = 0;
 	env_array = get_env_array(data->env_list);
@@ -68,7 +69,13 @@ bool	execute_external(t_data *data, t_node *cur)
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		if (execve(full_path, cur->cmd, env_array) == -1)
-			exit(get_execve_exit_code(cur->cmd[0], full_path));
+		{
+			exit_code = get_execve_exit_code(cur->cmd[0], full_path);
+			free(full_path);
+			ft_free_matrix(env_array);
+			shutdown_program(data);
+			exit(exit_code);
+		}
 	}
 	wait_result = waitpid(pid, &status, 0);
 	if (wait_result != -1)

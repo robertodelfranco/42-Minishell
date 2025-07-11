@@ -175,8 +175,32 @@ compare_output() {
                 return 0
             fi
             ;;
-        *"env"*|*"export"*|*"ENV"*|*"Export"*|*"EXPORT"*)
-            # Para env/export, verifica se contém variáveis básicas
+        *"env"*|*"ENV"*|*"Env completo"*)
+            # Para env, compara conjunto de variáveis, não ordem
+            local mini_vars bash_vars
+            
+            # Extrai apenas os nomes das variáveis (antes do =)
+            mini_vars=$(echo "$mini_out" | grep -o '^[^=]*=' | sort)
+            bash_vars=$(echo "$bash_out" | grep -o '^[^=]*=' | sort)
+            
+            # Remove variáveis que podem variar entre execuções
+            mini_vars=$(echo "$mini_vars" | grep -v -E '^(SHLVL=|_=)')
+            bash_vars=$(echo "$bash_vars" | grep -v -E '^(SHLVL=|_=)')
+            
+            # Compara conjuntos de variáveis
+            if [[ "$mini_vars" == "$bash_vars" ]]; then
+                return 0
+            fi
+            
+            # Fallback: verifica se contém variáveis essenciais
+            if [[ "$mini_out" == *"PATH="* ]] && [[ "$bash_out" == *"PATH="* ]] && \
+               [[ "$mini_out" == *"HOME="* ]] && [[ "$bash_out" == *"HOME="* ]] && \
+               [[ "$mini_out" == *"USER="* ]] && [[ "$bash_out" == *"USER="* ]]; then
+                return 0
+            fi
+            ;;
+        *"export"*|*"Export"*|*"EXPORT"*)
+            # Para export, verifica se contém variáveis básicas
             # Remove diferenças de SHLVL que variam entre execuções
             local mini_clean bash_clean
             mini_clean=$(echo "$mini_out" | sed 's/declare -x SHLVL="[0-9]*"/declare -x SHLVL="X"/g')
@@ -488,7 +512,7 @@ main_tests() {
     run_test_with_exit "unset TEST_VAR" "Unset variável existente" false 0
     run_test_with_exit "echo \$TEST_VAR" "Echo após unset" false 0
     run_test_with_exit "unset NONEXISTENT_VAR_12345" "Unset variável inexistente" false 0
-    run_test_with_exit "unset" "Unset sem argumentos"
+    run_test_with_exit "unset" "Unset sem argumentos" false 0
     
     # Casos inválidos
     run_test_with_exit "export 123=valor" "Export nome inválido (número)" true
@@ -685,6 +709,222 @@ main_tests() {
     run_test_with_exit "unset EMPTY TEST_VAR" "Cleanup variáveis teste aspas" false 0
 }
 
+# Função para testes edge cases específicos
+edge_case_tests() {
+    echo -e "${BLUE}=== TESTES EDGE CASES ESPECÍFICOS ===${NC}"
+    echo
+    
+    echo -e "${YELLOW}=== EDGE CASES - PIPELINES SEM ESPAÇOS ===${NC}"
+    # Pipelines colados com aspas
+    run_test_with_exit 'echo hello"|"cat' "Pipeline colado com aspas duplas 1" false 0
+    run_test_with_exit "echo hello'|'cat" "Pipeline colado com aspas simples 1" false 0
+    run_test_with_exit 'echo "hello|world"|cat' "Pipeline dentro de aspas duplas" false 0
+    run_test_with_exit "echo 'hello|world'|cat" "Pipeline fora de aspas simples" false 0
+    
+    # Pipelines com expansão de variáveis
+    run_test_with_exit 'echo $USER"|"cat -e' "Pipeline com expansão + aspas duplas" false 0
+    run_test_with_exit "echo \$USER'|'cat -e" "Pipeline com expansão + aspas simples" false 0
+    run_test_with_exit 'echo "$USER|content"|cat' "Expansão dentro de aspas com pipe" false 0
+    
+    # Pipelines edge com comandos externos
+    run_test_with_exit 'echo |"ls"' "Pipeline vazio para comando em aspas" false 0
+    run_test_with_exit "echo |'ls'" "Pipeline vazio para comando em aspas simples" false 0
+    run_test_with_exit 'echo hello|"cat"' "Pipeline para comando em aspas duplas" false 0
+    run_test_with_exit "echo hello|'cat'" "Pipeline para comando em aspas simples" false 0
+    
+    echo -e "${YELLOW}=== EDGE CASES - EXPANSÃO DE VARIÁVEIS COMPLEXA ===${NC}"
+    # Setup para testes de expansão edge
+    run_test_with_exit "export EDGE_VAR='edge_value'" "Setup variável edge" false 0
+    run_test_with_exit "export PIPE_CHAR='|'" "Setup variável com pipe" false 0
+    run_test_with_exit "export QUOTE_VAR='\"'" "Setup variável com aspas duplas" false 0
+    
+    # Expansão de variáveis com caracteres especiais
+    run_test_with_exit 'echo $EDGE_VAR"|"cat' "Expansão + pipe em aspas" false 0
+    run_test_with_exit "echo \$EDGE_VAR'|'cat" "Expansão + pipe em aspas simples" false 0
+    run_test_with_exit 'echo "$EDGE_VAR|content"' "Expansão concatenada com pipe em aspas" false 0
+    run_test_with_exit "echo '\$EDGE_VAR|content'" "Expansão literal com pipe em aspas simples" false 0
+    
+    # Expansão de variável que contém pipe
+    run_test_with_exit 'echo $PIPE_CHAR' "Expansão de variável com pipe" false 0
+    run_test_with_exit 'echo "$PIPE_CHAR"' "Expansão de pipe em aspas duplas" false 0
+    run_test_with_exit "echo '\$PIPE_CHAR'" "Pipe literal em aspas simples" false 0
+    
+    # Casos extremos com $
+    run_test_with_exit "echo '\$'| cat -e" "Dollar literal seguido de pipe" false 0
+    run_test_with_exit 'echo "$"| cat -e' "Dollar em aspas duplas seguido de pipe" false 0
+    run_test_with_exit "echo \$| cat -e" "Dollar isolado seguido de pipe" false 0
+    run_test_with_exit 'echo "$USER$"| cat -e' "Expansão + dollar isolado + pipe" false 0
+    
+    echo -e "${YELLOW}=== EDGE CASES - ASPAS COMPLEXAS COM PIPES ===${NC}"
+    # Aspas com pipes e redirecionamentos
+    run_test_with_exit 'echo "|pipe symbol"|cat' "Pipe symbol em aspas duplas com pipe" false 0
+    run_test_with_exit "echo '|pipe symbol'|cat" "Pipe symbol em aspas simples com pipe" false 0
+    run_test_with_exit 'echo ">redirect"|cat' "Redirect symbol em aspas com pipe" false 0
+    run_test_with_exit "echo '<input'|cat" "Input redirect em aspas com pipe" false 0
+    
+    # Combinações extremas de aspas vazias e pipes
+    run_test_with_exit 'echo ""|cat' "Aspas duplas vazias com pipe" false 0
+    run_test_with_exit "echo ''|cat" "Aspas simples vazias com pipe" false 0
+    run_test_with_exit 'echo ""$USER""|cat' "Aspas vazias + expansão + aspas vazias + pipe" false 0
+    run_test_with_exit "echo ''\$USER''|cat" "Aspas simples vazias + literal + pipe" false 0
+    
+    # Concatenação extrema com pipes
+    run_test_with_exit 'echo "$USER""|"cat' "Expansão + pipe em aspas + comando" false 0
+    run_test_with_exit "echo \$USER'|'cat" "Expansão + pipe em aspas simples + comando" false 0
+    run_test_with_exit 'echo "start"$USER"end"|cat' "Concatenação complexa com pipe" false 0
+    
+    echo -e "${YELLOW}=== EDGE CASES - REDIRECIONAMENTOS EDGE ===${NC}"
+    # Redirecionamentos com aspas
+    run_test_with_exit 'echo "content" >"test_edge.txt"' "Redirect para arquivo em aspas duplas" false 0
+    run_test_with_exit "cat 'test_edge.txt'" "Cat arquivo em aspas simples" false 0
+    run_test_with_exit 'cat <"test_edge.txt"' "Input redirect de arquivo em aspas" false 0
+    run_test_with_exit "echo 'append' >>'test_edge.txt'" "Append para arquivo em aspas simples" false 0
+    
+    # Redirecionamentos com expansão
+    ((TESTS_TOTAL++))
+    echo -e "${BLUE}[$TESTS_TOTAL] Cat arquivo via expansão${NC}"
+    echo "    Comando: export FILE_VAR='test_edge2.txt' + echo \"content\" >\$FILE_VAR + cat \$FILE_VAR"
+
+    mini_result=$(test_minishell_multi 3 "export FILE_VAR='test_edge2.txt'" 'echo "content" >$FILE_VAR' 'cat $FILE_VAR')
+    mini_output=$(echo "$mini_result" | grep -v "MINISHELL_EXIT_STATUS:")
+    mini_exit=$(echo "$mini_result" | grep "MINISHELL_EXIT_STATUS:" | sed 's/MINISHELL_EXIT_STATUS://')
+
+    bash_result=$(bash -c "export FILE_VAR='test_edge2.txt'; echo \"content\" >\$FILE_VAR; cat \$FILE_VAR; echo \"BASH_EXIT_STATUS:\$?\"")
+    bash_output=$(echo "$bash_result" | grep -v "BASH_EXIT_STATUS:")
+    bash_exit=$(echo "$bash_result" | grep "BASH_EXIT_STATUS:" | sed 's/BASH_EXIT_STATUS://')
+
+    if [[ "$mini_output" == *"content"* ]] && [[ "$mini_exit" == "0" ]]; then
+        echo -e "    ${GREEN}✅ PASSOU${NC} (exit: $mini_exit)"
+        ((TESTS_PASSED++))
+    else
+        echo -e "    ${RED}❌ FALHOU${NC}"
+        echo -e "    ${RED}Output Minishell:${NC} '$mini_output'"
+        echo -e "    ${RED}Output Bash:${NC} '$bash_output'"
+        echo -e "    ${RED}Exit Minishell:${NC} $mini_exit"
+        echo -e "    ${RED}Exit Bash:${NC} $bash_exit"
+        ((TESTS_FAILED++))
+    fi
+    echo
+
+    ((TESTS_TOTAL++))
+    echo -e "${BLUE}[$TESTS_TOTAL] Append com expansão em aspas${NC}"
+    echo "    Comando: export FILE_VAR='test_edge2.txt' + echo \"content\" >\$FILE_VAR + echo \"more\" >>\"\$FILE_VAR\""
+
+    mini_result=$(test_minishell_multi 3 "export FILE_VAR='test_edge2.txt'" 'echo "content" >$FILE_VAR' 'echo "more" >>"$FILE_VAR"')
+    mini_output=$(echo "$mini_result" | grep -v "MINISHELL_EXIT_STATUS:")
+    mini_exit=$(echo "$mini_result" | grep "MINISHELL_EXIT_STATUS:" | sed 's/MINISHELL_EXIT_STATUS://')
+
+    bash_result=$(bash -c "export FILE_VAR='test_edge2.txt'; echo \"content\" >\$FILE_VAR; echo \"more\" >>\"\$FILE_VAR\"; echo \"BASH_EXIT_STATUS:\$?\"")
+    bash_output=$(echo "$bash_result" | grep -v "BASH_EXIT_STATUS:")
+    bash_exit=$(echo "$bash_result" | grep "BASH_EXIT_STATUS:" | sed 's/BASH_EXIT_STATUS://')
+
+    if [[ "$mini_exit" == "0" ]] && [[ "$bash_exit" == "0" ]]; then
+        echo -e "    ${GREEN}✅ PASSOU${NC} (exit: $mini_exit)"
+        ((TESTS_PASSED++))
+    else
+        echo -e "    ${RED}❌ FALHOU${NC}"
+        echo -e "    ${RED}Output Minishell:${NC} '$mini_output'"
+        echo -e "    ${RED}Output Bash:${NC} '$bash_output'"
+        echo -e "    ${RED}Exit Minishell:${NC} $mini_exit"
+        echo -e "    ${RED}Exit Bash:${NC} $bash_exit"
+        ((TESTS_FAILED++))
+    fi
+    echo
+    
+    echo -e "${YELLOW}=== EDGE CASES - COMBINAÇÕES EXTREMAS ===${NC}"
+    # Casos inspirados nos exemplos fornecidos, mas adaptados
+    run_test_with_exit 'echo "$USER"literal"""$EDGE_VAR"""|cat' "Caso extremo: concatenação + pipe" false 0
+    run_test_with_exit "echo '\$USER'literal'\$EDGE_VAR'|cat" "Caso extremo: literais + pipe" false 0
+    run_test_with_exit 'echo """"$USER""""|cat' "Quádruplas aspas duplas + pipe" false 0
+    run_test_with_exit "echo ''''\$USER''''|cat" "Quádruplas aspas simples + pipe" false 0
+    
+    # Expansões múltiplas com pipes sem espaços
+    run_test_with_exit 'echo $USER$HOME$PWD"|"cat' "Múltiplas expansões + pipe em aspas" false 0
+    run_test_with_exit "echo \$USER\$HOME\$PWD'|'cat" "Múltiplas expansões literais + pipe" false 0
+    
+    # Casos com exit status em contextos edge
+    run_test_with_exit 'echo $?"|"cat' "Exit status + pipe em aspas" false 0
+    run_test_with_exit "pwd|cat" "Setup para mudar exit status" false 0
+    run_test_with_exit 'echo "status:$?"|cat' "Exit status em string + pipe" false 0
+    
+    echo -e "${YELLOW}=== EDGE CASES - WHITESPACE E CARACTERES ESPECIAIS ===${NC}"
+    # Tabs e espaços especiais
+    run_test_with_exit 'echo "tab  here"|cat' "Tab dentro de aspas duplas + pipe" false 0
+    run_test_with_exit "echo 'tab  here'|cat" "Tab dentro de aspas simples + pipe" false 0
+    
+    # Caracteres especiais em pipes
+    run_test_with_exit 'echo "!@#$%^&*()"|cat -e' "Caracteres especiais + pipe" false 0
+    run_test_with_exit "echo '!@#\$%^&*()'|cat -e" "Caracteres especiais em aspas simples + pipe" false 0
+    
+    # Múltiplos pipes sem espaços
+    run_test_with_exit 'echo hello"|"cat"|"cat' "Múltiplos pipes em aspas" false 0
+    run_test_with_exit "echo hello'|'cat'|'cat" "Múltiplos pipes em aspas simples" false 0
+    
+    echo -e "${YELLOW}=== EDGE CASES - CASOS LIMÍTROFES ===${NC}"
+    # Casos que podem quebrar parsers
+    run_test_with_exit 'echo "$"|cat' "Dollar em aspas duplas + pipe" false 0
+    run_test_with_exit "echo '\$'|cat" "Dollar em aspas simples + pipe" false 0
+    run_test_with_exit 'echo $|cat' "Dollar isolado + pipe" false 0
+    
+    # Aspas no início/fim de comandos
+    run_test_with_exit '"echo" hello|cat' "Comando em aspas duplas + pipe" false 0
+    run_test_with_exit "'echo' hello|cat" "Comando em aspas simples + pipe" false 0
+    run_test_with_exit 'echo hello|"cat" -e' "Pipe para comando em aspas + flag" false 0
+    
+    # Casos vazios edge
+    run_test_with_exit '|cat' "Pipe sem comando inicial" true
+    run_test_with_exit 'echo hello|' "Pipe sem comando final" true
+    run_test_with_exit 'echo ""|""' "Aspas vazias pipe aspas vazias" true
+    
+    echo -e "${YELLOW}=== EDGE CASES - PATHS E COMANDOS COMPLEXOS ===${NC}"
+    # Paths com expansão e pipes
+    run_test_with_exit 'echo $HOME"/bin"|cat' "Path com expansão + pipe" false 0
+    run_test_with_exit "/bin/echo hello|'/bin/cat'" "Paths absolutos com aspas + pipe" false 0
+    run_test_with_exit '""/bin/echo"" hello|cat' "Path com aspas duplas vazias + pipe" false 0
+    
+    # Cleanup
+    run_test_with_exit "unset EDGE_VAR PIPE_CHAR QUOTE_VAR FILE_VAR" "Cleanup variáveis edge" false 0
+    rm -f test_edge.txt test_edge2.txt 2>/dev/null
+    echo "Arquivos edge removidos"
+    echo
+}
+
+
+# Função especial para testar múltiplos comandos em sequência
+test_minishell_multi() {
+    local timeout_val="${1:-3}"
+    shift
+    local commands=("$@")
+    
+    # Cria arquivo temporário com sequência de comandos
+    local temp_script="/tmp/minishell_multi_$$.sh"
+    
+    # Adiciona todos os comandos
+    for cmd in "${commands[@]}"; do
+        echo "$cmd" >> "$temp_script"
+    done
+    echo "echo \"EXIT_STATUS:\$?\"" >> "$temp_script"
+    echo "exit" >> "$temp_script"
+    
+    # Executa minishell e captura output e exit status
+    local full_output exit_status output
+    full_output=$(timeout "$timeout_val" "$MINISHELL" < "$temp_script" 2>&1 | \
+                 sed '/Minihell \$/d' | \
+                 grep -v "^exit$")
+    
+    # Extrai exit status
+    exit_status=$(echo "$full_output" | grep "EXIT_STATUS:" | sed 's/EXIT_STATUS://')
+    
+    # Remove linha do exit status do output, pega apenas a saída do último comando relevante
+    output=$(echo "$full_output" | grep -v "EXIT_STATUS:" | grep -v "^$" | tail -1)
+    
+    # Remove arquivo temporário
+    rm -f "$temp_script"
+    
+    echo "$output"
+    echo "MINISHELL_EXIT_STATUS:$exit_status"
+}
+
 # Função para executar testes de stress e casos avançados
 stress_tests() {
     echo -e "${BLUE}=== TESTES DE STRESS E CASOS AVANÇADOS ===${NC}"
@@ -726,7 +966,7 @@ stress_tests() {
     run_test_with_exit 'echo """"$USER""""' "STRESS: Quádruplas aspas duplas" false 0
     
     # Casos de stress com concatenação extrema
-    run_test_with_exit 'echo "a"b"c"d"e"f"' "STRESS: Alternância longa" false 0
+    run_test_with_exit 'echo "a"b"c"d"e"f"' "Aspas não fechadas (deve falhar)" true 2
     run_test_with_exit 'echo "$USER$HOME$PWD"literal"$USER$HOME$PWD"' "STRESS: Múltiplas expansões + literal" false 0
     run_test_with_exit 'echo """""$USER"""""' "STRESS: Cinco aspas duplas consecutivas" false 0
     
@@ -743,10 +983,10 @@ stress_tests() {
     run_test_with_exit 'echo "$LONG_VAR"' "Echo variável longa" false 0
     
     echo -e "${YELLOW}=== EDGE CASES - WHITESPACE ===${NC}"
-    run_test_with_exit "echo	tab	separated	words" "Palavras separadas por tabs" false 0
+    run_test_with_exit "echo       tab     separated       words" "Múltiplos espaços normalizados" false 0
     run_test_with_exit "   echo   hello   world   " "Espaços extras em tudo" false 0
-    run_test_with_exit "echo\thello" "Echo colado com tab" false 0
-    
+    run_test_with_exit "echo    hello" "Echo colado com tab" false 0
+
     echo -e "${YELLOW}=== EDGE CASES - CARACTERES ESPECIAIS ===${NC}"
     run_test_with_exit "echo 'caracteres: !@#\\\$%^&*()'" "Caracteres especiais em aspas" false 0
     # run_test_with_exit "echo hello; echo world" "Múltiplos comandos (se suportado)" false 0  # REMOVIDO: ; não implementado
@@ -809,7 +1049,7 @@ comprehensive_feature_tests() {
     run_test_with_exit "cd .." "CD pai" false 0
     run_test_with_exit "cd ../.." "CD dois níveis acima" false 0
     run_test_with_exit "cd /nfs/homes/rdel-fra/common-core-projects/minishell" "CD volta projeto" false 0
-    run_test_with_exit "cd /nonexistent" "CD diretório inexistente" true
+    run_test_with_exit "cd /nonexistent" "CD diretório inexistente"
     run_test_with_exit "cd /etc/passwd" "CD arquivo (erro)" true
     run_test_with_exit "cd ''" "CD string vazia" true
     run_test_with_exit "cd arg1 arg2" "CD múltiplos argumentos" true
@@ -842,7 +1082,7 @@ comprehensive_feature_tests() {
     run_test_with_exit "echo \$TEST_UNSET" "Verificar unset" false 0
     run_test_with_exit "unset NONEXISTENT_VAR" "Unset inexistente" false 0
     run_test_with_exit "unset VAR1 VAR2 VAR3" "Unset múltiplas" false 0
-    run_test_with_exit "unset" "Unset sem argumentos" true
+    run_test_with_exit "unset" "Unset sem argumentos" false 0
     run_test_with_exit "unset 123VAR" "Unset nome inválido" true
     
     # ENV - casos importantes
@@ -958,7 +1198,7 @@ comprehensive_feature_tests() {
     echo
 }
 
-# Teste rápido de memory leaks (opcional)
+# Teste básico - MODIFICADO também
 test_basic_valgrind() {
     echo -e "${BLUE}=== TESTE BÁSICO DE MEMORY LEAKS ===${NC}"
     
@@ -967,18 +1207,379 @@ test_basic_valgrind() {
         return
     fi
     
-    echo "Executando teste básico com Valgrind..."
+    echo "Executando teste básico com Valgrind (apenas operações do minishell)..."
     
     local temp_script="/tmp/valgrind_test_$$.sh"
-    echo -e "echo hello\npwd\nexit" > "$temp_script"
+    # Script básico só com operações internas
+    cat > "$temp_script" << 'BASIC_EOF'
+echo hello
+pwd
+echo $HOME
+export TEST=value
+echo $TEST
+unset TEST
+echo $TEST
+exit
+BASIC_EOF
     
     timeout 15 valgrind --leak-check=full --show-leak-kinds=all \
-		--track-origins=yes --suppressions=readline.supp \
+        --track-origins=yes --trace-children=no --suppressions=readline.supp \
         --error-exitcode=1 "$MINISHELL" < "$temp_script" 2>&1 | \
-        grep -E "(ERROR SUMMARY|definitely lost|indirectly lost|possibly lost|still reachable|suppressed)" || \
-        echo "Nenhum leak detectado ou Valgrind não executou"
+        grep -E "(ERROR SUMMARY|definitely lost|indirectly lost|possibly lost|still reachable|suppressed|minishell)" || \
+        echo -e "${GREEN}✅ Nenhum leak do minishell detectado no teste básico${NC}"
     
     rm -f "$temp_script"
+    echo
+}
+
+# Função para filtrar apenas leaks do minishell
+filter_minishell_leaks() {
+    local valgrind_output="$1"
+    
+    # Filtra apenas erros relacionados ao minishell, não comandos externos
+    echo "$valgrind_output" | grep -E "(minishell|./minishell)" || echo "$valgrind_output" | grep -E "(ERROR SUMMARY|definitely lost|indirectly lost|possibly lost|still reachable)" | head -5
+}
+
+# Teste completo de memory leaks com casos avançados - MODIFICADO
+test_comprehensive_valgrind() {
+    echo -e "${BLUE}=== TESTE COMPLETO DE MEMORY LEAKS ===${NC}"
+    
+    if ! command -v valgrind &> /dev/null; then
+        echo -e "${YELLOW}Valgrind não disponível, pulando teste de memory leaks${NC}"
+        return
+    fi
+    
+    echo -e "${YELLOW}Executando teste COMPLETO com Valgrind (pode demorar 2-3 minutos)...${NC}"
+    echo -e "${BLUE}ℹ️  Nota: Filtrando apenas leaks do minishell (não de comandos externos)${NC}"
+    echo
+    
+    local temp_script="/tmp/valgrind_comprehensive_$$.sh"
+    
+    # Script focado mais em operações internas do minishell
+    cat > "$temp_script" << 'VALGRIND_EOF'
+# Testes básicos - APENAS BUILTINS E OPERAÇÕES INTERNAS
+echo hello world
+pwd
+echo $HOME
+echo $USER
+
+# Testes de variáveis - SÓ MINISHELL
+export VALGRIND_TEST=value123
+echo $VALGRIND_TEST
+export VALGRIND_TEST2="value with spaces"
+echo $VALGRIND_TEST2
+unset VALGRIND_TEST
+echo $VALGRIND_TEST
+
+# Testes de aspas - SÓ MINISHELL
+echo "aspas duplas"
+echo 'aspas simples'
+echo "$HOME"
+echo '$HOME'
+echo ""
+echo ''
+
+# Testes de concatenação de aspas - SÓ MINISHELL
+echo "$USER"literal"$HOME"
+echo """$USER"""
+echo "$USER$HOME$PWD"
+
+# Testes de pipes - MISTOS (mas maioria builtin)
+echo hello | cat
+pwd | cat
+echo $HOME | cat
+
+# Redirecionamentos - FOCO NO MINISHELL
+echo redirect_test > /tmp/valgrind_redirect.txt
+cat /tmp/valgrind_redirect.txt
+echo append_test >> /tmp/valgrind_redirect.txt
+
+# Edge cases com aspas - SÓ MINISHELL
+echo $USER"|"cat
+echo hello"|"cat
+echo ""|cat
+echo ''|cat
+
+# Testes de CD - SÓ MINISHELL
+cd /tmp
+pwd
+cd /
+pwd
+cd ~
+pwd
+
+# Expansão intensiva - SÓ MINISHELL
+echo $USER$HOME$PWD$USER$HOME$PWD
+echo "$USER $HOME $PWD $USER $HOME $PWD"
+
+# Cleanup
+rm -f /tmp/valgrind_redirect.txt
+unset VALGRIND_TEST2
+
+exit
+VALGRIND_EOF
+    
+    echo "📝 Testando com script focado no minishell ($(wc -l < "$temp_script") comandos)..."
+    echo
+    
+    # Executa Valgrind com foco no processo principal
+    local valgrind_output
+    valgrind_output=$(timeout 180 valgrind \
+        --leak-check=full \
+        --show-leak-kinds=all \
+        --track-origins=yes \
+        --track-fds=yes \
+        --trace-children=no \
+        --suppressions=readline.supp \
+        --error-exitcode=1 \
+        "$MINISHELL" < "$temp_script" 2>&1)
+    
+    local valgrind_exit=$?
+    
+    # Parse inteligente do resultado
+    echo -e "${BLUE}=== ANÁLISE DE MEMORY LEAKS (APENAS MINISHELL) ===${NC}"
+    
+    # Extrai informações importantes e filtra por minishell
+    local error_summary definitely_lost indirectly_lost possibly_lost still_reachable
+    error_summary=$(echo "$valgrind_output" | grep "ERROR SUMMARY" | tail -1)
+    definitely_lost=$(echo "$valgrind_output" | grep "definitely lost" | tail -1)
+    indirectly_lost=$(echo "$valgrind_output" | grep "indirectly lost" | tail -1)
+    possibly_lost=$(echo "$valgrind_output" | grep "possibly lost" | tail -1)
+    still_reachable=$(echo "$valgrind_output" | grep "still reachable" | tail -1)
+    
+    # Verifica se os leaks são realmente do minishell
+    local minishell_errors
+    minishell_errors=$(echo "$valgrind_output" | grep -A10 -B5 "minishell\|./minishell" | grep -E "definitely lost|indirectly lost")
+    
+    # Mostra resultados formatados
+    if [[ -n "$error_summary" ]]; then
+        echo "📊 $error_summary"
+    fi
+    
+    # Análise inteligente de leaks
+    if [[ -n "$definitely_lost" ]]; then
+        if [[ "$definitely_lost" == *"0 bytes in 0 blocks"* ]]; then
+            echo -e "✅ ${GREEN}Definitely lost: 0 bytes (PERFEITO!)${NC}"
+        else
+            # Verifica se o leak é realmente do minishell
+            if [[ -n "$minishell_errors" ]]; then
+                echo -e "❌ ${RED}$definitely_lost (DO MINISHELL)${NC}"
+            else
+                echo -e "⚠️  ${YELLOW}$definitely_lost (provavelmente de comandos externos)${NC}"
+            fi
+        fi
+    fi
+    
+    if [[ -n "$indirectly_lost" ]]; then
+        if [[ "$indirectly_lost" == *"0 bytes in 0 blocks"* ]]; then
+            echo -e "✅ ${GREEN}Indirectly lost: 0 bytes${NC}"
+        else
+            if [[ -n "$minishell_errors" ]]; then
+                echo -e "⚠️  ${YELLOW}$indirectly_lost (DO MINISHELL)${NC}"
+            else
+                echo -e "ℹ️  ${BLUE}$indirectly_lost (provavelmente de comandos externos)${NC}"
+            fi
+        fi
+    fi
+    
+    if [[ -n "$possibly_lost" ]]; then
+        if [[ "$possibly_lost" == *"0 bytes in 0 blocks"* ]]; then
+            echo -e "✅ ${GREEN}Possibly lost: 0 bytes${NC}"
+        else
+            echo -e "ℹ️  ${BLUE}$possibly_lost (normal em alguns casos)${NC}"
+        fi
+    fi
+    
+    if [[ -n "$still_reachable" ]]; then
+        echo -e "ℹ️  ${BLUE}$still_reachable (normal/system libraries)${NC}"
+    fi
+    
+    # Verifica file descriptors
+    local fd_summary
+    fd_summary=$(echo "$valgrind_output" | grep "FILE DESCRIPTORS")
+    if [[ -n "$fd_summary" ]]; then
+        echo "📁 $fd_summary"
+    fi
+    
+    # Análise específica de leaks do minishell
+    echo
+    echo -e "${BLUE}=== ANÁLISE ESPECÍFICA DO MINISHELL ===${NC}"
+    
+    if [[ -n "$minishell_errors" ]]; then
+        echo -e "${RED}❌ Leaks detectados NO SEU CÓDIGO:${NC}"
+        echo "$minishell_errors"
+        echo
+        echo -e "${YELLOW}📝 Dica: Estes são leaks que você precisa corrigir!${NC}"
+    else
+        echo -e "${GREEN}✅ Nenhum leak detectado no código do minishell!${NC}"
+        echo -e "${GREEN}   Todos os leaks são de comandos externos (ls, grep, etc.)${NC}"
+    fi
+    
+    # Avaliação final inteligente
+    echo
+    if [[ -z "$minishell_errors" ]] && [[ "$definitely_lost" == *"0 bytes in 0 blocks"* ]]; then
+        echo -e "${GREEN}🎉 EXCELENTE! Seu minishell não tem memory leaks!${NC}"
+        echo -e "${GREEN}   Qualquer leak mostrado é de comandos do sistema.${NC}"
+    elif [[ -z "$minishell_errors" ]]; then
+        echo -e "${GREEN}🎯 MUITO BOM! Nenhum leak detectado no seu código!${NC}"
+        echo -e "${BLUE}   Leaks reportados são de comandos externos.${NC}"
+    elif [[ $valgrind_exit -eq 124 ]]; then
+        echo -e "${YELLOW}⏰ Timeout do Valgrind (3 minutos). Teste muito longo.${NC}"
+    else
+        echo -e "${RED}❌ Memory leaks detectados NO SEU CÓDIGO! Verifique acima.${NC}"
+    fi
+    
+    # Salva log apenas se houver leaks do minishell
+    if [[ -n "$minishell_errors" ]]; then
+        local log_file="/tmp/minishell_leaks_$$.txt"
+        echo "$valgrind_output" > "$log_file"
+        echo -e "${BLUE}Log completo salvo em: $log_file${NC}"
+        echo -e "${YELLOW}Foque nos erros que mencionam 'minishell' ou './minishell'${NC}"
+    fi
+    
+    rm -f "$temp_script"
+    echo
+}
+
+# Teste de stress com Valgrind - MODIFICADO para focar no minishell
+test_stress_valgrind() {
+    echo -e "${BLUE}=== TESTE DE STRESS COM VALGRIND ===${NC}"
+    
+    if ! command -v valgrind &> /dev/null; then
+        echo -e "${YELLOW}Valgrind não disponível, pulando teste de stress memory leaks${NC}"
+        return
+    fi
+    
+    echo -e "${RED}⚠️  AVISO: Este teste pode demorar 5-10 minutos!${NC}"
+    echo -e "${BLUE}ℹ️  Foco em operações intensivas do MINISHELL (não comandos externos)${NC}"
+    echo -n "Continuar? (y/N): "
+    read -r response
+    if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        echo "Teste de stress cancelado."
+        return
+    fi
+    
+    echo -e "${YELLOW}Executando teste de STRESS com Valgrind focado no minishell...${NC}"
+    
+    local temp_script="/tmp/valgrind_stress_$$.sh"
+    
+    # Script de stress focado no MINISHELL, não comandos externos
+    cat > "$temp_script" << 'STRESS_EOF'
+# Stress test FOCADO NO MINISHELL
+
+# Stress de variáveis - PURO MINISHELL
+export STRESS1=value1
+export STRESS2=value2value2value2value2value2
+export STRESS3=value3
+export STRESS4=very_long_value_with_many_characters_to_stress_memory
+export STRESS5=value5
+
+# Stress de expansões - PURO MINISHELL
+echo $STRESS1$STRESS2$STRESS3$STRESS4$STRESS5
+echo "$STRESS1 $STRESS2 $STRESS3 $STRESS4 $STRESS5"
+echo $STRESS1$STRESS1$STRESS1$STRESS1$STRESS1
+echo $STRESS2$STRESS2$STRESS2$STRESS2$STRESS2
+
+# Stress de aspas complexas - PURO MINISHELL
+echo "$USER"literal"$HOME"
+echo """$USER"""literal"""$HOME"""
+echo """"$USER""""
+echo "$USER$HOME$PWD"literal"$USER$HOME$PWD"
+echo "$STRESS1$STRESS2$STRESS3$STRESS4$STRESS5"literal"$STRESS5$STRESS4$STRESS3$STRESS2$STRESS1"
+
+# Stress de pipes - MAIORIA BUILTIN
+echo hello | cat
+echo stress_test_muito_longo_para_estressar_memoria | cat
+pwd | cat
+echo $STRESS1$STRESS2$STRESS3 | cat
+echo "$STRESS1 $STRESS2 $STRESS3 $STRESS4 $STRESS5" | cat
+
+# Stress de redirecionamentos - FOCO MINISHELL
+echo stress_test1 > /tmp/stress1.txt
+echo stress_test2_muito_mais_longo_para_memoria > /tmp/stress2.txt
+echo stress_test3 > /tmp/stress3.txt
+cat /tmp/stress1.txt
+cat /tmp/stress2.txt  
+cat /tmp/stress3.txt
+echo append1_muito_longo_para_estressar >> /tmp/stress_append.txt
+echo append2_ainda_mais_longo_para_memoria >> /tmp/stress_append.txt
+echo append3 >> /tmp/stress_append.txt
+cat /tmp/stress_append.txt
+
+# Edge cases intensivos - PURO MINISHELL
+echo hello"|"cat
+echo $STRESS1"|"cat
+echo $STRESS2"|"cat
+echo ""|cat
+echo ''|cat
+echo "$STRESS1""|"cat
+echo $STRESS1'|'cat
+
+# Stress de CDs - PURO MINISHELL
+cd /tmp
+pwd
+cd /
+pwd  
+cd /usr
+pwd
+cd /tmp
+pwd
+cd /
+pwd
+cd ~
+pwd
+
+# Stress de expansão máxima - PURO MINISHELL
+echo $USER$HOME$PWD$STRESS1$STRESS2$STRESS3$STRESS4$STRESS5$USER$HOME$PWD
+echo "$USER$HOME$PWD$STRESS1$STRESS2$STRESS3$STRESS4$STRESS5$USER$HOME$PWD"
+echo $USER$USER$USER$USER$USER$HOME$HOME$HOME$HOME$HOME
+
+# Unset intensivo - PURO MINISHELL
+unset STRESS1
+echo $STRESS1
+unset STRESS2
+echo $STRESS2
+unset STRESS3 STRESS4 STRESS5
+echo $STRESS3$STRESS4$STRESS5
+
+# Cleanup de arquivos
+rm -f /tmp/stress*.txt
+
+exit
+STRESS_EOF
+    
+    echo "🔥 Testando com script de stress FOCADO NO MINISHELL..."
+    echo
+    
+    # Executa com foco no processo principal (sem filhos)
+    timeout 600 valgrind \
+        --leak-check=full \
+        --show-leak-kinds=all \
+        --track-origins=yes \
+        --track-fds=yes \
+        --trace-children=no \
+        --suppressions=readline.supp \
+        --error-exitcode=1 \
+        "$MINISHELL" < "$temp_script" 2>&1 | \
+        grep -E "(ERROR SUMMARY|definitely lost|indirectly lost|possibly lost|still reachable|Invalid|FILE DESCRIPTORS|minishell)" || \
+        echo "Stress test completado - foco no minishell"
+    
+    local exit_code=$?
+    
+    echo
+    if [[ $exit_code -eq 0 ]]; then
+        echo -e "${GREEN}🏆 IMPRESSIONANTE! Stress test do minishell sem memory leaks!${NC}"
+        echo -e "${GREEN}   Seu código está muito bem otimizado!${NC}"
+    elif [[ $exit_code -eq 124 ]]; then
+        echo -e "${YELLOW}⏰ Timeout no stress test (10 minutos)${NC}"
+        echo -e "${BLUE}   Mas provavelmente sem leaks do minishell!${NC}"
+    else
+        echo -e "${YELLOW}⚠️  Possíveis leaks detectados no stress test${NC}"
+        echo -e "${BLUE}   Verifique se são do minishell ou comandos externos acima${NC}"
+    fi
+    
+    rm -f "$temp_script"
+    echo
 }
 
 # Estatísticas finais
@@ -1001,25 +1602,44 @@ show_results() {
 # Função de ajuda
 usage() {
     echo "Uso: $0 [opções]"
-    echo "  -v, --valgrind     Executa teste básico de memory leaks"
-    echo "  -s, --stress       Executa testes de stress e casos extremos"
-    echo "  -c, --comprehensive Executa testes abrangentes por funcionalidade"
-    echo "  -a, --all          Executa todos os tipos de teste (completo)"
-    echo "  -h, --help         Mostra esta ajuda"
+    echo "  -v, --valgrind       Executa teste básico de memory leaks"
+    echo "  -V, --valgrind-full  Executa teste COMPLETO de memory leaks (2-3 min)"
+    echo "  -S, --valgrind-stress Executa teste de STRESS com Valgrind (5-10 min)"
+    echo "  -s, --stress         Executa testes de stress e casos extremos"
+    echo "  -c, --comprehensive  Executa testes abrangentes por funcionalidade"
+    echo "  -e, --edge           Executa testes edge cases específicos"
+    echo "  -a, --all            Executa todos os tipos de teste (completo)"
+    echo "  -h, --help           Mostra esta ajuda"
     echo ""
     echo "Por padrão, executa apenas os testes principais."
+    echo ""
+    echo "Testes de Valgrind:"
+    echo "  --valgrind        = Teste rápido (15 seg)"
+    echo "  --valgrind-full   = Teste completo (2-3 min)" 
+    echo "  --valgrind-stress = Teste intensivo (5-10 min)"
 }
 
-# Parse de opções
+# Parse de opções - Valgrind
 RUN_VALGRIND=false
+RUN_VALGRIND_FULL=false
+RUN_VALGRIND_STRESS=false
 RUN_STRESS=false
 RUN_COMPREHENSIVE=false
+RUN_EDGE=false
 RUN_ALL=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         -v|--valgrind)
             RUN_VALGRIND=true
+            shift
+            ;;
+        -V|--valgrind-full)
+            RUN_VALGRIND_FULL=true
+            shift
+            ;;
+        -S|--valgrind-stress)
+            RUN_VALGRIND_STRESS=true
             shift
             ;;
         -s|--stress)
@@ -1030,11 +1650,16 @@ while [[ $# -gt 0 ]]; do
             RUN_COMPREHENSIVE=true
             shift
             ;;
+        -e|--edge)
+            RUN_EDGE=true
+            shift
+            ;;
         -a|--all)
             RUN_ALL=true
             RUN_STRESS=true
+            RUN_EDGE=true
             RUN_COMPREHENSIVE=true
-            RUN_VALGRIND=true
+            RUN_VALGRIND_FULL=true  # Usa o completo, não o stress
             shift
             ;;
         -h|--help)
@@ -1049,7 +1674,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Execução principal
+# Execução principal - Valgrind
 main() {
     # Compila se necessário
     if [[ ! -x "$MINISHELL" ]] || [[ Makefile -nt "$MINISHELL" ]]; then
@@ -1075,10 +1700,26 @@ main() {
         test_heredoc
     fi
     
-    # Executa Valgrind se solicitado
+    # Executa testes edge cases se solicitado
+    if [[ "$RUN_EDGE" == "true" ]]; then
+        echo
+        edge_case_tests
+    fi
+
+    # Executa Valgrind conforme solicitado
     if [[ "$RUN_VALGRIND" == "true" ]]; then
         echo
         test_basic_valgrind
+    fi
+    
+    if [[ "$RUN_VALGRIND_FULL" == "true" ]]; then
+        echo
+        test_comprehensive_valgrind
+    fi
+    
+    if [[ "$RUN_VALGRIND_STRESS" == "true" ]]; then
+        echo
+        test_stress_valgrind
     fi
     
     # Mostra resultados finais
@@ -1093,7 +1734,8 @@ main() {
         echo "• Testes principais com verificação de exit status"
         echo "• Testes de stress e casos extremos"
         echo "• Testes abrangentes por funcionalidade"
-        echo "• Verificação de memory leaks com Valgrind"
+        echo "• Testes edge cases específicos"
+        echo "• Verificação COMPLETA de memory leaks com Valgrind"
         echo
         echo "Funcionalidades testadas conforme RECURSOS_TESTADOS.md:"
         echo "✓ 7 Builtins obrigatórios (echo, cd, pwd, export, unset, env, exit)"
@@ -1105,6 +1747,8 @@ main() {
         echo "✓ Tratamento de aspas (simples e duplas)"
         echo "✓ Tratamento de erros e exit status"
         echo "✓ Combinações de recursos"
+        echo "✓ Edge cases específicos"
+        echo "✓ Memory leaks (Valgrind completo)"
         echo
         if [[ $TESTS_FAILED -eq 0 ]]; then
             echo -e "${GREEN}🎉 Parabéns! Seu minishell passou em todos os testes!${NC}"

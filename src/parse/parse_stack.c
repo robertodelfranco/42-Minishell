@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 15:04:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 20:09:46 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/11 16:22:09 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,29 +28,29 @@ static void	add_stack_node(t_data *data, t_node *node)
 	}
 }
 
-static char	**ft_strdup_matrix(char **matrix)
-{
-	char	**new_matrix;
-	int		i;
+// static char	**ft_strdup_matrix(char **matrix)
+// {
+// 	char	**new_matrix;
+// 	int		i;
 
-	if (!matrix)
-		return (NULL);
-	new_matrix = (char **)ft_calloc(ft_ptrlen(matrix) + 1, sizeof(char *));
-	if (!new_matrix)
-		return (NULL);
-	i = 0;
-	while (matrix[i])
-	{
-		new_matrix[i] = ft_strdup(matrix[i]);
-		if (!new_matrix[i])
-		{
-			ft_free_matrix(new_matrix);
-			return (NULL);
-		}
-		i++;
-	}
-	return (new_matrix);
-}
+// 	if (!matrix)
+// 		return (NULL);
+// 	new_matrix = (char **)ft_calloc(ft_ptrlen(matrix) + 1, sizeof(char *));
+// 	if (!new_matrix)
+// 		return (NULL);
+// 	i = 0;
+// 	while (matrix[i])
+// 	{
+// 		new_matrix[i] = ft_strdup(matrix[i]);
+// 		if (!new_matrix[i])
+// 		{
+// 			ft_free_matrix(new_matrix);
+// 			return (NULL);
+// 		}
+// 		i++;
+// 	}
+// 	return (new_matrix);
+// }
 
 static t_node	*create_pipe_node(char **args, t_type type)
 {
@@ -59,7 +59,7 @@ static t_node	*create_pipe_node(char **args, t_type type)
 	pipe = (t_node *)ft_calloc(1, sizeof(t_node));
 	if (!pipe)
 		return (NULL);
-	pipe->cmd = ft_strdup_matrix(args);
+	pipe->cmd = args;
 	pipe->node_type = type;
 	return (pipe);
 }
@@ -71,7 +71,7 @@ static t_node	*create_cmd_node(char **prompt, t_redir *redir, t_type type)
 	command = (t_node *)ft_calloc(1, sizeof(t_node));
 	if (!command)
 		return (NULL);
-	command->cmd = ft_strdup_matrix(prompt);
+	command->cmd = prompt;
 	command->node_type = type;
 	command->redir = redir;
 	command->fd_in = -1;

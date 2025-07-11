@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 14:27:17 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 19:53:55 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/11 16:22:53 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,6 @@ void	ft_free_parse_list(t_data *data)
 	while (current)
 	{
 		temp = current->next;
-		if (current->cmd)
-			ft_free_matrix(current->cmd);
 		free(current);
 		current = temp;
 	}

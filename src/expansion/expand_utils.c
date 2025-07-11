@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 14:44:39 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/09 17:12:12 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/11 15:34:10 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ void	ft_free_key_and_value(char *key, char *value)
 int	is_variable_delimiter(char c)
 {
 	return ((c >= '\t' && c <= '\r') || (c >= ' ' && c <= '/')
-		|| (c >= ':' && c <= '@') || (c >= '[' && c <= '^')
-		|| (c >= '{' && c <= '~') || c == '$');
+		|| (c >= ':' && c <= '>') || (c >= '[' && c <= '^')
+		|| (c >= '{' && c <= '~') || c == '$' || c == '@');
 }
 
 char	*get_variable_value(t_data *data, char *str)
@@ -73,7 +73,7 @@ char	*get_variable_key(const char *str)
 	i = 0;
 	if (str[i] == '?')
 		return (ft_strdup("?"));
-	while (str[i] && !is_variable_delimiter(str[i]))
+	while (str[i] && !is_variable_delimiter(str[i]) && str[i] != '?')
 		i++;
 	if (i == 0 && str[i] != '\0')
 		i = 1;

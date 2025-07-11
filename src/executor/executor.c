@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/10 16:05:20 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/11 17:03:23 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,11 @@ bool	execute_command(t_data *data, t_node *cur, char **env_array)
 	if (cur->node_type == BUILT_IN)
 	{
 		if (execute_built_in(data, cur))
+		{
+			ft_free_matrix(env_array);
+			shutdown_program(data);
 			exit(0);
+		}
 		exit(CMD_NOT_FOUND);
 	}
 	else if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
@@ -54,6 +58,8 @@ bool	execute_command(t_data *data, t_node *cur, char **env_array)
 	{
 		exit_code = get_execve_exit_code(cur->cmd[0], full_path);
 		free(full_path);
+		ft_free_matrix(env_array);
+		shutdown_program(data);
 		exit(exit_code);
 	}
 	else

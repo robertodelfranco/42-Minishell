@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:40:55 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/09 17:18:44 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/11 15:35:26 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	get_exp_size(t_data *data, const char *str, bool heredoc)
 	{
 		if (heredoc == false && (str[i] == '\'' || str[i] == '\"'))
 			i += jump_quotes(data, &str[i], &size);
-		else if (str[i] == '$' && str[i + 1] != '\0' && str[i + 1] != ' ')
+		else if (str[i] == '$' && !is_variable_delimiter(str[i + 1]))
 			size += process_variable(data, str, &i);
 		else
 		{
@@ -73,7 +73,7 @@ char	*get_str_expand(t_data *data, char *input, char *expand, bool heredoc)
 	{
 		if (heredoc == false && (input[i] == '\'' || input[i] == '\"'))
 			i += copy_quotes(data, &input[i], expand, &j);
-		else if (input[i] == '$' && input[i + 1] != '\0' && input[i + 1] != ' ')
+		else if (input[i] == '$' && !is_variable_delimiter(input[i + 1]))
 		{
 			key = get_variable_key(&input[i + 1]);
 			value = get_variable_value(data, key);

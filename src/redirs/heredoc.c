@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:14:15 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/10 16:00:42 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/11 17:04:01 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,5 +72,6 @@ void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd)
 		free(input);
 	}
 	close(fd);
+	shutdown_program(data);
 	exit(0);
 }

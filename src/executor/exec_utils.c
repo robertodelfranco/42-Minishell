@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:22:19 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/10 16:04:52 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/11 16:37:40 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,11 +94,14 @@ char	*ft_get_external_path(t_data *data, char *token_name)
 	char	*full_cmd;
 	char	*full_path;
 	char	**new_path;
+	char	*value;
 
-	new_path = ft_split(get_variable_value(data, "PATH"), ':');
-	if (new_path == NULL)
+	value = get_variable_value(data, "PATH");
+	if (!value)
 		return (NULL);
 	i = 0;
+	new_path = ft_split(value, ':');
+	free(value);
 	while (new_path[i])
 	{
 		full_path = ft_strjoin(new_path[i++], "/");
