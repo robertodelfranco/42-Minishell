@@ -16,9 +16,9 @@ void	sigint_handler_prompt(int sig)
 {
 	(void)sig;
 	g_sig = 130;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_on_new_line();
+	ft_putendl_fd("", STDOUT_FILENO);
 	rl_replace_line("", 0);
+	rl_on_new_line();
 	rl_redisplay();
 }
 
@@ -26,7 +26,7 @@ void	sigint_handler_exec(int sig)
 {
 	(void)sig;
 	g_sig = 130;
-	write(STDOUT_FILENO, "\n", 1);
+	ft_putendl_fd("", STDOUT_FILENO);
 }
 
 void	sigpipe_handler(int sig)

@@ -15,27 +15,18 @@
 bool	init_heredoc(t_redir *redir, t_data *data)
 {
 	char		*filename;
-	int			pid;
 	int			fd;
 	static int	id = 0;
-	int			status;
 
 	filename = ft_strjoin_free("/tmp/here_doc", ft_itoa(id));
 	fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
-	if (fd < 0)
-		return (free_program(data, "Heredoc file creation failed"));
-	pid = fork();
-	if (pid == 0)
-		read_heredoc(redir, redir->target, data, fd);
-	else
-	{
-		signal(SIGINT, SIG_IGN);
-		waitpid(pid, &status, 0);
-		data->exit_status = WEXITSTATUS(status);
-	}
+	signal(SIGINT, handle_heredoc);
+	read_heredoc(redir, redir->target, data, fd);
+	close(fd);
+	signal_setup_prompt();
+	dup2(data->fd[0], STDIN_FILENO);
 	free(redir->target);
 	redir->target = filename;
-	close(fd);
 	id++;
 	return (true);
 }
@@ -48,18 +39,19 @@ void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd)
 
 	while (true)
 	{
-		signal(SIGINT, handle_heredoc);
 		input = readline(COLOR "> " RESET);
+		if (!input && g_sig != 0)
+			return ;
 		if (!input)
 		{
 			ft_printf_fd(2, "minishell: warning: here-document delimited by "
 				"end-of-file (wanted `%s')\n", delimiter);
-			break ;
+			return ;
 		}
 		if (ft_strcmp(input, delimiter) == 0)
 		{
 			free(input);
-			break ;
+			return ;
 		}
 		if (redir->quoted == false)
 		{
@@ -71,7 +63,4 @@ void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd)
 		ft_putendl_fd(input, fd);
 		free(input);
 	}
-	close(fd);
-	shutdown_program(data);
-	exit(0);
 }

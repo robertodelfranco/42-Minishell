@@ -16,8 +16,10 @@ void	handle_heredoc(int sig)
 {
 	(void)sig;
 	g_sig = 130;
-	write(STDOUT_FILENO, "\n", 1);
-	exit(130);
+	ft_putendl_fd("", STDOUT_FILENO);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	close(STDIN_FILENO);
 }
 
 void	handle_sigquit(int sig)
