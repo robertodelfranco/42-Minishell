@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:22:45 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/10 15:50:52 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 12:49:30 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,10 @@ int	main(int ac, char **av, char **env)
 	(void)av;
 	g_sig = 0;
 	data = (t_data *)ft_calloc(1, sizeof(t_data));
-	data->interactive_mode = isatty(STDIN_FILENO);
 	ft_init_env(data, env);
 	while (true)
 	{
-		if (data->interactive_mode)
-			signal_setup_prompt();
+		signal_setup_prompt();
 		if (!ft_readline(data))
 			continue ;
 		create_token(data);
@@ -52,8 +50,7 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		if (!parse(data))
 			continue ;
-		if (data->interactive_mode)
-			setup_signals_exec();
+		setup_signals_exec();
 		executor(data);
 		if (g_sig != 0)
 		{

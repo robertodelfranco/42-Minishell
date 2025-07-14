@@ -6,43 +6,35 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/10 15:54:16 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 18:22:46 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
+static int	handle_redir_pipe(t_data *data, int fd[2], t_node **cur, int *prev)
 {
-	char	**env_array;
+	t_node	*last_node;
+	int		last;
 
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
-	dup_fds(cur);
-	env_array = get_env_array(data->env_list);
-	if (cur->prev == NULL)
-	{
-		if (cur->fd_out == -1)
-			ft_dup_and_close(fd[1], STDOUT_FILENO, fd[0]);
-	}
-	else if (cur->next == NULL)
-	{
-		if (cur->fd_in == -1)
-			ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
-	}
-	else
-	{
-		if (cur->fd_in == -1)
-			ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
-		if (cur->fd_out == -1)
-			ft_dup_and_close(fd[1], STDOUT_FILENO, -1);
-	}
-	execute_command(data, cur, env_array);
-	ft_free_matrix(env_array);
-	return (false);
+	last_node = get_last_command_node(data->exec_list);
+	last = 0;
+	if (*cur == last_node)
+		last = 1;
+	if (*prev != -1)
+		close(*prev);
+	if ((*cur)->next != NULL)
+		close(fd[1]);
+	if ((*cur)->fd_in != -1)
+		close((*cur)->fd_in);
+	if ((*cur)->fd_out != -1)
+		close((*cur)->fd_out);
+	*prev = fd[0];
+	*cur = (*cur)->next;
+	return (last);
 }
 
-static int	handle_parent_no_wait(t_node *cur, int fd[2], int *prev_fd)
+int	handle_parent_no_wait(t_node *cur, int fd[2], int *prev_fd)
 {
 	if (*prev_fd != -1)
 		close(*prev_fd);
@@ -101,16 +93,12 @@ static int	wait_for_all_children(pid_t *pids, int count)
 
 bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 {
-	int		i;
-	int		last_cmd_error;
-	pid_t	pid;
-	pid_t	*pids;
+	int	last_cmd_error;
+	int	i;
 
-	pids = malloc(sizeof(pid_t) * count_commands(cur));
-	if (!pids)
-		return (free_program(data, "Memory allocation failed"));
 	i = 0;
 	last_cmd_error = 0;
+	data->pids = malloc(sizeof(pid_t) * count_commands(cur));
 	while (cur)
 	{
 		if (cur->node_type == PIPE)
@@ -118,24 +106,15 @@ bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 		if (cur->next && pipe(fd) == -1)
 			return (free_program(data, "Pipe creation failed"));
 		if (!identify_redirs(cur->redir, cur))
-		{
-			last_cmd_error = handle_redir_pipe(data, fd, cur, &prev_fd);
-			cur = cur->next;
-			continue ;
-		}
-		pid = fork();
-		if (pid < 0)
-			return (free_program(data, "Fork failed"));
-		if (pid == 0)
-			handle_child(data, cur, fd, prev_fd);
-		pids[i++] = pid;
-		handle_parent_no_wait(cur, fd, &prev_fd);
-		cur = cur->next;
+			last_cmd_error = handle_redir_pipe(data, fd, &cur, &prev_fd);
+		else
+			data->pids[i++] = exec_child(data, &cur, fd, &prev_fd);
 	}
 	if (last_cmd_error)
 		data->exit_status = 1;
 	else
-		data->exit_status = wait_for_all_children(pids, i);
-	free(pids);
+		data->exit_status = wait_for_all_children(data->pids, i);
+	free(data->pids);
+	data->pids = 0;
 	return (true);
 }

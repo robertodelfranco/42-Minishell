@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/10 16:05:10 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 17:45:17 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,44 +45,6 @@ bool	execute_built_in(t_data *data, t_node *cur)
 	return (false);
 }
 
-bool	execute_external(t_data *data, t_node *cur)
-{
-	char	*full_path;
-	char	**env_array;
-	int		pid;
-	int		status;
-	int		wait_result;
-
-	status = 0;
-	env_array = get_env_array(data->env_list);
-	if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
-		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
-		full_path = ft_strdup(cur->cmd[0]);
-	else
-		full_path = ft_get_external_path(data, cur->cmd[0]);
-	pid = fork();
-	if (pid < 0)
-		return (free_program(data, "Fork failed"));
-	else if (pid == 0)
-	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
-		if (execve(full_path, cur->cmd, env_array) == -1)
-			exit(get_execve_exit_code(cur->cmd[0], full_path));
-	}
-	wait_result = waitpid(pid, &status, 0);
-	if (wait_result != -1)
-	{
-		if (WIFEXITED(status))
-			data->exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			data->exit_status = 128 + WTERMSIG(status);
-	}
-	free(full_path);
-	ft_free_matrix(env_array);
-	return (true);
-}
-
 int	get_execve_exit_code(char *cmd, char *full_path)
 {
 	struct stat	st;
@@ -110,18 +72,4 @@ int	get_execve_exit_code(char *cmd, char *full_path)
 	}
 	ft_printf_fd(2, "minishell: %s: command not found\n", cmd);
 	return (127);
-}
-
-t_node	*get_last_command_node(t_node *cur)
-{
-	t_node	*last_cmd;
-
-	last_cmd = NULL;
-	while (cur)
-	{
-		if (cur->node_type != PIPE)
-			last_cmd = cur;
-		cur = cur->next;
-	}
-	return (last_cmd);
 }

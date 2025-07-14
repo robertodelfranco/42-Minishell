@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 10:06:03 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/08 13:23:44 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/11 16:24:36 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,12 @@ static bool	is_valid_arg(const char *args)
 		return (false);
 	if (!(ft_isalpha(args[0]) || args[0] == '_'))
 		return (false);
-	i = -1;
-	while (args[i++])
+	i = 0;
+	while (args[i])
 	{
 		if (!(ft_isalnum(args[i]) || args[i] == '_'))
 			return (false);
+		i++;
 	}
 	return (true);
 }

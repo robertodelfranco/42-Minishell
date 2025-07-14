@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_handle_quotes.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 14:52:08 by rheringe          #+#    #+#             */
-/*   Updated: 2025/07/02 14:55:12 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/07/11 15:23:38 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ static int	process_quotes(t_data *data, int i)
 		data->unclosed_quote = true;
 		return (i);
 	}
+	else
+		data->unclosed_quote = false;
 	if (data->prompt[i])
 		i++;
 	return (i);

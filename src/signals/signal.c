@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 15:48:45 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/10 15:41:27 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 12:53:42 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@ void	sigint_handler_prompt(int sig)
 {
 	(void)sig;
 	g_sig = 130;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_on_new_line();
+	ft_putendl_fd("", STDOUT_FILENO);
 	rl_replace_line("", 0);
+	rl_on_new_line();
 	rl_redisplay();
 }
 

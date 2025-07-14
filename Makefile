@@ -12,6 +12,7 @@ LIB			=	$(LIBFT)/libft.a
 
 SRCS		=	./src/main.c \
 				./src/read.c \
+				./src/utils.c \
 				./src/clean.c \
 				./src/free_list.c \
 				./src/token/token.c \
@@ -21,6 +22,7 @@ SRCS		=	./src/main.c \
 				./src/executor/exec_cmd.c \
 				./src/executor/exec_pipes.c \
 				./src/executor/exec_utils.c \
+				./src/executor/exec_child.c \
 				./src/parse/parse.c \
 				./src/parse/parse_list.c \
 				./src/parse/parse_stack.c \
@@ -39,6 +41,7 @@ SRCS		=	./src/main.c \
 				./src/expansion/expand.c \
 				./src/expansion/expand_utils.c \
 				./src/expansion/expand_quotes.c \
+				./src/expansion/expand_quotes_utils.c \
 				./src/redirs/redirs.c \
 				./src/redirs/heredoc.c \
 				./src/signals/signal.c \
