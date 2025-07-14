@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 15:48:45 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/10 15:41:27 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 12:53:42 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	sigint_handler_exec(int sig)
 {
 	(void)sig;
 	g_sig = 130;
-	ft_putendl_fd("", STDOUT_FILENO);
+	write(STDOUT_FILENO, "\n", 1);
 }
 
 void	sigpipe_handler(int sig)

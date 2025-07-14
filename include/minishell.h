@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/10 16:08:03 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 12:30:34 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@
 # define PATH_MAX 4096
 
 extern int	g_sig;
+
 typedef enum e_token_type
 {
 	PIPE = 1,
@@ -94,7 +95,6 @@ typedef struct s_data
 	int				exit_status;
 	int				fd[2];
 	bool			unclosed_quote;
-	bool			interactive_mode;
 	t_token			*token_list;
 	t_parse			*parse_list;
 	struct s_node	*exec_list;
@@ -220,7 +220,7 @@ void	sigpipe_handler(int sig);
 void	signal_setup_prompt(void);
 void	setup_signals_exec(void);
 void	handle_heredoc(int sig);
-void	handle_sigquit(int sig);
+void	handle_sig_heredoc(void);
 
 // Clear Program
 	// free_list

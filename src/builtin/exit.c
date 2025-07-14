@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 17:06:06 by rheringe          #+#    #+#             */
-/*   Updated: 2025/07/08 17:54:47 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 12:18:11 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,7 @@ bool	b_exit(t_data *data, char **argv)
 		data->exit_status = 1;
 		return (false);
 	}
-	if (data->interactive_mode)
-		ft_printf("exit\n");
+	ft_printf("exit\n");
 	if (argv[1])
 	{
 		if (!is_numeric(argv[1]))

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:14:15 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/11 17:04:01 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 12:50:35 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ bool	init_heredoc(t_redir *redir, t_data *data)
 	filename = ft_strjoin_free("/tmp/here_doc", ft_itoa(id));
 	fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	signal(SIGINT, handle_heredoc);
+	g_sig = 0;
 	read_heredoc(redir, redir->target, data, fd);
 	close(fd);
 	signal_setup_prompt();
