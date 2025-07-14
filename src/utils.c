@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:36:50 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/14 17:39:46 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 17:45:53 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,20 @@ char	*ft_get_external_path(t_data *data, char *token_name)
 	}
 	ft_free_matrix(new_path);
 	return (NULL);
+}
+
+t_node	*get_last_command_node(t_node *cur)
+{
+	t_node	*last_cmd;
+
+	last_cmd = NULL;
+	while (cur)
+	{
+		if (cur->node_type != PIPE)
+			last_cmd = cur;
+		cur = cur->next;
+	}
+	return (last_cmd);
 }
 
 int	ft_listsize(t_env *list)
