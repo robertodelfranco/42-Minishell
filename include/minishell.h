@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/14 17:34:53 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 17:57:50 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ typedef struct s_data
 	char			*prompt;
 	int				exit_status;
 	int				fd[2];
+	pid_t			*pids;
 	bool			unclosed_quote;
 	t_token			*token_list;
 	t_parse			*parse_list;

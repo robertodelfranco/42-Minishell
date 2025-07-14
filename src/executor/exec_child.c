@@ -6,11 +6,23 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:33:40 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/14 17:36:07 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 18:09:34 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+static char	*get_command_path(t_data *data, t_node *cur)
+{
+	char	*full_path;
+
+	if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
+		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
+		full_path = ft_strdup(cur->cmd[0]);
+	else
+		full_path = ft_get_external_path(data, cur->cmd[0]);
+	return (full_path);
+}
 
 static void	execute_command(t_data *data, t_node *cur, char **env_array)
 {
@@ -28,11 +40,7 @@ static void	execute_command(t_data *data, t_node *cur, char **env_array)
 		}
 		exit(CMD_NOT_FOUND);
 	}
-	else if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
-		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
-		full_path = ft_strdup(cur->cmd[0]);
-	else
-		full_path = ft_get_external_path(data, cur->cmd[0]);
+	full_path = get_command_path(data, cur);
 	if (execve(full_path, cur->cmd, env_array) == -1)
 	{
 		exit_code = get_execve_exit_code(cur->cmd[0], full_path);
@@ -41,9 +49,7 @@ static void	execute_command(t_data *data, t_node *cur, char **env_array)
 		shutdown_program(data);
 		exit(exit_code);
 	}
-	else
-		data->exit_status = 0;
-	ft_printf_fd(2, "minishell: %s: command not found\n", cur->cmd[0]);
+	data->exit_status = 0;
 	free(full_path);
 }
 
@@ -76,6 +82,23 @@ static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 	return (false);
 }
 
+int	exec_child(t_data *data, t_node **cur, int fd[2], int prev_fd)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid < 0)
+		return (free_program(data, "Fork failed"));
+	else if (pid == 0)
+	{
+		free(data->pids);
+		handle_child(data, *cur, fd, prev_fd);
+	}
+	handle_parent_no_wait(*cur, fd, &prev_fd);
+	*cur = (*cur)->next;
+	return (pid);
+}
+
 bool	execute_external(t_data *data, t_node *cur)
 {
 	char	*full_path;
@@ -87,11 +110,7 @@ bool	execute_external(t_data *data, t_node *cur)
 
 	status = 0;
 	env_array = get_env_array(data->env_list);
-	if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
-		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
-		full_path = ft_strdup(cur->cmd[0]);
-	else
-		full_path = ft_get_external_path(data, cur->cmd[0]);
+	full_path = get_command_path(data, cur);
 	pid = fork();
 	if (pid < 0)
 		return (free_program(data, "Fork failed"));
