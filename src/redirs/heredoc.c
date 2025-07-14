@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:14:15 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/14 12:50:35 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 15:31:21 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,19 @@ bool	init_heredoc(t_redir *redir, t_data *data)
 	return (true);
 }
 
+static void	ft_expand_heredoc(t_data *data, char **input)
+{
+	char	*expand;
+	char	*new_str;
+
+	expand = ft_calloc(get_exp_size(data, *input, true) + 1, 1);
+	new_str = get_str_expand(data, *input, expand, true);
+	free(*input);
+	*input = new_str;
+}
+
 void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd)
 {
-	char		*new_str;
-	char		*expand;
 	char		*input;
 
 	while (true)
@@ -55,12 +64,7 @@ void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd)
 			return ;
 		}
 		if (redir->quoted == false)
-		{
-			expand = ft_calloc(get_exp_size(data, input, true) + 1, 1);
-			new_str = get_str_expand(data, input, expand, true);
-			free(input);
-			input = new_str;
-		}
+			ft_expand_heredoc(data, &input);
 		ft_putendl_fd(input, fd);
 		free(input);
 	}
