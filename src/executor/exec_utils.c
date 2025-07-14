@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:22:19 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/11 16:37:40 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 17:43:54 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,21 +34,6 @@ void	dup_fds(t_node *cur)
 		}
 		close(cur->fd_out);
 	}
-}
-
-int	ft_listsize(t_env *list)
-{
-	t_env	*ptr;
-	int		i;
-
-	i = 0;
-	ptr = list;
-	while (ptr != NULL)
-	{
-		ptr = ptr->next;
-		i++;
-	}
-	return (i);
 }
 
 bool	fd_restore(t_data *data, t_node *cur)
@@ -86,35 +71,4 @@ char	**get_env_array(t_env *env_list)
 		i++;
 	}
 	return (env_array);
-}
-
-char	*ft_get_external_path(t_data *data, char *token_name)
-{
-	int		i;
-	char	*full_cmd;
-	char	*full_path;
-	char	**new_path;
-	char	*value;
-
-	value = get_variable_value(data, "PATH");
-	if (!value)
-		return (NULL);
-	i = 0;
-	new_path = ft_split(value, ':');
-	free(value);
-	while (new_path[i])
-	{
-		full_path = ft_strjoin(new_path[i++], "/");
-		full_cmd = ft_strjoin(full_path, token_name);
-		if (access(full_cmd, X_OK) == 0)
-		{
-			free(full_path);
-			ft_free_matrix(new_path);
-			return (full_cmd);
-		}
-		free(full_cmd);
-		free(full_path);
-	}
-	ft_free_matrix(new_path);
-	return (NULL);
 }

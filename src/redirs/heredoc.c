@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 12:14:15 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/14 15:31:21 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 16:32:38 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ static void	ft_expand_heredoc(t_data *data, char **input)
 
 	expand = ft_calloc(get_exp_size(data, *input, true) + 1, 1);
 	new_str = get_str_expand(data, *input, expand, true);
-	free(*input);
 	*input = new_str;
 }
 

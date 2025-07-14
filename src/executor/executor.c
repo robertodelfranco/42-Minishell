@@ -6,67 +6,11 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/14 16:19:33 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 17:35:00 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-int	handle_redir_pipe(t_data *data, int fd[2], t_node *cur, int *prev)
-{
-	t_node	*last_node;
-	int		last;
-
-	last_node = get_last_command_node(data->exec_list);
-	last = 0;
-	if (cur == last_node)
-		last = 1;
-	if (*prev != -1)
-		close(*prev);
-	if (cur->next != NULL)
-		close(fd[1]);
-	if (cur->fd_in != -1)
-		close(cur->fd_in);
-	if (cur->fd_out != -1)
-		close(cur->fd_out);
-	*prev = fd[0];
-	return (last);
-}
-
-bool	execute_command(t_data *data, t_node *cur, char **env_array)
-{
-	char	*full_path;
-	int		exit_code;
-
-	exit_code = 0;
-	if (cur->node_type == BUILT_IN)
-	{
-		if (execute_built_in(data, cur))
-		{
-			ft_free_matrix(env_array);
-			shutdown_program(data);
-			exit(0);
-		}
-		exit(CMD_NOT_FOUND);
-	}
-	else if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
-		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
-		full_path = ft_strdup(cur->cmd[0]);
-	else
-		full_path = ft_get_external_path(data, cur->cmd[0]);
-	if (execve(full_path, cur->cmd, env_array) == -1)
-	{
-		exit_code = get_execve_exit_code(cur->cmd[0], full_path);
-		free(full_path);
-		ft_free_matrix(env_array);
-		shutdown_program(data);
-		exit(exit_code);
-	}
-	else
-		data->exit_status = 0;
-	free(full_path);
-	return (true);
-}
 
 static bool	execute_one_command(t_data *data, t_node *cur)
 {

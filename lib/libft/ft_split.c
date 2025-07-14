@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 17:24:59 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/03/14 14:56:28 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 17:43:13 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ char	**ft_split(char const *s, char c)
 	size_t	len;
 	int		j;
 
+	if (!s)
+		return (NULL);
 	ptr_matrix = ft_matrix(ft_count(s, c), &len, &j, &flag);
 	if (!ptr_matrix)
 		return (NULL);

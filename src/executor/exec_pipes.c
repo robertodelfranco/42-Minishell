@@ -6,39 +6,31 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/11 17:28:58 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 17:43:50 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
+static int	handle_redir_pipe(t_data *data, int fd[2], t_node *cur, int *prev)
 {
-	char	**env_array;
+	t_node	*last_node;
+	int		last;
 
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
-	dup_fds(cur);
-	env_array = get_env_array(data->env_list);
-	if (cur->prev == NULL)
-	{
-		if (cur->fd_out == -1)
-			ft_dup_and_close(fd[1], STDOUT_FILENO, fd[0]);
-	}
-	else if (cur->next == NULL)
-	{
-		if (cur->fd_in == -1)
-			ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
-	}
-	else
-	{
-		if (cur->fd_in == -1)
-			ft_dup_and_close(prev_fd, STDIN_FILENO, fd[0]);
-		if (cur->fd_out == -1)
-			ft_dup_and_close(fd[1], STDOUT_FILENO, -1);
-	}
-	execute_command(data, cur, env_array);
-	return (false);
+	last_node = get_last_command_node(data->exec_list);
+	last = 0;
+	if (cur == last_node)
+		last = 1;
+	if (*prev != -1)
+		close(*prev);
+	if (cur->next != NULL)
+		close(fd[1]);
+	if (cur->fd_in != -1)
+		close(cur->fd_in);
+	if (cur->fd_out != -1)
+		close(cur->fd_out);
+	*prev = fd[0];
+	return (last);
 }
 
 static int	handle_parent_no_wait(t_node *cur, int fd[2], int *prev_fd)

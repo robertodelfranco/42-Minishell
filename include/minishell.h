@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/14 16:03:04 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 17:34:53 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,6 @@ int		copy_quotes(t_data *data, char *input, char *str_expand, int *j);
 // Executor
 	// executor
 bool	executor(t_data *data);
-int		handle_redir_pipe(t_data *data, int fd[2], t_node *cur, int *prev);
 	// exec_cmd
 void	ft_dup_and_close(int fd, int dup, int clos);
 bool	execute_built_in(t_data *data, t_node *cur);
@@ -178,7 +177,6 @@ bool	execute_external(t_data *data, t_node *cur);
 int		get_execve_exit_code(char *cmd, char *full_path);
 t_node	*get_last_command_node(t_node *cur);
 	// exec_pipes
-bool	execute_command(t_data *data, t_node *cur, char **env_array);
 bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd);
 	// exec_utils
 void	dup_fds(t_node *cur);
