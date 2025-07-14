@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/14 12:30:34 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 15:26:39 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,7 @@ int		handle_word_token(t_data *data, int i);
 // Parser
 	// parse
 bool	parse(t_data *data);
+bool	handle_quotes(t_token *cur);
 	// parse_list
 bool	parse_args_list(t_data *data);
 char	**get_arguments(t_token *cur);
@@ -146,7 +147,7 @@ bool	get_new_types(t_data *data);
 int		ft_count_tokens(t_token *cur);
 t_parse	*ft_last_parse(t_parse *lst);
 	// parse_quotes
-bool	handle_quotes(t_token *cur);
+char	*ft_get_str_without_quotes(char *quoted);
 
 // Expansion
 	//init_env

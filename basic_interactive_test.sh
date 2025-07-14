@@ -462,8 +462,8 @@ main_tests() {
     run_test_with_exit "cd /tmp" "CD para /tmp" false 0
     run_test_with_exit "pwd" "PWD após CD /tmp" false 0
     run_test_with_exit "cd /nonexistent_directory_12345" "CD para diretório inexistente"
-    run_test_with_exit "cd /root" "CD para diretório sem permissão" true
-    run_test_with_exit "cd ''" "CD com string vazia" true
+    run_test_with_exit "cd /root" "CD para diretório sem permissão" true 1
+    run_test_with_exit "cd ''" "CD com string vazia" true 1
     run_test_with_exit "cd /nfs/homes/rdel-fra/common-core-projects/minishell" "CD de volta para projeto" false 0
     
     echo -e "${YELLOW}=== COMANDO ENV (Robusto + Exit Status) ===${NC}"
@@ -603,6 +603,23 @@ main_tests() {
     # Pipes com builtins
     run_test_with_exit "pwd | cat" "Pipe pwd->cat" false 0
     run_test_with_exit "env | head -5 | tail -2" "Pipe env->head->tail" false 0
+    
+    # Pipes múltiplos avançados
+    run_test_with_exit "echo test | cat | cat | cat | cat" "Pipe 5x cat" false 0
+    run_test_with_exit "pwd | cat | cat | cat" "Pipe pwd->3x cat" false 0
+    run_test_with_exit "echo 'multi pipe test' | cat | cat | cat | cat | cat" "Pipe 6x cat" false 0
+    run_test_with_exit "echo hello | cat | cat | cat | cat | cat | cat" "Pipe 7x cat" false 0
+    
+    # Pipes com expansão de variáveis
+    run_test_with_exit "echo \$USER | cat" "Pipe com expansão USER" false 0
+    run_test_with_exit "echo \$HOME | cat | cat" "Pipe com expansão HOME" false 0
+    run_test_with_exit "echo \$PWD | cat | cat | cat" "Pipe com expansão PWD" false 0
+    
+    # Pipes com aspas
+    run_test_with_exit "echo 'quoted pipe' | cat | cat" "Pipe com aspas simples" false 0
+    run_test_with_exit 'echo "quoted pipe" | cat | cat' "Pipe com aspas duplas" false 0
+    run_test_with_exit "echo '\$USER literal' | cat" "Pipe aspas simples literal" false 0
+    run_test_with_exit 'echo "$USER expanded" | cat' "Pipe aspas duplas simples" false 0
     
     # Pipes com redirecionamento
     run_test_with_exit "echo 'pipe+redirect' | cat > /tmp/mini_test5.txt" "Pipe + output redirect" false 0
@@ -1288,6 +1305,16 @@ echo "$USER$HOME$PWD"
 echo hello | cat
 pwd | cat
 echo $HOME | cat
+echo world | cat | cat
+echo multi | cat | cat | cat
+echo pipe_test | cat | cat | cat | cat
+pwd | cat | cat
+echo $USER | cat | cat
+echo multiple | cat | cat | cat | cat | cat
+echo "pipes with quotes" | cat | cat
+echo 'single quotes pipe' | cat | cat
+echo $HOME$USER | cat | cat | cat
+echo complex_pipe_test_with_expansion_$USER | cat | cat | cat | cat
 
 # Redirecionamentos - FOCO NO MINISHELL
 echo redirect_test > /tmp/valgrind_redirect.txt
@@ -1312,8 +1339,23 @@ pwd
 echo $USER$HOME$PWD$USER$HOME$PWD
 echo "$USER $HOME $PWD $USER $HOME $PWD"
 
+# Testes avançados de pipes com builtins - SÓ MINISHELL
+echo stress_pipes_1 | cat | cat | cat | cat | cat
+echo stress_pipes_2_$USER | cat | cat | cat
+pwd | cat | cat | cat | cat
+echo pipe_stress_with_expansion_$HOME | cat | cat | cat | cat | cat | cat
+echo final_pipe_test | cat | cat | cat | cat | cat | cat | cat
+echo massive_pipe_$USER$HOME | cat | cat | cat | cat | cat | cat | cat | cat
+
+# Pipes com redirecionamentos combinados
+echo pipe_and_redirect | cat > /tmp/pipe_redirect.txt
+cat /tmp/pipe_redirect.txt | cat | cat
+echo append_pipe | cat >> /tmp/pipe_redirect.txt
+cat /tmp/pipe_redirect.txt | cat | cat | cat
+
 # Cleanup
 rm -f /tmp/valgrind_redirect.txt
+rm -f /tmp/pipe_redirect.txt
 unset VALGRIND_TEST2
 
 exit
@@ -1465,36 +1507,29 @@ test_stress_valgrind() {
     
     # Script de stress focado no MINISHELL, não comandos externos
     cat > "$temp_script" << 'STRESS_EOF'
-# Stress test FOCADO NO MINISHELL
-
-# Stress de variáveis - PURO MINISHELL
 export STRESS1=value1
 export STRESS2=value2value2value2value2value2
 export STRESS3=value3
 export STRESS4=very_long_value_with_many_characters_to_stress_memory
 export STRESS5=value5
 
-# Stress de expansões - PURO MINISHELL
 echo $STRESS1$STRESS2$STRESS3$STRESS4$STRESS5
 echo "$STRESS1 $STRESS2 $STRESS3 $STRESS4 $STRESS5"
 echo $STRESS1$STRESS1$STRESS1$STRESS1$STRESS1
 echo $STRESS2$STRESS2$STRESS2$STRESS2$STRESS2
 
-# Stress de aspas complexas - PURO MINISHELL
 echo "$USER"literal"$HOME"
 echo """$USER"""literal"""$HOME"""
 echo """"$USER""""
 echo "$USER$HOME$PWD"literal"$USER$HOME$PWD"
 echo "$STRESS1$STRESS2$STRESS3$STRESS4$STRESS5"literal"$STRESS5$STRESS4$STRESS3$STRESS2$STRESS1"
 
-# Stress de pipes - MAIORIA BUILTIN
 echo hello | cat
 echo stress_test_muito_longo_para_estressar_memoria | cat
 pwd | cat
 echo $STRESS1$STRESS2$STRESS3 | cat
 echo "$STRESS1 $STRESS2 $STRESS3 $STRESS4 $STRESS5" | cat
 
-# Stress de redirecionamentos - FOCO MINISHELL
 echo stress_test1 > /tmp/stress1.txt
 echo stress_test2_muito_mais_longo_para_memoria > /tmp/stress2.txt
 echo stress_test3 > /tmp/stress3.txt
@@ -1506,7 +1541,6 @@ echo append2_ainda_mais_longo_para_memoria >> /tmp/stress_append.txt
 echo append3 >> /tmp/stress_append.txt
 cat /tmp/stress_append.txt
 
-# Edge cases intensivos - PURO MINISHELL
 echo hello"|"cat
 echo $STRESS1"|"cat
 echo $STRESS2"|"cat
@@ -1515,7 +1549,6 @@ echo ''|cat
 echo "$STRESS1""|"cat
 echo $STRESS1'|'cat
 
-# Stress de CDs - PURO MINISHELL
 cd /tmp
 pwd
 cd /
@@ -1529,12 +1562,10 @@ pwd
 cd ~
 pwd
 
-# Stress de expansão máxima - PURO MINISHELL
 echo $USER$HOME$PWD$STRESS1$STRESS2$STRESS3$STRESS4$STRESS5$USER$HOME$PWD
 echo "$USER$HOME$PWD$STRESS1$STRESS2$STRESS3$STRESS4$STRESS5$USER$HOME$PWD"
 echo $USER$USER$USER$USER$USER$HOME$HOME$HOME$HOME$HOME
 
-# Unset intensivo - PURO MINISHELL
 unset STRESS1
 echo $STRESS1
 unset STRESS2
@@ -1542,7 +1573,6 @@ echo $STRESS2
 unset STRESS3 STRESS4 STRESS5
 echo $STRESS3$STRESS4$STRESS5
 
-# Cleanup de arquivos
 rm -f /tmp/stress*.txt
 
 exit
@@ -1659,7 +1689,7 @@ while [[ $# -gt 0 ]]; do
             RUN_STRESS=true
             RUN_EDGE=true
             RUN_COMPREHENSIVE=true
-            RUN_VALGRIND_FULL=true  # Usa o completo, não o stress
+            RUN_VALGRIND_FULL=true
             shift
             ;;
         -h|--help)
