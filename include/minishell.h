@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/14 17:57:50 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 18:20:58 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,6 +178,7 @@ bool	execute_external(t_data *data, t_node *cur);
 int		get_execve_exit_code(char *cmd, char *full_path);
 t_node	*get_last_command_node(t_node *cur);
 	// exec_pipes
+int		handle_parent_no_wait(t_node *cur, int fd[2], int *prev_fd);
 bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd);
 	// exec_utils
 void	dup_fds(t_node *cur);
@@ -185,6 +186,8 @@ int		ft_listsize(t_env *list);
 bool	fd_restore(t_data *data, t_node *cur);
 char	**get_env_array(t_env *env_list);
 char	*ft_get_external_path(t_data *data, char *token_name);
+	// exec_child
+int		exec_child(t_data *data, t_node **cur, int fd[2], int *prev_fd);
 
 // Built_ins
 	// echo
@@ -220,7 +223,9 @@ void	sigpipe_handler(int sig);
 void	signal_setup_prompt(void);
 void	setup_signals_exec(void);
 void	handle_heredoc(int sig);
-void	handle_sig_heredoc(void);
+
+// Utils
+
 
 // Clear Program
 	// free_list

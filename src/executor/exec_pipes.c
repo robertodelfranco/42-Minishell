@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/14 18:06:12 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 18:22:46 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int	handle_redir_pipe(t_data *data, int fd[2], t_node **cur, int *prev)
 
 	last_node = get_last_command_node(data->exec_list);
 	last = 0;
-	if (cur == last_node)
+	if (*cur == last_node)
 		last = 1;
 	if (*prev != -1)
 		close(*prev);
@@ -34,7 +34,7 @@ static int	handle_redir_pipe(t_data *data, int fd[2], t_node **cur, int *prev)
 	return (last);
 }
 
-static int	handle_parent_no_wait(t_node *cur, int fd[2], int *prev_fd)
+int	handle_parent_no_wait(t_node *cur, int fd[2], int *prev_fd)
 {
 	if (*prev_fd != -1)
 		close(*prev_fd);
@@ -96,6 +96,7 @@ bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 	int	last_cmd_error;
 	int	i;
 
+	i = 0;
 	last_cmd_error = 0;
 	data->pids = malloc(sizeof(pid_t) * count_commands(cur));
 	while (cur)
@@ -107,7 +108,7 @@ bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 		if (!identify_redirs(cur->redir, cur))
 			last_cmd_error = handle_redir_pipe(data, fd, &cur, &prev_fd);
 		else
-			data->pids[i++] = exec_child(data, &cur, fd, prev_fd);
+			data->pids[i++] = exec_child(data, &cur, fd, &prev_fd);
 	}
 	if (last_cmd_error)
 		data->exit_status = 1;

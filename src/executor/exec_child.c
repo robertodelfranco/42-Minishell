@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:33:40 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/14 18:09:34 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 18:20:26 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
 	return (false);
 }
 
-int	exec_child(t_data *data, t_node **cur, int fd[2], int prev_fd)
+int	exec_child(t_data *data, t_node **cur, int fd[2], int *prev_fd)
 {
 	pid_t	pid;
 
@@ -92,9 +92,9 @@ int	exec_child(t_data *data, t_node **cur, int fd[2], int prev_fd)
 	else if (pid == 0)
 	{
 		free(data->pids);
-		handle_child(data, *cur, fd, prev_fd);
+		handle_child(data, *cur, fd, *prev_fd);
 	}
-	handle_parent_no_wait(*cur, fd, &prev_fd);
+	handle_parent_no_wait(*cur, fd, prev_fd);
 	*cur = (*cur)->next;
 	return (pid);
 }
