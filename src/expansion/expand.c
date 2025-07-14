@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:40:55 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/11 15:35:26 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 16:07:46 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	copy_value(char *str_expand, char *value, int *j)
 	*j = c;
 }
 
-int	get_exp_size(t_data *data, const char *str, bool heredoc)
+int	get_exp_size(t_data *data, char *str, bool heredoc)
 {
 	int		size;
 	int		i;
@@ -84,6 +84,7 @@ char	*get_str_expand(t_data *data, char *input, char *expand, bool heredoc)
 		else
 			expand[j++] = input[i++];
 	}
+	free(input);
 	return (expand);
 }
 
@@ -107,7 +108,6 @@ bool	ft_expand(t_data *data)
 				if (!exp)
 					return (free_program(data, "calloc error"));
 				new_str = get_str_expand(data, cur->value, exp, false);
-				free(cur->value);
 				cur->value = new_str;
 			}
 		}

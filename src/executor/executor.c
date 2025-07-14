@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/11 17:03:23 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 16:19:33 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,34 +96,36 @@ static bool	execute_one_command(t_data *data, t_node *cur)
 	return (false);
 }
 
+static bool	verify_white_spaces(t_node **cur)
+{
+	char	*temp;
+
+	while (cur && (*cur)->cmd[0] && (*cur)->cmd[1] == NULL)
+	{
+		temp = ft_strtrim((*cur)->cmd[0], " \t\n");
+		free((*cur)->cmd[0]);
+		(*cur)->cmd[0] = temp;
+		if ((*cur)->cmd[0][0] == '\0')
+		{
+			*cur = (*cur)->next;
+			if (!*cur)
+				return (true);
+		}
+		else
+			break ;
+	}
+	return (false);
+}
+
 bool	executor(t_data *data)
 {
 	t_node	*cur;
 	int		fd[2];
 	int		prev_fd;
-	char	*temp;
 
 	cur = data->exec_list;
-	if (cur->cmd != NULL)
-	{
-		while (cur && cur->cmd[0] && cur->cmd[1] == NULL)
-		{
-			temp = ft_strtrim(cur->cmd[0], " \t\n");
-			free(cur->cmd[0]);
-			cur->cmd[0] = temp;
-			if (cur->cmd[0][0] == '\0')
-			{
-				cur = cur->next;
-				if (!cur)
-				{
-					data->exit_status = 0;
-					return (true);
-				}
-			}
-			else
-				break ;
-		}
-	}
+	if (verify_white_spaces(&cur))
+		return (true);
 	if (cur->next == NULL)
 		return (execute_one_command(data, cur));
 	prev_fd = -1;

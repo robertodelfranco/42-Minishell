@@ -39,6 +39,7 @@ SRCS		=	./src/main.c \
 				./src/expansion/expand.c \
 				./src/expansion/expand_utils.c \
 				./src/expansion/expand_quotes.c \
+				./src/expansion/expand_quotes_utils.c \
 				./src/redirs/redirs.c \
 				./src/redirs/heredoc.c \
 				./src/signals/signal.c \

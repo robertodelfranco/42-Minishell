@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/14 15:26:39 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 16:03:04 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ char	*ft_get_str_without_quotes(char *quoted);
 	//init_env
 void	ft_init_env(t_data *data, char **env);
 	//expand
-int		get_exp_size(t_data *data, const char *str, bool heredoc);
+int		get_exp_size(t_data *data, char *str, bool heredoc);
 char	*get_str_expand(t_data *data, char *input, char *expand, bool heredoc);
 void	copy_value(char *str_expand, char *value, int *j);
 bool	ft_expand(t_data *data);
@@ -164,7 +164,7 @@ int		is_variable_delimiter(char c);
 char	*get_variable_value(t_data *data, char *str);
 char	*get_variable_key(const char *str);
 	// expand_quotes
-int		jump_quotes(t_data *data, const char *str, int *size);
+int		jump_quotes(t_data *data, char *str, int *size);
 int		copy_quotes(t_data *data, char *input, char *str_expand, int *j);
 
 // Executor
