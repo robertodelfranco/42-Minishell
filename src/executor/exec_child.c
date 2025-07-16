@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:33:40 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/16 12:39:14 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/16 15:10:51 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,8 @@ static void	handle_exec_child(t_data *data, t_node *cur,
 
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
+	if (!full_path)
+		full_path = ft_strdup(cur->cmd[0]);
 	if (execve(full_path, cur->cmd, env_array) == -1)
 	{
 		exit_code = get_execve_exit_code(cur->cmd[0], full_path);
