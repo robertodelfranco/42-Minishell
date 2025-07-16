@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 14:39:51 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/14 17:35:00 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/16 19:36:14 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ static bool	verify_white_spaces(t_node **cur)
 {
 	char	*temp;
 
+	if (!*cur || !(*cur)->cmd || !(*cur)->cmd[0])
+		return (false);
 	while (cur && (*cur)->cmd[0] && (*cur)->cmd[1] == NULL)
 	{
 		temp = ft_strtrim((*cur)->cmd[0], " \t\n");

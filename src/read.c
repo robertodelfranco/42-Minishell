@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:31:14 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/10 15:56:45 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/16 19:32:24 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	*ft_readline(t_data *data)
 	{
 		ft_putendl_fd("exit", STDOUT_FILENO);
 		shutdown_program(data);
-		exit(130);
+		exit(0);
 	}
 	if (g_sig != 0)
 	{
