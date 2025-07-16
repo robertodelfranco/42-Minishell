@@ -63,12 +63,16 @@ char	**get_env_array(t_env *env_list)
 	while (cur)
 	{
 		if (cur->key && cur->value)
-			env_array[i] = ft_strjoin_three(cur->key, "=",
-					cur->value);
+		{
+			env_array[i] = ft_strjoin_three(cur->key, "=", cur->value);
+			i++;
+		}
 		else if (cur->key)
+		{
 			env_array[i] = ft_strjoin(cur->key, "=");
+			i++;
+		}
 		cur = cur->next;
-		i++;
 	}
 	return (env_array);
 }

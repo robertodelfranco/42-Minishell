@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 14:52:08 by rheringe          #+#    #+#             */
-/*   Updated: 2025/07/11 15:23:38 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/16 15:23:35 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ static int	process_quotes(t_data *data, int i)
 		data->unclosed_quote = true;
 		return (i);
 	}
-	else
-		data->unclosed_quote = false;
 	if (data->prompt[i])
 		i++;
 	return (i);

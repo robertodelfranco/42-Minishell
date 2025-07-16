@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/14 18:20:58 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/16 10:36:42 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,9 @@ bool	execute_built_in(t_data *data, t_node *cur);
 bool	execute_external(t_data *data, t_node *cur);
 int		get_execve_exit_code(char *cmd, char *full_path);
 t_node	*get_last_command_node(t_node *cur);
+void	handle_exec_status(t_data *data, int status);
+char	*get_command_path(t_data *data, t_node *cur);
+
 	// exec_pipes
 int		handle_parent_no_wait(t_node *cur, int fd[2], int *prev_fd);
 bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd);
@@ -223,9 +226,6 @@ void	sigpipe_handler(int sig);
 void	signal_setup_prompt(void);
 void	setup_signals_exec(void);
 void	handle_heredoc(int sig);
-
-// Utils
-
 
 // Clear Program
 	// free_list

@@ -46,7 +46,8 @@ static bool	remove_var_from_env_list(t_data *data, const char *arg)
 			else
 				data->env_list = current->next;
 			free(current->key);
-			free(current->value);
+			if (current->value)
+				free(current->value);
 			free(current);
 			return (true);
 		}

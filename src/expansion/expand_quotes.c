@@ -24,7 +24,12 @@ char	*get_variable_value(t_data *data, char *str)
 	while (cur)
 	{
 		if (ft_strcmp(str, cur->key) == 0)
-			return (ft_strdup(cur->value));
+		{
+			if (cur->value)
+				return (ft_strdup(cur->value));
+			else
+				return (ft_strdup(""));
+		}
 		cur = cur->next;
 	}
 	return (ft_strdup(""));

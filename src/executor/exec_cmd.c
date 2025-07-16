@@ -3,14 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/14 17:45:17 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/16 10:36:04 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+void	handle_exec_status(t_data *data, int status)
+{
+	if (WIFEXITED(status))
+		data->exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		data->exit_status = 128 + WTERMSIG(status);
+}
+
+char	*get_command_path(t_data *data, t_node *cur)
+{
+	char	*full_path;
+
+	if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
+		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
+		full_path = ft_strdup(cur->cmd[0]);
+	else
+		full_path = ft_get_external_path(data, cur->cmd[0]);
+	return (full_path);
+}
 
 void	ft_dup_and_close(int fd, int dup, int clos)
 {

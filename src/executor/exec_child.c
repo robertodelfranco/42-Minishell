@@ -6,23 +6,11 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:33:40 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/14 18:20:26 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/16 15:10:51 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-static char	*get_command_path(t_data *data, t_node *cur)
-{
-	char	*full_path;
-
-	if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
-		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
-		full_path = ft_strdup(cur->cmd[0]);
-	else
-		full_path = ft_get_external_path(data, cur->cmd[0]);
-	return (full_path);
-}
 
 static void	execute_command(t_data *data, t_node *cur, char **env_array)
 {
@@ -38,6 +26,8 @@ static void	execute_command(t_data *data, t_node *cur, char **env_array)
 			shutdown_program(data);
 			exit(0);
 		}
+		ft_free_matrix(env_array);
+		shutdown_program(data);
 		exit(CMD_NOT_FOUND);
 	}
 	full_path = get_command_path(data, cur);
@@ -49,8 +39,6 @@ static void	execute_command(t_data *data, t_node *cur, char **env_array)
 		shutdown_program(data);
 		exit(exit_code);
 	}
-	data->exit_status = 0;
-	free(full_path);
 }
 
 static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)
@@ -99,14 +87,31 @@ int	exec_child(t_data *data, t_node **cur, int fd[2], int *prev_fd)
 	return (pid);
 }
 
+static void	handle_exec_child(t_data *data, t_node *cur,
+		char *full_path, char **env_array)
+{
+	int	exit_code;
+
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	if (!full_path)
+		full_path = ft_strdup(cur->cmd[0]);
+	if (execve(full_path, cur->cmd, env_array) == -1)
+	{
+		exit_code = get_execve_exit_code(cur->cmd[0], full_path);
+		free(full_path);
+		ft_free_matrix(env_array);
+		shutdown_program(data);
+		exit(exit_code);
+	}
+}
+
 bool	execute_external(t_data *data, t_node *cur)
 {
 	char	*full_path;
 	char	**env_array;
 	int		pid;
 	int		status;
-	int		wait_result;
-	int		exit_code;
 
 	status = 0;
 	env_array = get_env_array(data->env_list);
@@ -115,26 +120,9 @@ bool	execute_external(t_data *data, t_node *cur)
 	if (pid < 0)
 		return (free_program(data, "Fork failed"));
 	else if (pid == 0)
-	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
-		if (execve(full_path, cur->cmd, env_array) == -1)
-		{
-			exit_code = get_execve_exit_code(cur->cmd[0], full_path);
-			free(full_path);
-			ft_free_matrix(env_array);
-			shutdown_program(data);
-			exit(exit_code);
-		}
-	}
-	wait_result = waitpid(pid, &status, 0);
-	if (wait_result != -1)
-	{
-		if (WIFEXITED(status))
-			data->exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			data->exit_status = 128 + WTERMSIG(status);
-	}
+		handle_exec_child(data, cur, full_path, env_array);
+	if (waitpid(pid, &status, 0) != -1)
+		handle_exec_status(data, status);
 	free(full_path);
 	ft_free_matrix(env_array);
 	return (true);
