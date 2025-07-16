@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/07 13:13:00 by rafaelherin      ###   ########.fr       */
+/*   Updated: 2025/07/16 10:36:42 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,13 @@
 # include <stdbool.h>
 # include <fcntl.h>
 # include <sys/wait.h>
-// # include <signal.h>
+# include <signal.h>
 # include <sys/stat.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include "../lib/includes/libft.h"
 # include "../lib/includes/ft_printf_bonus.h"
+# include "../lib/includes/get_next_line_bonus.h"
 
 # define SUCCESS 0
 # define FAILURE 1
@@ -34,6 +35,8 @@
 # define RESET "\001\033[0m\002"
 # define NOPRINTABLE "\t\n\v\f\r "
 # define PATH_MAX 4096
+
+extern int	g_sig;
 
 typedef enum e_token_type
 {
@@ -91,10 +94,10 @@ typedef struct s_data
 	char			*prompt;
 	int				exit_status;
 	int				fd[2];
+	pid_t			*pids;
 	bool			unclosed_quote;
 	t_token			*token_list;
 	t_parse			*parse_list;
-	t_redir			*redir_list;
 	struct s_node	*exec_list;
 	t_env			*env_list;
 	t_env			*env_copy;
@@ -129,6 +132,7 @@ int		handle_word_token(t_data *data, int i);
 // Parser
 	// parse
 bool	parse(t_data *data);
+bool	handle_quotes(t_token *cur);
 	// parse_list
 bool	parse_args_list(t_data *data);
 char	**get_arguments(t_token *cur);
@@ -144,23 +148,24 @@ bool	get_new_types(t_data *data);
 int		ft_count_tokens(t_token *cur);
 t_parse	*ft_last_parse(t_parse *lst);
 	// parse_quotes
-bool	handle_quotes(t_token *cur);
+char	*ft_get_str_without_quotes(char *quoted);
 
 // Expansion
 	//init_env
 void	ft_init_env(t_data *data, char **env);
 	//expand
-int		get_expand_size(t_data *data, const char *str, bool heredoc);
+int		get_exp_size(t_data *data, char *str, bool heredoc);
 char	*get_str_expand(t_data *data, char *input, char *expand, bool heredoc);
+void	copy_value(char *str_expand, char *value, int *j);
 bool	ft_expand(t_data *data);
 	//expand_utils
 int		ft_ptr_len(char **str);
 void	ft_free_key_and_value(char *key, char *value);
-void	copy_value(char *str_expand, char *value, int *j);
+int		is_variable_delimiter(char c);
 char	*get_variable_value(t_data *data, char *str);
 char	*get_variable_key(const char *str);
 	// expand_quotes
-int		jump_quotes(t_data *data, const char *str, int *size);
+int		jump_quotes(t_data *data, char *str, int *size);
 int		copy_quotes(t_data *data, char *input, char *str_expand, int *j);
 
 // Executor
@@ -171,19 +176,25 @@ void	ft_dup_and_close(int fd, int dup, int clos);
 bool	execute_built_in(t_data *data, t_node *cur);
 bool	execute_external(t_data *data, t_node *cur);
 int		get_execve_exit_code(char *cmd, char *full_path);
+t_node	*get_last_command_node(t_node *cur);
+void	handle_exec_status(t_data *data, int status);
+char	*get_command_path(t_data *data, t_node *cur);
+
 	// exec_pipes
-bool	execute_command(t_data *data, t_node *cur, char **env_array);
+int		handle_parent_no_wait(t_node *cur, int fd[2], int *prev_fd);
 bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd);
 	// exec_utils
 void	dup_fds(t_node *cur);
 int		ft_listsize(t_env *list);
 bool	fd_restore(t_data *data, t_node *cur);
 char	**get_env_array(t_env *env_list);
-char	*ft_get_external_path(char *token_name);
+char	*ft_get_external_path(t_data *data, char *token_name);
+	// exec_child
+int		exec_child(t_data *data, t_node **cur, int fd[2], int *prev_fd);
 
 // Built_ins
 	// echo
-bool	echo(char **args);
+bool	echo(t_data *data, char **args);
 	// env
 bool	env(t_data *data, char **args);
 int		ft_envdup(t_data *data);
@@ -203,10 +214,18 @@ bool	b_unset(t_data *data, char **args);
 
 // Redirects
 	// redirs
-bool	identify_redirs(t_redir *redir, t_node *node, t_data *data);
+bool	identify_redirs(t_redir *redir, t_node *node);
 	// heredoc
-bool	init_heredoc(t_redir *redir, t_node *node, t_data *data);
+bool	init_heredoc(t_redir *redir, t_data *data);
 void	read_heredoc(t_redir *redir, char *delimiter, t_data *data, int fd);
+
+// Signals
+void	sigint_handler_prompt(int sig);
+void	sigint_handler_exec(int sig);
+void	sigpipe_handler(int sig);
+void	signal_setup_prompt(void);
+void	setup_signals_exec(void);
+void	handle_heredoc(int sig);
 
 // Clear Program
 	// free_list

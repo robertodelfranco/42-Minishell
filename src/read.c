@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:31:14 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/06/30 17:15:40 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/10 15:56:45 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,17 @@ char	*ft_readline(t_data *data)
 	data->prompt = readline(COLOR "Minihell $ " RESET);
 	data->fd[0] = -1;
 	data->fd[1] = -1;
+	if (!data->prompt)
+	{
+		ft_putendl_fd("exit", STDOUT_FILENO);
+		shutdown_program(data);
+		exit(130);
+	}
+	if (g_sig != 0)
+	{
+		data->exit_status = g_sig;
+		g_sig = 0;
+	}
 	if (data->prompt[0] == '\0')
 	{
 		free_program(data, NULL);

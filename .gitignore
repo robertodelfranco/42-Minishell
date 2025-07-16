@@ -2,6 +2,9 @@
 .vscode/
 objs/
 *.json
+read-md/
+scripts/
+read-md/
 
 # arquivos aleatórios
 *.pdf
@@ -10,9 +13,13 @@ teste
 teste
 .nfs*
 *_tester
+*md
+test_*sh
+basic*.sh
 
 # arquivos de compilação
 minishell
 a.out
 libft.a
 *.o
+readline.supp

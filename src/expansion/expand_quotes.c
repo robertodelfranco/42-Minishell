@@ -6,74 +6,47 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 18:13:28 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 16:42:35 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 15:56:25 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static int	get_variable_size(t_data *data, const char *str, int start_pos)
+char	*get_variable_value(t_data *data, char *str)
 {
-	char	*key;
-	char	*value;
-	int		var_size;
+	t_env	*cur;
 
-	key = get_variable_key(&str[start_pos + 1]);
-	value = get_variable_value(data, key);
-	var_size = ft_strlen(value);
-	ft_free_key_and_value(key, value);
-	return (var_size);
+	cur = data->env_list;
+	if (str[0] == '\0')
+		return (ft_strdup("$"));
+	if (str[0] == '?')
+		return (ft_itoa(data->exit_status));
+	while (cur)
+	{
+		if (ft_strcmp(str, cur->key) == 0)
+		{
+			if (cur->value)
+				return (ft_strdup(cur->value));
+			else
+				return (ft_strdup(""));
+		}
+		cur = cur->next;
+	}
+	return (ft_strdup(""));
 }
 
-static int	get_variable_key_length(const char *str)
+char	*get_variable_key(const char *str)
 {
 	int	i;
 
 	i = 0;
 	if (str[i] == '?')
-		return (1);
-	while (str[i] && str[i] != 32 && str[i] != '$'
-		&& str[i] != '\'' && str[i] != '\"')
+		return (ft_strdup("?"));
+	while (str[i] && !is_variable_delimiter(str[i]) && str[i] != '?')
 		i++;
 	if (i == 0 && str[i] != '\0')
 		i = 1;
-	return (i);
-}
-
-int	jump_quotes(t_data *data, const char *str, int *size)
-{
-	char	quote;
-	int		i;
-
-	i = 1;
-	quote = str[0];
-	if (quote == '\"')
-	{
-		while (str[i] && str[i] != quote)
-		{
-			if (str[i] == '$' && str[i + 1] != '\0' && str[i + 1] != ' ')
-			{
-				*size += get_variable_size(data, str, i);
-				i += get_variable_key_length(&str[i + 1]) + 1;
-			}
-			else
-			{
-				(*size)++;
-				i++;
-			}
-		}
-	}
-	else if (quote == '\'')
-	{
-		while (str[i] && str[i] != quote)
-		{
-			(*size)++;
-			i++;
-		}
-	}
-	if (str[i] == quote)
-		i++;
-	return (i);
+	return (ft_substr(str, 0, i));
 }
 
 static int	ft_double_quotes(t_data *data, char *input, char *expand, int *j)
@@ -87,7 +60,7 @@ static int	ft_double_quotes(t_data *data, char *input, char *expand, int *j)
 	quote = input[0];
 	while (input[i] && input[i] != quote)
 	{
-		if (input[i] == '$' && input[i + 1] != '\0' && input[i + 1] != ' ')
+		if (input[i] == '$' && !is_variable_delimiter(input[i + 1]))
 		{
 			key = get_variable_key(&input[i + 1]);
 			value = get_variable_value(data, key);
@@ -110,6 +83,8 @@ int	copy_quotes(t_data *data, char *input, char *str_expand, int *j)
 
 	i = 0;
 	quote_type = input[i];
+	if (quote_type == input[i + 1])
+		return (2);
 	if (quote_type == '\"')
 		return (ft_double_quotes(data, input, str_expand, j));
 	else if (quote_type == '\'')

@@ -3,14 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:19:09 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 17:20:50 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/16 10:36:04 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+void	handle_exec_status(t_data *data, int status)
+{
+	if (WIFEXITED(status))
+		data->exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		data->exit_status = 128 + WTERMSIG(status);
+}
+
+char	*get_command_path(t_data *data, t_node *cur)
+{
+	char	*full_path;
+
+	if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
+		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
+		full_path = ft_strdup(cur->cmd[0]);
+	else
+		full_path = ft_get_external_path(data, cur->cmd[0]);
+	return (full_path);
+}
 
 void	ft_dup_and_close(int fd, int dup, int clos)
 {
@@ -28,7 +48,7 @@ bool	execute_built_in(t_data *data, t_node *cur)
 		return (true);
 	type = ft_get_cmd_type(cur->cmd[0]);
 	if (type == ECHO)
-		return (echo(cur->cmd));
+		return (echo(data, cur->cmd));
 	data->exit_status = 0;
 	if (type == CD)
 		return (cd(data, cur->cmd));
@@ -43,35 +63,6 @@ bool	execute_built_in(t_data *data, t_node *cur)
 	else if (type == UNSET)
 		return (b_unset(data, cur->cmd));
 	return (false);
-}
-
-bool	execute_external(t_data *data, t_node *cur)
-{
-	char	*full_path;
-	char	**env_array;
-	int		pid;
-	int		status;
-
-	env_array = get_env_array(data->env_list);
-	if (cur->cmd[0][0] == '/' || ft_strncmp(cur->cmd[0], "./", 2) == 0
-		|| ft_strncmp(cur->cmd[0], "../", 3) == 0)
-		full_path = ft_strdup(cur->cmd[0]);
-	else
-		full_path = ft_get_external_path(cur->cmd[0]);
-	pid = fork();
-	if (pid < 0)
-		return (free_program(data, "Fork failed"));
-	else if (pid == 0)
-	{
-		if (execve(full_path, cur->cmd, env_array) == -1)
-			exit(get_execve_exit_code(cur->cmd[0], full_path));
-	}
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		data->exit_status = WEXITSTATUS(status);
-	free(full_path);
-	ft_free_matrix(env_array);
-	return (true);
 }
 
 int	get_execve_exit_code(char *cmd, char *full_path)

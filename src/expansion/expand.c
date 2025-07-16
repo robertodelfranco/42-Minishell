@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 17:40:55 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 16:45:54 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 16:07:46 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,19 @@ static int	process_variable(t_data *data, const char *str, int *i)
 	return (var_size);
 }
 
-int	get_expand_size(t_data *data, const char *str, bool heredoc)
+void	copy_value(char *str_expand, char *value, int *j)
+{
+	int	i;
+	int	c;
+
+	i = 0;
+	c = *j;
+	while (value[i])
+		str_expand[c++] = value[i++];
+	*j = c;
+}
+
+int	get_exp_size(t_data *data, char *str, bool heredoc)
 {
 	int		size;
 	int		i;
@@ -37,7 +49,7 @@ int	get_expand_size(t_data *data, const char *str, bool heredoc)
 	{
 		if (heredoc == false && (str[i] == '\'' || str[i] == '\"'))
 			i += jump_quotes(data, &str[i], &size);
-		else if (str[i] == '$' && str[i + 1] != '\0' && str[i + 1] != ' ')
+		else if (str[i] == '$' && !is_variable_delimiter(str[i + 1]))
 			size += process_variable(data, str, &i);
 		else
 		{
@@ -61,7 +73,7 @@ char	*get_str_expand(t_data *data, char *input, char *expand, bool heredoc)
 	{
 		if (heredoc == false && (input[i] == '\'' || input[i] == '\"'))
 			i += copy_quotes(data, &input[i], expand, &j);
-		else if (input[i] == '$' && input[i + 1] != '\0' && input[i + 1] != ' ')
+		else if (input[i] == '$' && !is_variable_delimiter(input[i + 1]))
 		{
 			key = get_variable_key(&input[i + 1]);
 			value = get_variable_value(data, key);
@@ -72,6 +84,7 @@ char	*get_str_expand(t_data *data, char *input, char *expand, bool heredoc)
 		else
 			expand[j++] = input[i++];
 	}
+	free(input);
 	return (expand);
 }
 
@@ -79,7 +92,7 @@ bool	ft_expand(t_data *data)
 {
 	t_token	*cur;
 	char	*new_str;
-	char	*expand;
+	char	*exp;
 
 	cur = data->token_list;
 	while (cur)
@@ -91,11 +104,10 @@ bool	ft_expand(t_data *data)
 			if (ft_strchr(cur->value, '$') || ft_strchr(cur->value, '\"')
 				|| ft_strchr(cur->value, '\''))
 			{
-				expand = ft_calloc(get_expand_size(data, cur->value, false) + 1, 1);
-				if (!expand)
+				exp = ft_calloc(get_exp_size(data, cur->value, false) + 1, 1);
+				if (!exp)
 					return (free_program(data, "calloc error"));
-				new_str = get_str_expand(data, cur->value, expand, false);
-				free(cur->value);
+				new_str = get_str_expand(data, cur->value, exp, false);
 				cur->value = new_str;
 			}
 		}

@@ -1,29 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   signal_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/09 15:38:52 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/09 14:33:06 by rdel-fra         ###   ########.fr       */
+/*   Created: 2025/07/09 12:58:06 by rheringe          #+#    #+#             */
+/*   Updated: 2025/07/14 12:57:42 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-bool	pwd(t_data *data)
+void	handle_heredoc(int sig)
 {
-	char	*cwd;
+	(void)sig;
+	g_sig = 130;
+	ft_putendl_fd("", STDOUT_FILENO);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	close(STDIN_FILENO);
+}
 
-	cwd = getcwd(NULL, 0);
-	if (cwd)
+void	handle_sigquit(int sig)
+{
+	(void)sig;
+	signal(SIGQUIT, SIG_IGN);
+}
+
+void	update_exit_status(t_data *data)
+{
+	if (g_sig != 0)
 	{
-		ft_printf_fd(STDOUT_FILENO, "%s\n", cwd);
-		free(cwd);
-		data->exit_status = 0;
-		return (true);
+		data->exit_status = g_sig;
+		g_sig = 0;
 	}
-	data->exit_status = 1;
-	return (false);
 }

@@ -6,11 +6,36 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 17:09:30 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 16:06:14 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 15:26:12 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+bool	handle_quotes(t_token *cur)
+{
+	t_token	*nav;
+	char	*temp;
+
+	nav = cur;
+	while (nav)
+	{
+		if (ft_strchr(nav->value, '\'') || ft_strchr(nav->value, '\"'))
+		{
+			if (ft_strlen(nav->value) <= 2)
+				temp = ft_strdup("");
+			else
+				temp = ft_get_str_without_quotes(nav->value);
+			if (!temp)
+				return (false);
+			free(nav->value);
+			nav->value = temp;
+			nav->quoted = true;
+		}
+		nav = nav->next;
+	}
+	return (true);
+}
 
 static bool	search_heredoc(t_data *data)
 {
@@ -37,8 +62,6 @@ static bool	validate_tokens(t_data *data)
 	t_token	*cur;
 	t_token	*last;
 
-	if (data->unclosed_quote == true)
-		return (false);
 	cur = data->token_list;
 	if (cur->type == PIPE)
 		return (false);
@@ -58,12 +81,40 @@ static bool	validate_tokens(t_data *data)
 	return (true);
 }
 
-// echo hi > hi echo "hello" >> ha < hi > hu > ho >> he > hh 
-// >> hc < hh > ll > kk > kd > ds < hi > jj < kk < ll >> jj
+static bool	open_heredocs(t_data *data)
+{
+	t_node	*cur;
+	t_redir	*cur_redir;
+
+	cur = data->exec_list;
+	while (cur)
+	{
+		if (cur->redir)
+		{
+			cur_redir = cur->redir;
+			while (cur_redir)
+			{
+				if (cur_redir->type == HEREDOC)
+				{
+					if (!init_heredoc(cur_redir, data))
+						return (false);
+				}
+				cur_redir = cur_redir->next;
+			}
+		}
+		cur = cur->next;
+	}
+	return (true);
+}
+
 bool	parse(t_data *data)
 {
 	if (!validate_tokens(data))
-		return (free_program(data, "Invalid tokens"));
+	{
+		data->exit_status = 2;
+		ft_printf_fd(2, "minishell: syntax error near unexpected token\n");
+		return (free_program(data, NULL));
+	}
 	if (!search_heredoc(data))
 		return (free_program(data, "Error searching heredoc"));
 	if (!ft_expand(data))
@@ -76,5 +127,7 @@ bool	parse(t_data *data)
 	data->fd[1] = dup(STDOUT_FILENO);
 	if (!build_stack(data))
 		return (free_program(data, "Error building stack"));
+	if (!open_heredocs(data))
+		return (free_program(data, "Error opening heredocs"));
 	return (true);
 }

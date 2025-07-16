@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 15:53:47 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 16:39:50 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/14 15:26:18 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,21 @@ static int	ft_count_str_without_quotes(char *quoted)
 	return (count);
 }
 
-static char	*ft_get_str_without_quotes(char *quoted)
+static int	ft_copy_single_quote(char *quoted, char *unquoted, int *i, int *j)
+{
+	(*i)++;
+	while (quoted[*i] && quoted[*i] != '\'')
+	{
+		unquoted[*j] = quoted[*i];
+		(*j)++;
+		(*i)++;
+	}
+	if (quoted[*i] == '\'')
+		(*i)++;
+	return (*i);
+}
+
+char	*ft_get_str_without_quotes(char *quoted)
 {
 	char	*unquoted;
 	int		i;
@@ -78,13 +92,7 @@ static char	*ft_get_str_without_quotes(char *quoted)
 	while (quoted[i])
 	{
 		if (quoted[i] == '\'')
-		{
-			i++;
-			while (quoted[i] && quoted[i] != '\'')
-				unquoted[j++] = quoted[i++];
-			if (quoted[i] == '\'')
-				i++;
-		}
+			ft_copy_single_quote(quoted, unquoted, &i, &j);
 		else if (quoted[i] == '\"')
 		{
 			i++;
@@ -97,29 +105,4 @@ static char	*ft_get_str_without_quotes(char *quoted)
 			unquoted[j++] = quoted[i++];
 	}
 	return (unquoted);
-}
-
-bool	handle_quotes(t_token *cur)
-{
-	t_token	*nav;
-	char	*temp;
-
-	nav = cur;
-	while (nav)
-	{
-		if (ft_strchr(nav->value, '\'') || ft_strchr(nav->value, '\"'))
-		{
-			if (ft_strlen(nav->value) <= 2)
-				temp = ft_strdup("");
-			else
-				temp = ft_get_str_without_quotes(nav->value);
-			if (!temp)
-				return (false);
-			free(nav->value);
-			nav->value = temp;
-			nav->quoted = true;
-		}
-		nav = nav->next;
-	}
-	return (true);
 }

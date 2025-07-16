@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 14:32:21 by rheringe          #+#    #+#             */
-/*   Updated: 2025/07/01 14:48:25 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/16 14:58:14 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,14 +74,14 @@ bool	env(t_data *data, char **args)
 
 	if (args[1])
 	{
-		ft_printf("env: %s: No such file or directory\n", args[1]);
-		data->exit_status = 126;
+		ft_printf_fd(2, "env: ‘%s’: No such file or directory\n", args[1]);
+		data->exit_status = 127;
 		return (false);
 	}
 	cur = data->env_list;
 	while (cur)
 	{
-		ft_printf("%s=%s\n", cur->key, cur->value);
+		ft_printf_fd(STDOUT_FILENO, "%s=%s\n", cur->key, cur->value);
 		cur = cur->next;
 	}
 	data->exit_status = 0;

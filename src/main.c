@@ -6,16 +6,34 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:22:45 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/02 12:33:08 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/16 15:23:55 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
+int	g_sig;
+
+static void	update_exit_status(t_data *data)
+{
+	if (g_sig != 0)
+	{
+		data->exit_status = g_sig;
+		g_sig = 0;
+	}
+}
+
 bool	verify_tokens(t_data *data)
 {
 	if (data->token_list == NULL)
 	{
+		free_program(data, NULL);
+		return (false);
+	}
+	else if (data->unclosed_quote == true)
+	{
+		ft_printf_fd(2, "minishell: unclosed quote\n");
+		data->exit_status = 2;
 		free_program(data, NULL);
 		return (false);
 	}
@@ -28,10 +46,13 @@ int	main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
+	g_sig = 0;
 	data = (t_data *)ft_calloc(1, sizeof(t_data));
 	ft_init_env(data, env);
 	while (true)
 	{
+		signal_setup_prompt();
+		data->unclosed_quote = false;
 		if (!ft_readline(data))
 			continue ;
 		create_token(data);
@@ -39,7 +60,9 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		if (!parse(data))
 			continue ;
+		setup_signals_exec();
 		executor(data);
+		update_exit_status(data);
 		free_program(data, NULL);
 	}
 }
