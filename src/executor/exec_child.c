@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_child.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 17:33:40 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/16 10:35:58 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/07/16 12:39:14 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ static void	execute_command(t_data *data, t_node *cur, char **env_array)
 			shutdown_program(data);
 			exit(0);
 		}
+		ft_free_matrix(env_array);
+		shutdown_program(data);
 		exit(CMD_NOT_FOUND);
 	}
 	full_path = get_command_path(data, cur);
@@ -37,8 +39,6 @@ static void	execute_command(t_data *data, t_node *cur, char **env_array)
 		shutdown_program(data);
 		exit(exit_code);
 	}
-	data->exit_status = 0;
-	free(full_path);
 }
 
 static bool	handle_child(t_data *data, t_node *cur, int fd[2], int prev_fd)

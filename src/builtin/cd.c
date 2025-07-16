@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 17:34:57 by rheringe          #+#    #+#             */
-/*   Updated: 2025/07/14 14:59:59 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/16 13:11:07 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,15 @@ static t_env	*get_env_node(t_data *data, char *key)
 	{
 		if (ft_strcmp(env->key, key) == 0)
 			return (env);
+		if (!env->next && ft_strcmp(key, "OLDPWD") == 0)
+		{
+			env->next = ft_calloc(1, sizeof(t_env));
+			if (!env->next)
+				return (NULL);
+			env->next->key = ft_strdup("OLDPWD");
+			env->next->value = ft_strdup("");
+			return (env->next);
+		}
 		env = env->next;
 	}
 	return (NULL);
@@ -85,9 +94,8 @@ static void	update_pwd(t_data *data)
 	path = ft_calloc(1024, sizeof(char));
 	if (!pwd || !oldpwd || !path)
 	{
-		free(pwd);
-		free(oldpwd);
-		free(path);
+		if (path)
+			free(path);
 		return ;
 	}
 	if (oldpwd->value)
