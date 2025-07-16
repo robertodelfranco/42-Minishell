@@ -464,7 +464,7 @@ main_tests() {
     run_test_with_exit "cd /nonexistent_directory_12345" "CD para diretório inexistente"
     run_test_with_exit "cd /root" "CD para diretório sem permissão" true 1
     run_test_with_exit "cd ''" "CD com string vazia" true 1
-    run_test_with_exit "cd /nfs/homes/rdel-fra/common-core-projects/minishell" "CD de volta para projeto" false 0
+    run_test_with_exit "cd /nfs/homes/rheringe/common-core-projects/minishell" "CD de volta para projeto" false 0
     
     echo -e "${YELLOW}=== COMANDO ENV (Robusto + Exit Status) ===${NC}"
     run_test_with_exit "env" "ENV completo" false 0

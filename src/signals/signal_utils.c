@@ -27,3 +27,12 @@ void	handle_sigquit(int sig)
 	(void)sig;
 	signal(SIGQUIT, SIG_IGN);
 }
+
+void	update_exit_status(t_data *data)
+{
+	if (g_sig != 0)
+	{
+		data->exit_status = g_sig;
+		g_sig = 0;
+	}
+}

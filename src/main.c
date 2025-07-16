@@ -3,16 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:22:45 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/14 12:49:30 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/16 10:28:08 by rheringe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 int	g_sig;
+
+static void	update_exit_status(t_data *data)
+{
+	if (g_sig != 0)
+	{
+		data->exit_status = g_sig;
+		g_sig = 0;
+	}
+}
 
 bool	verify_tokens(t_data *data)
 {
@@ -52,11 +61,7 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		setup_signals_exec();
 		executor(data);
-		if (g_sig != 0)
-		{
-			data->exit_status = g_sig;
-			g_sig = 0;
-		}
+		update_exit_status(data);
 		free_program(data, NULL);
 	}
 }
