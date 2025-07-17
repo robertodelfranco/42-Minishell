@@ -448,7 +448,7 @@ main_tests() {
     run_test_with_exit "echo hello world" "Echo múltiplas palavras sem aspas" false 0
     run_test_with_exit "echo -nnnn -n hello" "Echo com várias flags -n" false 0
     run_test_with_exit "echo -n 'world'" "Echo -n com aspas" false 0
-    run_test_with_exit "echo "-n " hello" "Echo com -n em aspas" false 0
+    run_test_with_exit "echo \"-n \" hello" "Echo com -n em aspas" false 0
     run_test_with_exit "echo ''" "Echo string vazia com aspas" false 0
     run_test_with_exit 'echo ""' "Echo string vazia com aspas duplas" false 0
     
