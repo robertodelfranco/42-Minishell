@@ -22,7 +22,7 @@
 # ✓ Comandos externos com paths absolutos e relativos
 # ✓ Pipes simples e múltiplos
 # ✓ Redirecionamentos: >, <, >>
-# ✓ Heredoc: << -> you need to do it manually
+# ✓ Heredoc: << -> você precisa fazer o teste manualmente, rode com -c pra ver alguns exemplos
 # ✓ Expansão de variáveis: $VAR, $?, $HOME, etc
 # ✓ Tratamento de aspas simples e duplas
 # ✓ Tratamento de erros e exit codes corretos
@@ -2080,7 +2080,7 @@ main() {
         echo "✓ Comandos externos"
         echo "✓ Pipes (simples e múltiplos)"
         echo "✓ Redirecionamentos (>, <, >>)"
-        echo "✓ Heredoc (<<)"
+        echo "✓ Heredoc (<<)" você precisa fazer o teste manualmente, rode com -c pra ver alguns exemplos
         echo "✓ Expansão de variáveis (\$VAR, \$?, etc)"
         echo "✓ Tratamento de aspas (simples e duplas)"
         echo "✓ Tratamento de erros e exit status"
