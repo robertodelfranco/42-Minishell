@@ -1668,6 +1668,7 @@ RUN_STRESS=false
 RUN_COMPREHENSIVE=false
 RUN_EDGE=false
 RUN_ALL=false
+RUN_MAIN=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -1696,6 +1697,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         -a|--all)
+            RUN_MAIN=true
             RUN_ALL=true
             RUN_STRESS=true
             RUN_EDGE=true
@@ -1728,7 +1730,13 @@ main() {
     if [[ "$RUN_STRESS" == "false" && "$RUN_COMPREHENSIVE" == "false" && "$RUN_EDGE" == "false" && "$RUN_VALGRIND" == "false" && "$RUN_VALGRIND_FULL" == "false" && "$RUN_VALGRIND_STRESS" == "false" && "$RUN_ALL" == "false" ]]; then
         main_tests
     fi
-    
+
+    # Executa testes principais se solicitado
+    if [[ "$RUN_MAIN" == "true" ]]; then
+        echo
+        main_tests
+    fi
+
     # Executa testes de stress se solicitado
     if [[ "$RUN_STRESS" == "true" ]]; then
         echo
