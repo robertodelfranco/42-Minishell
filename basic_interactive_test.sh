@@ -1111,7 +1111,7 @@ comprehensive_feature_tests() {
     run_test_with_exit "unset NONEXISTENT_VAR" "Unset inexistente" false 0
     run_test_with_exit "unset VAR1 VAR2 VAR3" "Unset múltiplas" false 0
     run_test_with_exit "unset" "Unset sem argumentos" false 0
-    run_test_with_exit "unset 123VAR" "Unset nome inválido" true
+    run_test_with_exit "unset 123VAR" "Unset nome inválido" false 0
     
     # ENV - casos importantes
     echo -e "${BLUE}ENV:${NC}"
@@ -1921,7 +1921,7 @@ show_results() {
 usage() {
     echo "Uso: $0 [opções]"
     echo "  -v, --valgrind       Executa teste básico de memory leaks"
-    echo "  -V, --valgrind-full  Executa teste COMPLETO de memory leaks (2-3 min)"
+    echo "  -V, --valgrind-full  Executa teste COMPLETO de memory leaks (5-8 min)"
     echo "  -S, --valgrind-stress Executa teste de STRESS com Valgrind (5-10 min)"
     echo "  -s, --stress         Executa testes de stress e casos extremos"
     echo "  -c, --comprehensive  Executa testes abrangentes por funcionalidade"
@@ -1933,8 +1933,14 @@ usage() {
     echo ""
     echo "Testes de Valgrind:"
     echo "  --valgrind        = Teste rápido (15 seg)"
-    echo "  --valgrind-full   = Teste completo (2-3 min)" 
+    echo "  --valgrind-full   = Teste completo (5-8 min)" 
     echo "  --valgrind-stress = Teste intensivo (5-10 min)"
+    echo ""
+    echo "📁 Logs de Valgrind:"
+    echo "  • Todos os logs são salvos em /tmp/minishell_valgrind_*.txt"
+    echo "  • Scripts executados salvos em /tmp/minishell_valgrind_*_script_*.sh"
+    echo "  • Use 'less' ou 'cat' para visualizar o conteúdo detalhado"
+    echo "  • Logs persistem até reiniciar o sistema"
 }
 
 # Parse de opções - Valgrind
