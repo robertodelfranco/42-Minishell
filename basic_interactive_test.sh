@@ -1369,6 +1369,85 @@ rm -f /tmp/valgrind_redirect.txt
 rm -f /tmp/pipe_redirect.txt
 unset VALGRIND_TEST2
 
+# ===== TESTES EDGE CASES ADICIONADOS =====
+# Edge cases - Pipelines sem espaços
+echo hello"|"cat
+echo hello'|'cat
+echo "hello|world"|cat
+echo 'hello|world'|cat
+
+# Edge cases - Expansão de variáveis complexa
+export EDGE_VAR='edge_value'
+export PIPE_CHAR='|'
+echo $EDGE_VAR"|"cat
+echo $EDGE_VAR'|'cat
+echo "$EDGE_VAR|content"
+echo '$EDGE_VAR|content'
+
+# Edge cases - Aspas complexas com pipes
+echo "|pipe symbol"|cat
+echo '|pipe symbol'|cat
+echo ">redirect"|cat
+echo '<input'|cat
+
+# Edge cases - Aspas vazias
+echo ""|cat
+echo ''|cat
+echo ""$USER""|cat
+echo ''$USER''|cat
+
+# Edge cases - Redirecionamentos com aspas
+echo "content" >"test_valgrind_edge.txt"
+cat "test_valgrind_edge.txt"
+cat <"test_valgrind_edge.txt"
+echo 'append' >>'test_valgrind_edge.txt'
+
+# Edge cases - Expansão com redirecionamentos
+export FILE_VAR='test_valgrind_edge2.txt'
+echo "content" >$FILE_VAR
+cat $FILE_VAR
+echo "more" >>"$FILE_VAR"
+
+# Edge cases - Combinações extremas
+echo "$USER"literal"""$EDGE_VAR"""|cat
+echo '$USER'literal'$EDGE_VAR'|cat
+echo """"$USER""""|cat
+echo ''''$USER''''|cat
+
+# Edge cases - Múltiplas expansões
+echo $USER$HOME$PWD"|"cat
+echo $USER$HOME$PWD'|'cat
+
+# Edge cases - Exit status
+echo $?"|"cat
+pwd|cat
+echo "status:$?"|cat
+
+# Edge cases - Caracteres especiais
+echo "!@#$%^&*()"|cat
+echo '!@#$%^&*()'|cat
+
+# Edge cases - Múltiplos pipes
+echo hello"|"cat"|"cat
+echo hello'|'cat'|'cat
+
+# Edge cases - Dollar cases
+echo "$"|cat
+echo '$'|cat
+
+# Edge cases - Comandos em aspas
+"echo" hello|cat
+'echo' hello|cat
+echo hello|"cat"
+
+# Edge cases - Paths
+echo $HOME"/bin"|cat
+echo "/bin/echo hello"|cat
+
+# Cleanup edge cases
+rm -f test_valgrind_edge.txt test_valgrind_edge2.txt
+unset EDGE_VAR PIPE_CHAR FILE_VAR
+
 exit
 VALGRIND_EOF
     
@@ -1729,6 +1808,8 @@ main() {
     # Se nenhuma flag específica foi passada, executa testes principais
     if [[ "$RUN_STRESS" == "false" && "$RUN_COMPREHENSIVE" == "false" && "$RUN_EDGE" == "false" && "$RUN_VALGRIND" == "false" && "$RUN_VALGRIND_FULL" == "false" && "$RUN_VALGRIND_STRESS" == "false" && "$RUN_ALL" == "false" ]]; then
         main_tests
+        echo
+        test_heredoc
     fi
 
     # Executa testes principais se solicitado
@@ -1769,6 +1850,8 @@ main() {
     fi
     
     if [[ "$RUN_VALGRIND_STRESS" == "true" ]]; then
+        echo
+        stress_tests
         echo
         test_stress_valgrind
     fi
