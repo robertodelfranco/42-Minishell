@@ -446,9 +446,9 @@ main_tests() {
     run_test_with_exit "echo 'hello world'" "Echo com aspas simples múltiplas palavras" false 0
     run_test_with_exit 'echo "hello world"' "Echo com aspas duplas múltiplas palavras" false 0
     run_test_with_exit "echo hello world" "Echo múltiplas palavras sem aspas" false 0
-    run_test_with_exit "echo -n hello" "Echo com flag -n" false 0
+    run_test_with_exit "echo -nnnn -n hello" "Echo com várias flags -n" false 0
     run_test_with_exit "echo -n 'world'" "Echo -n com aspas" false 0
-    run_test_with_exit "echo" "Echo sem argumentos" false 0
+    run_test_with_exit "echo "-n " hello" "Echo com -n em aspas" false 0
     run_test_with_exit "echo ''" "Echo string vazia com aspas" false 0
     run_test_with_exit 'echo ""' "Echo string vazia com aspas duplas" false 0
     
@@ -1060,11 +1060,11 @@ comprehensive_feature_tests() {
     # ECHO - todas as variações
     echo -e "${BLUE}ECHO:${NC}"
     run_test_with_exit "echo" "Echo sem parâmetros" false 0
-    run_test_with_exit "echo -n" "Echo -n sem parâmetros" false 0
-    run_test_with_exit "echo -n hello" "Echo -n com parâmetro" false 0
+    run_test_with_exit "echo -nnnn" "Echo -n sem parâmetros" false 0
+    run_test_with_exit "echo -n -n hello" "Echo -n com parâmetro" false 0
     run_test_with_exit "echo -n hello world" "Echo -n múltiplos parâmetros" false 0
     run_test_with_exit "echo hello world test 123" "Echo múltiplos parâmetros" false 0
-    run_test_with_exit "echo -n -n hello" "Echo múltiplos -n" false 0
+    run_test_with_exit "echo -n -nnnnnn hello" "Echo múltiplos -n" false 0
     run_test_with_exit "echo -ntest" "Echo -n colado" false 0
     
     # CD - todas as variações
@@ -1724,8 +1724,10 @@ main() {
         echo
     fi
     
-    # Executa testes principais
-    main_tests
+    # Se nenhuma flag específica foi passada, executa testes principais
+    if [[ "$RUN_STRESS" == "false" && "$RUN_COMPREHENSIVE" == "false" && "$RUN_EDGE" == "false" && "$RUN_VALGRIND" == "false" && "$RUN_VALGRIND_FULL" == "false" && "$RUN_VALGRIND_STRESS" == "false" && "$RUN_ALL" == "false" ]]; then
+        main_tests
+    fi
     
     # Executa testes de stress se solicitado
     if [[ "$RUN_STRESS" == "true" ]]; then
