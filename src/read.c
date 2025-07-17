@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 15:31:14 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/16 19:32:24 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/17 12:01:39 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 char	*ft_readline(t_data *data)
 {
-	data->prompt = readline(COLOR "Minihell $ " RESET);
+	data->prompt = readline(COLOR "minihell$ " RESET);
 	data->fd[0] = -1;
 	data->fd[1] = -1;
 	if (!data->prompt)

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 14:32:21 by rheringe          #+#    #+#             */
-/*   Updated: 2025/07/16 14:58:14 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/17 12:56:22 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,8 @@ bool	env(t_data *data, char **args)
 	cur = data->env_list;
 	while (cur)
 	{
-		ft_printf_fd(STDOUT_FILENO, "%s=%s\n", cur->key, cur->value);
+		if (cur->value)
+			ft_printf_fd(STDOUT_FILENO, "%s=%s\n", cur->key, cur->value);
 		cur = cur->next;
 	}
 	data->exit_status = 0;
