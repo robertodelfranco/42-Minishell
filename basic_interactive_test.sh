@@ -1277,7 +1277,7 @@ test_comprehensive_valgrind() {
         return
     fi
     
-    echo -e "${YELLOW}Executando teste COMPLETO com Valgrind (pode demorar 2-3 minutos)...${NC}"
+    echo -e "${YELLOW}Executando teste COMPLETO com Valgrind (pode demorar 5-8 minutos)...${NC}"
     echo -e "${BLUE}ℹ️  Nota: Filtrando apenas leaks do minishell (não de comandos externos)${NC}"
     echo
     
@@ -1288,16 +1288,16 @@ test_comprehensive_valgrind() {
 # Testes básicos - APENAS BUILTINS E OPERAÇÕES INTERNAS
 echo hello world
 pwd
-echo $HOME
-echo $USER
+echo -n $HOME
+echo -nnnnnnnnnnn $USER
 
 # Testes de variáveis - SÓ MINISHELL
 export VALGRIND_TEST=value123
-echo $VALGRIND_TEST
+echo -n-n-n $VALGRIND_TEST
 export VALGRIND_TEST2="value with spaces"
-echo $VALGRIND_TEST2
+echo "-n " $VALGRIND_TEST2
 unset VALGRIND_TEST
-echo $VALGRIND_TEST
+echo ""-n"" $VALGRIND_TEST
 
 # Testes de aspas - SÓ MINISHELL
 echo "aspas duplas"
@@ -1448,6 +1448,159 @@ echo "/bin/echo hello"|cat
 rm -f test_valgrind_edge.txt test_valgrind_edge2.txt
 unset EDGE_VAR PIPE_CHAR FILE_VAR
 
+# ===== TESTES INTENSIVOS ADICIONADOS =====
+# Stress test - Múltiplas variáveis e expansões
+export STRESS_VAR1="stress_value_1"
+export STRESS_VAR2="stress_value_2"
+export STRESS_VAR3="stress_value_3"
+export STRESS_VAR4="stress_value_4"
+export STRESS_VAR5="stress_value_5"
+
+# Expansões intensivas repetidas
+echo $STRESS_VAR1$STRESS_VAR2$STRESS_VAR3$STRESS_VAR4$STRESS_VAR5
+echo $STRESS_VAR1$STRESS_VAR2$STRESS_VAR3$STRESS_VAR4$STRESS_VAR5
+echo $STRESS_VAR1$STRESS_VAR2$STRESS_VAR3$STRESS_VAR4$STRESS_VAR5
+echo $STRESS_VAR1$STRESS_VAR2$STRESS_VAR3$STRESS_VAR4$STRESS_VAR5
+echo $STRESS_VAR1$STRESS_VAR2$STRESS_VAR3$STRESS_VAR4$STRESS_VAR5
+
+# Expansões em aspas repetidas
+echo "$STRESS_VAR1 $STRESS_VAR2 $STRESS_VAR3 $STRESS_VAR4 $STRESS_VAR5"
+echo "$STRESS_VAR1 $STRESS_VAR2 $STRESS_VAR3 $STRESS_VAR4 $STRESS_VAR5"
+echo "$STRESS_VAR1 $STRESS_VAR2 $STRESS_VAR3 $STRESS_VAR4 $STRESS_VAR5"
+echo "$STRESS_VAR1 $STRESS_VAR2 $STRESS_VAR3 $STRESS_VAR4 $STRESS_VAR5"
+echo "$STRESS_VAR1 $STRESS_VAR2 $STRESS_VAR3 $STRESS_VAR4 $STRESS_VAR5"
+
+# Pipes intensivos com expansão
+echo $STRESS_VAR1$STRESS_VAR2 | cat | cat | cat | cat | cat
+echo $STRESS_VAR2$STRESS_VAR3 | cat | cat | cat | cat | cat
+echo $STRESS_VAR3$STRESS_VAR4 | cat | cat | cat | cat | cat
+echo $STRESS_VAR4$STRESS_VAR5 | cat | cat | cat | cat | cat
+echo $STRESS_VAR5$STRESS_VAR1 | cat | cat | cat | cat | cat
+
+# Redirecionamentos intensivos
+echo $STRESS_VAR1 > /tmp/stress_test1.txt
+echo $STRESS_VAR2 > /tmp/stress_test2.txt
+echo $STRESS_VAR3 > /tmp/stress_test3.txt
+echo $STRESS_VAR4 > /tmp/stress_test4.txt
+echo $STRESS_VAR5 > /tmp/stress_test5.txt
+
+# Leitura e pipes dos arquivos
+cat /tmp/stress_test1.txt | cat | cat
+cat /tmp/stress_test2.txt | cat | cat
+cat /tmp/stress_test3.txt | cat | cat
+cat /tmp/stress_test4.txt | cat | cat
+cat /tmp/stress_test5.txt | cat | cat
+
+# Append intensivo
+echo $STRESS_VAR1 >> /tmp/stress_append.txt
+echo $STRESS_VAR2 >> /tmp/stress_append.txt
+echo $STRESS_VAR3 >> /tmp/stress_append.txt
+echo $STRESS_VAR4 >> /tmp/stress_append.txt
+echo $STRESS_VAR5 >> /tmp/stress_append.txt
+
+# Leitura do arquivo com append
+cat /tmp/stress_append.txt | cat | cat | cat
+
+# Stress test - CD intensivo
+cd /tmp
+pwd
+cd /
+pwd
+cd /tmp
+pwd
+cd /usr
+pwd
+cd /
+pwd
+cd ~
+pwd
+cd /tmp
+pwd
+cd /
+pwd
+cd ~
+pwd
+
+# Stress test - Export/Unset intensivo
+export TEMP_VAR1="temp1"
+export TEMP_VAR2="temp2"
+export TEMP_VAR3="temp3"
+export TEMP_VAR4="temp4"
+export TEMP_VAR5="temp5"
+echo $TEMP_VAR1$TEMP_VAR2$TEMP_VAR3$TEMP_VAR4$TEMP_VAR5
+unset TEMP_VAR1
+unset TEMP_VAR2
+unset TEMP_VAR3
+unset TEMP_VAR4
+unset TEMP_VAR5
+
+# Stress test - Aspas complexas intensivas
+echo "$USER$HOME$PWD$USER$HOME$PWD$USER$HOME$PWD"
+echo '$USER$HOME$PWD$USER$HOME$PWD$USER$HOME$PWD'
+echo "$USER$HOME$PWD$USER$HOME$PWD$USER$HOME$PWD"
+echo '$USER$HOME$PWD$USER$HOME$PWD$USER$HOME$PWD'
+echo "$USER$HOME$PWD$USER$HOME$PWD$USER$HOME$PWD"
+
+# Stress test - Pipes massivos
+echo stress_pipe_1 | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+echo stress_pipe_2 | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+echo stress_pipe_3 | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+echo stress_pipe_4 | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+echo stress_pipe_5 | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+
+# Stress test - Expansão + Pipes massivos
+echo $USER$HOME | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+echo $HOME$PWD | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+echo $PWD$USER | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+echo $USER$HOME$PWD | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+echo $HOME$PWD$USER | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+
+# Stress test - Aspas com pipes massivos
+echo "stress with quotes" | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+echo 'stress with single quotes' | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+echo "$USER with expansion" | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+echo '$USER literal' | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+echo "final stress test" | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+
+# Stress test - Redirecionamento + Pipes combinados
+echo stress_combo_1 | cat > /tmp/combo1.txt
+echo stress_combo_2 | cat > /tmp/combo2.txt
+echo stress_combo_3 | cat > /tmp/combo3.txt
+cat /tmp/combo1.txt | cat | cat | cat | cat
+cat /tmp/combo2.txt | cat | cat | cat | cat
+cat /tmp/combo3.txt | cat | cat | cat | cat
+
+# Stress test - Exit status intensivo
+echo $?
+pwd
+echo $?
+cd /tmp
+echo $?
+pwd
+echo $?
+cd /
+echo $?
+pwd
+echo $?
+
+# Stress test - Variáveis de ambiente intensivas
+env | grep USER | cat
+env | grep HOME | cat
+env | grep PWD | cat
+env | grep PATH | cat | cat
+env | grep SHELL | cat | cat
+
+# Stress test - Combinações extremas finais
+echo "$USER$HOME$PWD$?"
+echo "$USER$HOME$PWD$?"
+echo "$USER$HOME$PWD$?"
+echo "$USER$HOME$PWD$?"
+echo "$USER$HOME$PWD$?"
+
+# Cleanup stress
+rm -f /tmp/stress_test*.txt /tmp/stress_append.txt /tmp/combo*.txt
+unset STRESS_VAR1 STRESS_VAR2 STRESS_VAR3 STRESS_VAR4 STRESS_VAR5
+
 exit
 VALGRIND_EOF
     
@@ -1456,7 +1609,7 @@ VALGRIND_EOF
     
     # Executa Valgrind com foco no processo principal
     local valgrind_output
-    valgrind_output=$(timeout 180 valgrind \
+    valgrind_output=$(timeout 480 valgrind \
         --leak-check=full \
         --show-leak-kinds=all \
         --track-origins=yes \
@@ -1556,7 +1709,7 @@ VALGRIND_EOF
         echo -e "${GREEN}🎯 MUITO BOM! Nenhum leak detectado no seu código!${NC}"
         echo -e "${BLUE}   Leaks reportados são de comandos externos.${NC}"
     elif [[ $valgrind_exit -eq 124 ]]; then
-        echo -e "${YELLOW}⏰ Timeout do Valgrind (3 minutos). Teste muito longo.${NC}"
+        echo -e "${YELLOW}⏰ Timeout do Valgrind (8 minutos). Teste muito longo.${NC}"
     else
         echo -e "${RED}❌ Memory leaks detectados NO SEU CÓDIGO! Verifique acima.${NC}"
     fi
@@ -1568,7 +1721,10 @@ VALGRIND_EOF
         echo -e "${BLUE}Log completo salvo em: $log_file${NC}"
         echo -e "${YELLOW}Foque nos erros que mencionam 'minishell' ou './minishell'${NC}"
     fi
-    
+
+    echo
+    echo "Os testes executados focaram somente em leaks do minishell, ainda pode haver alguns erros em comandos!"
+
     rm -f "$temp_script"
     echo
 }
