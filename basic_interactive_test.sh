@@ -1250,11 +1250,24 @@ echo $TEST
 exit
 BASIC_EOF
     
-    timeout 15 valgrind --leak-check=full --show-leak-kinds=all \
+    local valgrind_output
+    valgrind_output=$(timeout 15 valgrind --leak-check=full --show-leak-kinds=all \
         --track-origins=yes --trace-children=no --suppressions=readline.supp \
-        --error-exitcode=1 "$MINISHELL" < "$temp_script" 2>&1 | \
-        grep -E "(ERROR SUMMARY|definitely lost|indirectly lost|possibly lost|still reachable|suppressed|minishell)" || \
+        --error-exitcode=1 "$MINISHELL" < "$temp_script" 2>&1)
+    
+    # Mostra resultado resumido
+    echo "$valgrind_output" | grep -E "(ERROR SUMMARY|definitely lost|indirectly lost|possibly lost|still reachable|suppressed|minishell)" || \
         echo -e "${GREEN}✅ Nenhum leak do minishell detectado no teste básico${NC}"
+    
+    # Salva logs para análise
+    local log_file="/tmp/minishell_valgrind_basic_$$.txt"
+    echo "$valgrind_output" > "$log_file"
+    
+    local script_file="/tmp/minishell_valgrind_basic_script_$$.sh"
+    cp "$temp_script" "$script_file"
+    
+    echo -e "${BLUE}📁 Logs salvos: $log_file${NC}"
+    echo -e "${BLUE}📁 Script testado: $script_file${NC}"
     
     rm -f "$temp_script"
     echo
@@ -1714,16 +1727,32 @@ VALGRIND_EOF
         echo -e "${RED}❌ Memory leaks detectados NO SEU CÓDIGO! Verifique acima.${NC}"
     fi
     
-    # Salva log apenas se houver leaks do minishell
+    # Salva log sempre para visualização posterior
+    local log_file="/tmp/minishell_valgrind_full_$$.txt"
+    echo "$valgrind_output" > "$log_file"
+    
+    # Salva também o script executado para referência
+    local script_file="/tmp/minishell_valgrind_script_$$.sh"
+    cp "$temp_script" "$script_file"
+    
+    # Mostra informações dos arquivos salvos
+    echo -e "${BLUE}📁 Arquivos salvos para análise:${NC}"
+    echo -e "${BLUE}   Log completo do Valgrind: $log_file${NC}"
+    echo -e "${BLUE}   Script executado: $script_file${NC}"
+    echo -e "${YELLOW}   Use 'less $log_file' para ver o log completo${NC}"
+    echo -e "${YELLOW}   Use 'cat $script_file' para ver os comandos testados${NC}"
+    
     if [[ -n "$minishell_errors" ]]; then
-        local log_file="/tmp/minishell_leaks_$$.txt"
-        echo "$valgrind_output" > "$log_file"
-        echo -e "${BLUE}Log completo salvo em: $log_file${NC}"
-        echo -e "${YELLOW}Foque nos erros que mencionam 'minishell' ou './minishell'${NC}"
+        echo -e "${YELLOW}   Foque nos erros que mencionam 'minishell' ou './minishell'${NC}"
     fi
 
     echo
     echo "Os testes executados focaram somente em leaks do minishell, ainda pode haver alguns erros em comandos!"
+    echo
+    echo -e "${GREEN}💡 DICA: Para análise detalhada dos logs do Valgrind:${NC}"
+    echo -e "${GREEN}   • Os arquivos ficam salvos em /tmp/ até o próximo reboot${NC}"
+    echo -e "${GREEN}   • Use 'less' ou 'cat' para visualizar o conteúdo${NC}"
+    echo -e "${GREEN}   • O log contém informações detalhadas sobre memory leaks${NC}"
 
     rm -f "$temp_script"
     echo
@@ -1828,7 +1857,8 @@ STRESS_EOF
     echo
     
     # Executa com foco no processo principal (sem filhos)
-    timeout 600 valgrind \
+    local valgrind_output
+    valgrind_output=$(timeout 600 valgrind \
         --leak-check=full \
         --show-leak-kinds=all \
         --track-origins=yes \
@@ -1836,11 +1866,20 @@ STRESS_EOF
         --trace-children=no \
         --suppressions=readline.supp \
         --error-exitcode=1 \
-        "$MINISHELL" < "$temp_script" 2>&1 | \
-        grep -E "(ERROR SUMMARY|definitely lost|indirectly lost|possibly lost|still reachable|Invalid|FILE DESCRIPTORS|minishell)" || \
-        echo "Stress test completado - foco no minishell"
+        "$MINISHELL" < "$temp_script" 2>&1)
     
     local exit_code=$?
+    
+    # Mostra resultado resumido
+    echo "$valgrind_output" | grep -E "(ERROR SUMMARY|definitely lost|indirectly lost|possibly lost|still reachable|Invalid|FILE DESCRIPTORS|minishell)" || \
+        echo "Stress test completado - foco no minishell"
+    
+    # Salva logs para análise
+    local log_file="/tmp/minishell_valgrind_stress_$$.txt"
+    echo "$valgrind_output" > "$log_file"
+    
+    local script_file="/tmp/minishell_valgrind_stress_script_$$.sh"
+    cp "$temp_script" "$script_file"
     
     echo
     if [[ $exit_code -eq 0 ]]; then
@@ -1853,6 +1892,9 @@ STRESS_EOF
         echo -e "${YELLOW}⚠️  Possíveis leaks detectados no stress test${NC}"
         echo -e "${BLUE}   Verifique se são do minishell ou comandos externos acima${NC}"
     fi
+    
+    echo -e "${BLUE}📁 Logs do stress test salvos: $log_file${NC}"
+    echo -e "${BLUE}📁 Script do stress test: $script_file${NC}"
     
     rm -f "$temp_script"
     echo
