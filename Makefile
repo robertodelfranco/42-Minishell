@@ -48,6 +48,7 @@ SRCS		=	./src/main.c \
 				./src/signals/signal_utils.c
 
 CYAN		=	\033[1;96m
+RED			=	\033[1;91m
 NC			=	\033[0m
 
 OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
@@ -55,6 +56,11 @@ OBJ_DIR		=	objs
 VPATH		=	./src ./src/builtin ./src/token ./src/parse ./src/executor ./src/expansion ./src/pipes ./src/redirs ./src/signals
 
 all: libft ${NAME}
+	@if [ -f ${NAME} ]; then \
+		echo "${RED}✅ Minishell já está compilado!${NC}"; \
+	else \
+		$(MAKE) ${NAME}; \
+	fi
 
 libft:
 	@make -C $(LIBFT) --no-print-directory
@@ -79,7 +85,4 @@ fclean:	clean
 
 re: fclean all
 
-val:
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --suppressions=readline.supp ./minishell
-
-.PHONY: all clean fclean re libft val
+.PHONY: all clean fclean re libft
