@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 12:58:06 by rheringe          #+#    #+#             */
-/*   Updated: 2025/07/14 12:57:42 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/18 13:54:59 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,11 @@ void	handle_heredoc(int sig)
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	close(STDIN_FILENO);
+}
+
+void	handle_sig_pipe(int sig)
+{
+	(void)sig;
 }
 
 void	handle_sigquit(int sig)

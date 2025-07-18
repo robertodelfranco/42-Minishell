@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/18 10:20:27 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/18 13:55:24 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,6 +224,7 @@ void	sigpipe_handler(int sig);
 void	signal_setup_prompt(void);
 void	setup_signals_exec(void);
 void	handle_heredoc(int sig);
+void	handle_sig_pipe(int sig);
 
 // Utils
 char	*ft_get_external_path(t_data *data, char *token_name);
