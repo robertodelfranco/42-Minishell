@@ -36,10 +36,10 @@
 # =========================================================================
 
 # Cores
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
+RED='\033[1;91m'
+GREEN='\033[1;92m'
+YELLOW='\033[1;93m'
+BLUE='\033[1;94m'
 NC='\033[0m'
 
 # Contadores
@@ -561,35 +561,35 @@ main_tests() {
     
     echo -e "${YELLOW}=== REDIRECIONAMENTOS (Robusto + Exit Status) ===${NC}"
     # Output redirect (>)
-    run_test_with_exit "echo 'teste redirect' > /tmp/mini_test1.txt" "Output redirect simples" false 0
-    run_test_with_exit "cat /tmp/mini_test1.txt" "Verificar output redirect" false 0
-    run_test_with_exit "echo 'sobrescrever' > /tmp/mini_test1.txt" "Output redirect sobrescrever" false 0
-    run_test_with_exit "cat /tmp/mini_test1.txt" "Verificar sobrescrita" false 0
-    run_test_with_exit "> /tmp/mini_test1.txt" "Verificar criação e sobrescrita de arquivo sem comando" false 0
-    run_test_with_exit "cat /tmp/mini_test1.txt" "Verificar arquivo vazio após criação sem comando" false 0
-    run_test_with_exit ">> /tmp/mini_test1.txt" "Verificar criação e sobrescrita de arquivo sem comando" false 0
-    run_test_with_exit "cat /tmp/mini_test1.txt" "Verificar arquivo vazio após criação sem comando" false 0
-    run_test_with_exit "< /tmp/mini_test1.txt" "Verificar leitura de arquivo vazio" false 0
-    run_test_with_exit "echo 'sobrescrever' > /tmp/mini_test1.txt" "Output redirect sobrescrever" false 0
+    run_test_with_exit "echo 'teste redirect' > mini_test1.txt" "Output redirect simples" false 0
+    run_test_with_exit "cat mini_test1.txt" "Verificar output redirect" false 0
+    run_test_with_exit "echo 'sobrescrever' > mini_test1.txt" "Output redirect sobrescrever" false 0
+    run_test_with_exit "cat mini_test1.txt" "Verificar sobrescrita" false 0
+    run_test_with_exit "> mini_test1.txt" "Verificar criação e sobrescrita de arquivo sem comando" false 0
+    run_test_with_exit "cat mini_test1.txt" "Verificar arquivo vazio após criação sem comando" false 0
+    run_test_with_exit ">> mini_test1.txt" "Verificar criação e sobrescrita de arquivo sem comando" false 0
+    run_test_with_exit "cat mini_test1.txt" "Verificar arquivo vazio após criação sem comando" false 0
+    run_test_with_exit "< mini_test1.txt" "Verificar leitura de arquivo vazio" false 0
+    run_test_with_exit "echo 'sobrescrever' > mini_test1.txt" "Output redirect sobrescrever" false 0
     
     # Append redirect (>>)
-    run_test_with_exit "echo 'append1' >> /tmp/mini_test2.txt" "Append redirect novo arquivo" false 0
-    run_test_with_exit "echo 'append2' >> /tmp/mini_test2.txt" "Append redirect adicionar" false 0
-    run_test_with_exit "cat /tmp/mini_test2.txt" "Verificar append" false 0
-    
+    run_test_with_exit "echo 'append1' >> mini_test2.txt" "Append redirect novo arquivo" false 0
+    run_test_with_exit "echo 'append2' >> mini_test2.txt" "Append redirect adicionar" false 0
+    run_test_with_exit "cat mini_test2.txt" "Verificar append" false 0
+
     # Input redirect (<)
-    run_test_with_exit "cat < /tmp/mini_test1.txt" "Input redirect" false 0
-    run_test_with_exit "grep 'sobrescrever' < /tmp/mini_test1.txt" "Input redirect com comando" false 0
-    
+    run_test_with_exit "cat < mini_test1.txt" "Input redirect" false 0
+    run_test_with_exit "grep 'sobrescrever' < mini_test1.txt" "Input redirect com comando" false 0
+
     # Erros de redirecionamento
     run_test_with_exit "echo test > /root/forbidden.txt" "Redirect sem permissão" true
     run_test_with_exit "cat < /nonexistent_file_12345.txt" "Input redirect arquivo inexistente" 1
     
     # Múltiplos redirecionamentos
-    run_test_with_exit "echo 'multi' > /tmp/mini_test3.txt > /tmp/mini_test4.txt" "Múltiplos output redirects"
-    run_test_with_exit "cat /tmp/mini_test3.txt" "Verificar primeiro redirect"
-    run_test_with_exit "cat /tmp/mini_test4.txt" "Verificar segundo redirect"
-    
+    run_test_with_exit "echo 'multi' > mini_test3.txt > mini_test4.txt" "Múltiplos output redirects"
+    run_test_with_exit "cat mini_test3.txt" "Verificar primeiro redirect"
+    run_test_with_exit "cat mini_test4.txt" "Verificar segundo redirect"
+
     echo -e "${YELLOW}=== HEREDOC (Robusto + Exit Status) ===${NC}"
     # Nota: Heredoc é interativo, então testamos de forma limitada
     echo "    [Info] Heredoc << requer input interativo ou Ctrl-D"
@@ -633,10 +633,10 @@ main_tests() {
     run_test_with_exit 'echo "$USER expanded" | cat' "Pipe aspas duplas simples" false 0
     
     # Pipes com redirecionamento
-    run_test_with_exit "echo 'pipe+redirect' | cat > /tmp/mini_test5.txt" "Pipe + output redirect" false 0
-    run_test_with_exit "cat /tmp/mini_test5.txt" "Verificar pipe+redirect" false 0
-    run_test_with_exit "echo 'input+pipe' | cat | cat > /tmp/mini_test6.txt" "Input + pipe + redirect" false 0
-    run_test_with_exit "cat /tmp/mini_test6.txt" "Verificar input+pipe+redirect" false 0
+    run_test_with_exit "echo 'pipe+redirect' | cat > mini_test5.txt" "Pipe + output redirect" false 0
+    run_test_with_exit "cat mini_test5.txt" "Verificar pipe+redirect" false 0
+    run_test_with_exit "echo 'input+pipe' | cat | cat > mini_test6.txt" "Input + pipe + redirect" false 0
+    run_test_with_exit "cat mini_test6.txt" "Verificar input+pipe+redirect" false 0
     
     echo -e "${YELLOW}=== COMANDOS EXTERNOS (Robusto + Exit Status) ===${NC}"
     # Comandos básicos
@@ -724,8 +724,8 @@ main_tests() {
     
     # Casos com aspas e comandos externos
     run_test_with_exit 'echo "$USER"suffix | cat' "Aspas complexas + pipe" false 0
-    run_test_with_exit 'echo "prefix$HOME" > /tmp/complex_quotes.txt' "Aspas complexas + redirect" false 0
-    run_test_with_exit "cat /tmp/complex_quotes.txt" "Verificar aspas complexas em arquivo" false 0
+    run_test_with_exit 'echo "prefix$HOME" > complex_quotes.txt' "Aspas complexas + redirect" false 0
+    run_test_with_exit "cat complex_quotes.txt" "Verificar aspas complexas em arquivo" false 0
     
     # Testes com variáveis especiais em aspas complexas
     run_test_with_exit 'echo "$?"exit"$?"' "Exit status em aspas complexas" false 0
@@ -733,7 +733,8 @@ main_tests() {
     run_test_with_exit 'echo "status:"$?' "Exit status concatenado" false 0
     
     # Cleanup dos arquivos de teste
-    rm -f /tmp/complex_quotes.txt 2>/dev/null
+    rm -f complex_quotes.txt 2>/dev/null
+    rm -f mini_test1.txt mini_test2.txt mini_test3.txt mini_test4.txt mini_test5.txt mini_test6.txt 2>/dev/null
     run_test_with_exit "unset EMPTY TEST_VAR" "Cleanup variáveis teste aspas" false 0
 }
 

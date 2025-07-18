@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rheringe <rheringe@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 18:57:54 by rafaelherin       #+#    #+#             */
-/*   Updated: 2025/07/16 10:36:42 by rheringe         ###   ########.fr       */
+/*   Updated: 2025/07/18 10:20:27 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,23 +174,21 @@ bool	executor(t_data *data);
 	// exec_cmd
 void	ft_dup_and_close(int fd, int dup, int clos);
 bool	execute_built_in(t_data *data, t_node *cur);
-bool	execute_external(t_data *data, t_node *cur);
 int		get_execve_exit_code(char *cmd, char *full_path);
-t_node	*get_last_command_node(t_node *cur);
 void	handle_exec_status(t_data *data, int status);
 char	*get_command_path(t_data *data, t_node *cur);
-
 	// exec_pipes
 int		handle_parent_no_wait(t_node *cur, int fd[2], int *prev_fd);
 bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd);
 	// exec_utils
 void	dup_fds(t_node *cur);
-int		ft_listsize(t_env *list);
 bool	fd_restore(t_data *data, t_node *cur);
+void	init_default_signals(void);
 char	**get_env_array(t_env *env_list);
-char	*ft_get_external_path(t_data *data, char *token_name);
 	// exec_child
 int		exec_child(t_data *data, t_node **cur, int fd[2], int *prev_fd);
+int		count_nodes_until_now(t_data *data, t_node *end);
+bool	execute_external(t_data *data, t_node *cur);
 
 // Built_ins
 	// echo
@@ -227,6 +225,11 @@ void	signal_setup_prompt(void);
 void	setup_signals_exec(void);
 void	handle_heredoc(int sig);
 
+// Utils
+char	*ft_get_external_path(t_data *data, char *token_name);
+t_node	*get_last_command_node(t_node *cur);
+int		ft_listsize(t_env *list);
+
 // Clear Program
 	// free_list
 void	ft_free_node_list(t_data *data);
@@ -239,5 +242,6 @@ bool	free_program(t_data *data, char *message);
 bool	shutdown_program(t_data *data);
 void	error_message(char *message);
 void	ft_free_matrix(char **ptr_matrix);
+void	exit_not_found(t_data *data, char **env);
 
 #endif

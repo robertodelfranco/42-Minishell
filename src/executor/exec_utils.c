@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:22:19 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/14 17:43:54 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/18 10:17:37 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,27 @@ char	**get_env_array(t_env *env_list)
 		cur = cur->next;
 	}
 	return (env_array);
+}
+
+int	count_nodes_until_now(t_data *data, t_node *end)
+{
+	t_node	*nav;
+	int		count;
+
+	count = 0;
+	nav = data->exec_list;
+	while (nav && nav != end)
+	{
+		if (nav->node_type != PIPE)
+			count++;
+		nav = nav->next;
+	}
+	return (count);
+}
+
+void	init_default_signals(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGPIPE, SIG_DFL);
 }

@@ -6,7 +6,7 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 15:10:52 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/03 20:16:52 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/18 10:15:14 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,4 +60,12 @@ void	ft_free_matrix(char **ptr_matrix)
 	}
 	free(ptr_matrix);
 	ptr_matrix = NULL;
+}
+
+void	exit_not_found(t_data *data, char **env)
+{
+	if (env)
+		ft_free_matrix(env);
+	shutdown_program(data);
+	exit(CMD_NOT_FOUND);
 }
