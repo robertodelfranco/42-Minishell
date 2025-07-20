@@ -48,6 +48,7 @@ SRCS		=	./src/main.c \
 				./src/signals/signal_utils.c
 
 CYAN		=	\033[1;96m
+GREEN		=	\033[1;92m
 RED			=	\033[1;91m
 NC			=	\033[0m
 
@@ -55,15 +56,20 @@ OBJS		=	$(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 OBJ_DIR		=	objs
 VPATH		=	./src ./src/builtin ./src/token ./src/parse ./src/executor ./src/expansion ./src/pipes ./src/redirs ./src/signals
 
-all: libft ${NAME}
-	@if [ -f ${NAME} ]; then \
-		echo "${RED}✅ Minishell já está compilado!${NC}"; \
+all: libft
+	@$(MAKE) libft --no-print-directory
+	@if $(MAKE) -q ${NAME} 2>/dev/null; then \
+		echo "${GREEN}✅ Minishell already compiled!${NC}"; \
 	else \
-		$(MAKE) ${NAME}; \
+		$(MAKE) ${NAME} --no-print-directory; \
 	fi
 
 libft:
-	@make -C $(LIBFT) --no-print-directory
+	@if $(MAKE) -q -C $(LIBFT); then \
+		: ; \
+	else \
+		make -C $(LIBFT) --no-print-directory; \
+	fi
 
 ${NAME}: ${OBJS}
 	@$(CC) $(OBJS) $(LIB) $(HEADERS) -o $(NAME) -lreadline
@@ -77,11 +83,12 @@ $(OBJ_DIR)/%.o:%.c
 clean:
 	@rm -rf ${OBJS}
 	@$(MAKE) -C $(LIBFT) clean --no-print-directory
+	@echo "${RED}Object files cleaned!${NC}"
 
 fclean:	clean
 	@rm -rf ${NAME}
 	@$(MAKE) -C $(LIBFT) fclean --no-print-directory
-	@echo "${CYAN}All files cleaned!${NC}"
+	@echo "${RED}All files cleaned!${NC}"
 
 re: fclean all
 
