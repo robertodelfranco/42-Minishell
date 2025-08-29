@@ -6,17 +6,47 @@
 /*   By: rdel-fra <rdel-fra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 15:20:25 by rdel-fra          #+#    #+#             */
-/*   Updated: 2025/07/14 18:22:46 by rdel-fra         ###   ########.fr       */
+/*   Updated: 2025/07/18 10:25:36 by rdel-fra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+static int	wait_for_all_children(pid_t *pids, int count)
+{
+	int	i;
+	int	status;
+	int	exit_code;
+	int	wait_result;
+
+	i = 0;
+	status = 0;
+	exit_code = 0;
+	while (i < count)
+	{
+		wait_result = waitpid(pids[i], &status, 0);
+		if (wait_result != -1)
+		{
+			if (WIFEXITED(status))
+			{
+				if (i == count - 1)
+					exit_code = WEXITSTATUS(status);
+			}
+			else if (WIFSIGNALED(status))
+				if (i == count - 1)
+					exit_code = 128 + WTERMSIG(status);
+		}
+		i++;
+	}
+	return (exit_code);
+}
 
 static int	handle_redir_pipe(t_data *data, int fd[2], t_node **cur, int *prev)
 {
 	t_node	*last_node;
 	int		last;
 
+	wait_for_all_children(data->pids, count_nodes_until_now(data, *cur));
 	last_node = get_last_command_node(data->exec_list);
 	last = 0;
 	if (*cur == last_node)
@@ -62,35 +92,6 @@ static int	count_commands(t_node *cur)
 	return (count);
 }
 
-static int	wait_for_all_children(pid_t *pids, int count)
-{
-	int	i;
-	int	status;
-	int	exit_code;
-	int	wait_result;
-
-	i = 0;
-	status = 0;
-	exit_code = 0;
-	while (i < count)
-	{
-		wait_result = waitpid(pids[i], &status, 0);
-		if (wait_result != -1)
-		{
-			if (WIFEXITED(status))
-			{
-				if (i == count - 1)
-					exit_code = WEXITSTATUS(status);
-			}
-			else if (WIFSIGNALED(status))
-				if (i == count - 1)
-					exit_code = 128 + WTERMSIG(status);
-		}
-		i++;
-	}
-	return (exit_code);
-}
-
 bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 {
 	int	last_cmd_error;
@@ -98,7 +99,7 @@ bool	exec_multiple_cmd(t_data *data, t_node *cur, int fd[2], int prev_fd)
 
 	i = 0;
 	last_cmd_error = 0;
-	data->pids = malloc(sizeof(pid_t) * count_commands(cur));
+	data->pids = ft_calloc(count_commands(cur), sizeof(pid_t));
 	while (cur)
 	{
 		if (cur->node_type == PIPE)

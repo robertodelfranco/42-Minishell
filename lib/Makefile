@@ -65,6 +65,9 @@ SRCS		=	./libft/ft_isalpha.c \
 
 HEADERS		=	./includes
 
+CYAN		=	\033[1;96m
+NC			=	\033[0m
+
 AR			=	ar rcs
 
 RM			=	rm -rf
@@ -76,6 +79,7 @@ VPATH		=	./libft:./gnl:./printf
 all: ${NAME}
 
 ${NAME}: ${OBJS}
+	@echo "${CYAN}Libft compiled successfully!${NC}"
 
 $(OBJ_DIR)/%.o:%.c ${HEADERS}
 	@mkdir -p $(OBJ_DIR)
